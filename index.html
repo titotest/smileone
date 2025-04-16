@@ -86,10 +86,14 @@
         }
         .menu-item.clicked {
             transform: scale(1.1);
-            transition: transform 0.05s ease; /* Faster inflate for both touch and mouse */
+            transition: transform 0.05s ease;
+        }
+        .menu-item.short-word.clicked {
+            transform: scale(1.15); /* Slightly larger scale for shorter words */
+            transition: transform 0.05s ease;
         }
         .menu-item:not(.clicked) {
-            transition: transform 0.4s ease-out; /* Keep deflate natural */
+            transition: transform 0.4s ease-out;
         }
     </style>
 </head>
@@ -97,12 +101,12 @@
     <div class="container">
         <h1 id="smileText" class="title">REMORPH DESIGN</h1>
         <div id="menuList" class="menu-list">
-            <div class="menu-item">SPECS</div>
+            <div class="menu-item short-word">SPECS</div> <!-- Added short-word class -->
             <div class="menu-item">FEATURES</div>
             <a href="https://www.youtube.com/@RemorphDesign" target="_blank" class="menu-item">VIDEOS</a>
             <div class="menu-item">PICTURES</div>
             <div class="menu-item">YAPPING</div>
-            <div class="menu-item">FILES</div>
+            <div class="menu-item short-word">FILES</div> <!-- Added short-word class -->
             <div class="menu-item">DISCORD</div>
         </div>
     </div>
@@ -284,10 +288,20 @@
                 item.addEventListener("mouseup", function(e) {
                     if (e.button === 0) {
                         item.classList.remove("clicked");
+                        // Reset transition to ensure subsequent animations are fresh
+                        item.style.transition = "none";
+                        setTimeout(() => {
+                            item.style.transition = "transform 0.4s ease-out";
+                        }, 0);
                     }
                 });
                 item.addEventListener("mouseleave", function() {
                     item.classList.remove("clicked");
+                    // Reset transition
+                    item.style.transition = "none";
+                    setTimeout(() => {
+                        item.style.transition = "transform 0.2s ease";
+                    }, 0);
                 });
 
                 // Touch events for mobile
@@ -303,6 +317,11 @@
                         e.preventDefault();
                     }
                     item.classList.remove("clicked");
+                    // Reset transition to ensure subsequent animations are fresh
+                    item.style.transition = "none";
+                    setTimeout(() => {
+                        item.style.transition = "transform 0.4s ease-out";
+                    }, 0);
                 }, { passive: false });
 
                 item.addEventListener("click", function(e) {
