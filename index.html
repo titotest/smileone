@@ -3,119 +3,283 @@
 <head>
     <title>Remorph Design</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap" rel="stylesheet">
     <style>
         html, body {
             margin: 0;
-            height: 100%;
-            font-family: "SF Pro Rounded", "Helvetica Neue", "Helvetica", "Roboto", sans-serif;
+            padding: 0;
+            font-family: "Nunito", "Arial", sans-serif;
             background: black;
+            overflow: hidden; /* Disable scrolling */
+            height: 100vh;
         }
-        h1 {
-            font-size: 3rem;
-            font-size: clamp(2.84765625rem, 5vw, 4.271484375rem);
+        /* Main Container */
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        /* Title */
+        .title {
+            font-size: 2.7rem; /* Reduced base size by 10% (from 3.3rem) */
+            font-size: clamp(2.84rem, 5vw, 4.27rem); /* Reduced by 10%, using original rounded values */
             text-align: center;
             cursor: pointer;
             color: white;
-            font-weight: 600;
-            animation: glow 1.5s ease-in-out infinite alternate;
-            transition: transform 0.2s ease;
+            font-weight: 900;
             margin: 0;
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(0deg) scale(1);
             transform-origin: center;
+            z-index: 1;
+            transition: top 0.5s ease, transform 0.5s ease; /* Smooth transition for moving to top and rotation */
+            padding: 0; /* Remove padding to avoid extra space */
+            line-height: 1; /* Normalize line height */
         }
-        .stop-glow {
-            animation: none;
+        .title-at-top {
+            transform: translate(-50%, 0) rotate(0deg) scale(1); /* Only center horizontally, preserve rotation */
         }
-        @keyframes glow {
-            from {
-                opacity: 0.6;
-            }
-            to {
-                opacity: 1;
-            }
+        /* Menu */
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 100%; /* Start below the viewport */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease; /* Smooth reveal animation */
+        }
+        .menu-list.visible {
+            top: 50%; /* Center vertically */
+            transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+            opacity: 1;
+            visibility: visible;
+        }
+        .menu-item {
+            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+        }
+        .menu-item:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <h1 id="smileText">REMORPH DESIGN</h1>
+    <div class="container">
+        <h1 id="smileText" class="title">REMORPH DESIGN</h1>
+        <div id="menuList" class="menu-list">
+            <div class="menu-item">SPECS</div>
+            <div class="menu-item">FEATURES</div>
+            <div class="menu-item">VIDEOS</div>
+            <div class="menu-item">PICTURES</div>
+            <div class="menu-item">YAPING</div>
+            <div class="menu-item">FILES</div>
+            <div class="menu-item">DISCORD</div>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener("touchmove", function(e) {
-            e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener("wheel", function(e) {
-            e.preventDefault();
-        }, { passive: false });
-
         if (document.addEventListener) {
             const smileText = document.getElementById("smileText");
-            let hasBeenClicked = false;
+            const menuList = document.getElementById("menuList");
             let isSmiley = false;
             let timeoutId = null;
+            let isMenuVisible = false;
+            let hasScrolledFirstTime = false;
+            let touchStartY = 0;
+            let isAnimating = false;
             let currentRotation = 0;
-            let isAnimating = false; // Track if an animation is in progress
+
+            // Dynamically set the title's top position
+            function updatePositions() {
+                const titleHeight = smileText.offsetHeight;
+                const titleBuffer = 80; // Increased buffer from 60px to 80px for more space from the top
+
+                // Ensure the transition is applied for top changes
+                smileText.style.transition = "top 0.5s ease, transform 0.5s ease";
+
+                // Set title position
+                if (isMenuVisible) {
+                    smileText.style.top = `${titleBuffer}px`; // Ensure the title is fully visible
+                } else {
+                    smileText.style.top = "50%";
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`; // Center vertically in initial state
+                }
+            }
+
+            // Prevent default scroll behavior
+            document.addEventListener("wheel", function(e) {
+                e.preventDefault();
+                // Use deltaY to determine scroll direction
+                if (e.deltaY < 0) {
+                    // Scroll up: hide menu, return to initial state
+                    if (isMenuVisible) {
+                        toggleMenu();
+                    }
+                } else if (e.deltaY > 0) {
+                    // Scroll down: show menu
+                    if (!isMenuVisible) {
+                        toggleMenu();
+                    }
+                }
+            }, { passive: false });
+
+            // Handle touch gestures for mobile
+            document.addEventListener("touchstart", function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+
+            document.addEventListener("touchmove", function(e) {
+                e.preventDefault(); // Prevent scrolling
+                const touchEndY = e.touches[0].clientY;
+                const deltaY = touchStartY - touchEndY; // Positive for swipe up, negative for swipe down
+
+                if (deltaY < 0) {
+                    // Swipe down: hide menu, return to initial state
+                    if (isMenuVisible) {
+                        toggleMenu();
+                    }
+                } else if (deltaY > 0) {
+                    // Swipe up: show menu
+                    if (!isMenuVisible) {
+                        toggleMenu();
+                    }
+                }
+            }, { passive: false });
 
             function updateRotation(targetRotation, duration, scale) {
-                if (isAnimating) return; // Prevent new animations during an ongoing one
+                if (isAnimating) return;
                 isAnimating = true;
-                // Ensure clockwise rotation
                 while (currentRotation > targetRotation) {
                     currentRotation -= 360;
                 }
                 currentRotation = targetRotation;
                 smileText.style.transition = `transform ${duration}s ease`;
-                smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+                if (isMenuVisible) {
+                    smileText.style.transform = `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`;
+                } else {
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+                }
             }
 
             function revertToText(shouldFullCircle) {
                 smileText.textContent = "REMORPH DESIGN";
                 isSmiley = false;
+                clearTimeout(timeoutId);
                 timeoutId = null;
                 if (shouldFullCircle) {
-                    updateRotation(360, 0.4, 1); // Complete the circle clockwise
+                    updateRotation(360, 0.4, 1);
                 } else {
-                    updateRotation(0, 0.2, 1); // Rotate back counterclockwise
+                    updateRotation(0, 0.2, 1);
                 }
             }
 
-            smileText.addEventListener("click", function() {
-                if (isAnimating) return; // Ignore clicks during animation
-
-                if (!hasBeenClicked) {
-                    smileText.classList.add("stop-glow");
-                    hasBeenClicked = true;
+            function toggleMenu() {
+                if (!hasScrolledFirstTime) {
+                    hasScrolledFirstTime = true;
+                    isSmiley = false;
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                    currentRotation = 0;
+                    smileText.textContent = "REMORPH DESIGN";
+                    isAnimating = false;
+                    smileText.style.transition = "none";
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                } else {
+                    isSmiley = false;
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                    currentRotation = 0;
+                    smileText.textContent = "REMORPH DESIGN";
+                    isAnimating = false;
+                    smileText.style.transition = "none";
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
                 }
 
-                if (!isSmiley) {
-                    // Reset rotation to 0 before showing smiley
-                    currentRotation = 0;
-                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
-                    // Show smiley
-                    smileText.textContent = ":-)";
-                    isSmiley = true;
-                    updateRotation(90, 0.2, 1.2);
-                    timeoutId = setTimeout(function() {
-                        revertToText(false); // Revert counterclockwise after timer
-                    }, 1000);
+                if (!isMenuVisible) {
+                    // Show the menu
+                    isMenuVisible = true;
+                    smileText.classList.add("title-at-top");
+                    smileText.style.cursor = "default";
+                    menuList.classList.add("visible");
                 } else {
-                    // Revert immediately with full circle
+                    // Hide the menu and return to initial state
+                    isMenuVisible = false;
+                    smileText.classList.remove("title-at-top");
+                    smileText.style.cursor = "pointer";
+                    menuList.classList.remove("visible");
+                    isSmiley = false;
                     clearTimeout(timeoutId);
-                    revertToText(true); // Revert with full circle
+                    timeoutId = null;
+                    currentRotation = 0;
+                    smileText.textContent = "REMORPH DESIGN";
+                    isAnimating = false;
+                    smileText.style.transition = "none";
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                }
+                updatePositions(); // Update positions
+            }
+
+            smileText.addEventListener("click", function() {
+                if (!isMenuVisible && !isAnimating) {
+                    if (!isSmiley) {
+                        currentRotation = 0;
+                        smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                        smileText.textContent = ":-)";
+                        isSmiley = true;
+                        updateRotation(90, 0.2, 1.2);
+                        timeoutId = setTimeout(function() {
+                            if (!isMenuVisible) {
+                                revertToText(false);
+                            }
+                        }, 1000);
+                    } else {
+                        clearTimeout(timeoutId);
+                        revertToText(true);
+                    }
                 }
             });
 
-            // Reset rotation and animation state after transitions
             smileText.addEventListener("transitionend", function() {
                 if (currentRotation === 360) {
                     currentRotation = 0;
                     smileText.style.transition = "none";
-                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                    if (isMenuVisible) {
+                        smileText.style.transform = `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)`;
+                    } else {
+                        smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                    }
                 }
-                isAnimating = false; // Allow new clicks after animation ends
+                isAnimating = false;
+            });
+
+            // Update positions on window resize
+            window.addEventListener("resize", updatePositions);
+
+            // Initial position update
+            updatePositions();
+
+            // Handle clicks on menu items (placeholders for now)
+            document.querySelectorAll(".menu-item").forEach(item => {
+                item.addEventListener("click", function() {
+                    console.log(`${item.textContent} clicked!`);
+                });
             });
         }
     </script>
