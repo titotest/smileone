@@ -96,27 +96,31 @@
         .menu-item.clicked {
             transform: scale(1.1);
             transition: transform 0.03s ease;
+            -webkit-transition: transform 0.03s ease;
         }
         .menu-item.short-word.clicked {
             transform: scale(1.15);
             transition: transform 0.03s ease;
+            -webkit-transition: transform 0.03s ease;
         }
         .menu-item:not(.clicked) {
             transition: transform 0.3s ease-out;
+            -webkit-transition: transform 0.3s ease-out;
         }
         /* Mobile: Disable transform animations and handle font size */
-        .menu-item.clicked,
-        .menu-item.short-word.clicked,
-        .menu-item:not(.clicked) {
-            transform: none !important;
-            transition: none !important;
-            -webkit-transition: none !important;
-        }
-        .menu-item.tapped {
-            font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important;
-            transition: none !important;
-            -webkit-transition: none !important;
-            color: yellow !important; /* Fallback feedback to test */
+        @media (hover: none) and (pointer: coarse) {
+            .menu-item.clicked,
+            .menu-item.short-word.clicked,
+            .menu-item:not(.clicked) {
+                transform: none !important;
+                transition: none !important;
+                -webkit-transition: none !important;
+            }
+            .menu-item.tapped {
+                font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important;
+                transition: none !important;
+                -webkit-transition: none !important;
+            }
         }
     </style>
 </head>
@@ -203,7 +207,6 @@
 
             document.addEventListener("touchstart", function(e) {
                 touchStartY = e.touches[0].clientY;
-                console.log("Global touchstart fired, target:", e.target); // Debug log
             }, { passive: true });
 
             document.addEventListener("touchmove", function(e) {
@@ -351,17 +354,15 @@
 
                 // Touch events for mobile
                 item.addEventListener("touchstart", function(e) {
-                    console.log(`Touchstart on menu item: ${item.textContent}, classList: ${item.classList}`); // Debug log
                     if (!item.href) {
                         e.preventDefault();
                     }
                     item.classList.add("tapped");
                     // Force repaint
-                    const dummy = item.offsetHeight; // Accessing offsetHeight forces a repaint
+                    const dummy = item.offsetHeight;
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
-                    console.log(`Touchend on menu item: ${item.textContent}, classList: ${item.classList}`); // Debug log
                     if (!item.href) {
                         e.preventDefault();
                     }
@@ -371,7 +372,6 @@
                 }, { passive: false });
 
                 item.addEventListener("touchcancel", function(e) {
-                    console.log(`Touchcancel on menu item: ${item.textContent}`); // Debug log
                     item.classList.remove("tapped");
                 }, { passive: false });
 
