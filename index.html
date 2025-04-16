@@ -9,21 +9,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: "SF Pro Rounded", "Helvetica Neue", "Helvetica", "Roboto", sans-serif;
+            font-family: -apple-system, "SF Pro Rounded", "Helvetica Neue", "Helvetica", "Roboto", sans-serif;
             background: black;
-            font-weight: 700; /* Apply bold to all text on the page */
+            font-weight: 700;
         }
         h1 {
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3rem); /* Smooth scaling between 2rem and 3rem */
             text-align: center;
             cursor: pointer;
             color: white;
-            font-weight: 700; /* Already bold, just for clarity */
-        }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
+            font-weight: 700;
         }
     </style>
 </head>
