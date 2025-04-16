@@ -104,10 +104,10 @@
                 top: 2%; /* Adjusted position when menu is visible */
             }
             .menu-list {
-                top: 15%; /* Position menu below title */
+                top: 25%; /* Increased to ensure separation */
             }
             .menu-list.visible {
-                top: 15%; /* Override centered positioning */
+                top: 25%; /* Override centered positioning */
                 transform: translateX(-50%) translateY(0); /* Remove vertical centering */
                 max-height: 70vh; /* Increase max height to fit content */
             }
@@ -152,12 +152,22 @@
                 const titleHeight = smileText.offsetHeight;
                 const titleBuffer = titleHeight + 30;
                 smileText.style.transition = "top 0.5s ease, transform 0.5s ease";
-                if (isMenuVisible) {
-                    smileText.style.top = `${titleBuffer}px`;
+
+                // Check if in landscape mode and apply percentage-based positioning
+                if (window.matchMedia("(max-width: 767px) and (orientation: landscape)").matches) {
+                    if (isMenuVisible) {
+                        smileText.style.top = "2%"; // Respect landscape media query
+                    } else {
+                        smileText.style.top = "5%"; // Respect landscape media query
+                    }
                 } else {
-                    smileText.style.top = "50%";
-                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
+                    if (isMenuVisible) {
+                        smileText.style.top = `${titleBuffer}px`;
+                    } else {
+                        smileText.style.top = "50%";
+                    }
                 }
+                smileText.style.transform = isMenuVisible ? `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)` : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
             }
 
             function setMenuItemDimensions() {
