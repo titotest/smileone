@@ -40,9 +40,9 @@
             white-space: nowrap;
             max-width: 90%;
             box-sizing: border-box;
-            will-change: transform; /* Optimize transform animations */
-            backface-visibility: hidden; /* Reduce rendering artifacts */
-            transform-style: preserve-3d; /* Force hardware acceleration */
+            will-change: transform;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
         .title-at-top {
             transform: translate(-50%, 0) rotate(0deg) scale(1);
@@ -75,10 +75,11 @@
             cursor: pointer;
             margin: 20px 0;
             transform: scale(1);
-            transition: transform 0.2s ease; /* Simplified to single transition */
-            will-change: transform; /* Optimize transform animations */
-            backface-visibility: hidden; /* Reduce rendering artifacts */
-            transform-style: preserve-3d; /* Force hardware acceleration */
+            transition: transform 0.2s ease;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            text-decoration: none; /* Remove underline for links */
         }
         .menu-item:hover {
             transform: scale(1.05);
@@ -98,7 +99,7 @@
         <div id="menuList" class="menu-list">
             <div class="menu-item">SPECS</div>
             <div class="menu-item">FEATURES</div>
-            <div class="menu-item">VIDEOS</div>
+            <a href="https://www.youtube.com/@RemorphDesign" target="_blank" class="menu-item">VIDEOS</a> <!-- Added link -->
             <div class="menu-item">PICTURES</div>
             <div class="menu-item">YAPPING</div>
             <div class="menu-item">FILES</div>
@@ -117,7 +118,7 @@
             let touchStartY = 0;
             let isAnimating = false;
             let currentRotation = 0;
-            let originalWidth = null; /* To store the title's original width */
+            let originalWidth = null;
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
@@ -180,7 +181,7 @@
 
             function revertToText(shouldFullCircle) {
                 smileText.textContent = "REMORPH DESIGN";
-                smileText.style.width = ""; /* Reset width */
+                smileText.style.width = "";
                 isSmiley = false;
                 clearTimeout(timeoutId);
                 timeoutId = null;
@@ -199,7 +200,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
-                    smileText.style.width = ""; /* Reset width */
+                    smileText.style.width = "";
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -209,7 +210,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
-                    smileText.style.width = ""; /* Reset width */
+                    smileText.style.width = "";
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -230,7 +231,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
-                    smileText.style.width = ""; /* Reset width */
+                    smileText.style.width = "";
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -241,9 +242,8 @@
             smileText.addEventListener("click", function() {
                 if (!isMenuVisible && !isAnimating) {
                     if (!isSmiley) {
-                        /* Store the original width before changing text */
                         originalWidth = smileText.offsetWidth + "px";
-                        smileText.style.width = originalWidth; /* Fix width to prevent jitter */
+                        smileText.style.width = originalWidth;
                         currentRotation = 0;
                         smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
                         smileText.textContent = ":-)";
@@ -288,8 +288,11 @@
                 item.addEventListener("mouseleave", function() {
                     item.classList.remove("clicked");
                 });
-                item.addEventListener("click", function() {
-                    console.log(`${item.textContent} clicked!`);
+                item.addEventListener("click", function(e) {
+                    // Only log for non-link items to avoid redundancy
+                    if (!item.href) {
+                        console.log(`${item.textContent} clicked!`);
+                    }
                 });
             });
 
