@@ -70,7 +70,6 @@
         .menu-item {
             font-size: clamp(1.9rem, 3.8vw, 2.85rem);
             font-weight: 900;
-            text-align: center;
             color: white;
             cursor: pointer;
             margin: 20px 0;
@@ -81,7 +80,10 @@
             transform-style: preserve-3d;
             text-decoration: none;
             box-sizing: border-box;
-            display: inline-block; /* Ensures the item takes only the space it needs */
+            display: flex; /* Use flex to center text */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             line-height: 1; /* Prevent line height from affecting layout */
         }
         /* Desktop: Hover animation */
@@ -164,13 +166,23 @@
                     // Calculate dimensions at the original font size
                     const originalFontSize = window.getComputedStyle(item).fontSize;
                     item.style.fontSize = originalFontSize; // Ensure we're at the base font size
-                    const width = item.offsetWidth;
-                    const height = item.offsetHeight;
+                    let width = item.offsetWidth;
+                    let height = item.offsetHeight;
+                    // Temporarily set the tapped font size to calculate max dimensions
+                    item.style.fontSize = "clamp(2.28rem, 4.56vw, 3.42rem)";
+                    const tappedWidth = item.offsetWidth;
+                    const tappedHeight = item.offsetHeight;
+                    // Use the larger dimensions to accommodate both states
+                    width = Math.max(width, tappedWidth);
+                    height = Math.max(height, tappedHeight);
+                    // Add a small buffer to ensure no clipping
+                    width += 4; // Small buffer
+                    height += 4;
                     // Set fixed dimensions
                     item.style.width = `${width}px`;
                     item.style.height = `${height}px`;
-                    // Restore font size for tapped state
-                    item.style.fontSize = "";
+                    // Restore font size for normal state
+                    item.style.fontSize = originalFontSize;
                 });
             }
 
