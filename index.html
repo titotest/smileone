@@ -12,17 +12,28 @@
             font-family: Arial, sans-serif;
         }
         h1 {
-            font-size: 3rem; /* Adjusts size, responsive with rem */
+            font-size: 3rem;
             text-align: center;
+            cursor: pointer; /* Makes the text clickable */
         }
         @media (max-width: 600px) {
             h1 {
-                font-size: 2rem; /* Smaller size on mobile */
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <h1>SMILE ONE</h1>
+    <h1 id="smileText">SMILE ONE</h1>
+
+    <script>
+        // Get the h1 element
+        const smileText = document.getElementById("smileText");
+
+        // Add a click event listener to change the text color
+        smileText.addEventListener("click", function() {
+            smileText.style.color = smileText.style.color === "blue" ? "black" : "blue";
+        });
+    </script>
 </body>
 </html>
