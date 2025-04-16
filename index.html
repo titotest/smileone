@@ -93,7 +93,7 @@
             transition: transform 0.03s ease;
         }
         .menu-item:not(.clicked) {
-            transition: transform 0.4s ease-out;
+            transition: transform 0.3s ease-out; /* Slightly faster deflation */
         }
     </style>
 </head>
@@ -134,6 +134,18 @@
                     smileText.style.top = "50%";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
                 }
+            }
+
+            // Function to reset animation state for mobile
+            function resetAnimationState(item, callback) {
+                requestAnimationFrame(() => {
+                    // Briefly toggle transform to force a repaint
+                    item.style.transform = "scale(1)";
+                    item.classList.remove("clicked");
+                    requestAnimationFrame(() => {
+                        if (callback) callback();
+                    });
+                });
             }
 
             document.addEventListener("wheel", function(e) {
@@ -306,7 +318,10 @@
                     if (!item.href) {
                         e.preventDefault();
                     }
-                    item.classList.remove("clicked");
+                    // Reset animation state using requestAnimationFrame
+                    resetAnimationState(item, () => {
+                        item.classList.remove("clicked");
+                    });
                 }, { passive: false });
 
                 item.addEventListener("click", function(e) {
