@@ -60,7 +60,7 @@
             width: 100%;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.5s ease;
+            transition: top 0.5s ease, opacity 0.5s ease;
         }
         .menu-list.visible {
             top: 50%;
@@ -74,8 +74,8 @@
             color: white;
             cursor: pointer;
             margin: 20px 0;
-            transform: none; /* No scaling animations */
-            will-change: font-size; /* Optimize for font size changes */
+            transform: none;
+            will-change: font-size;
             text-decoration: none;
             box-sizing: border-box;
             display: flex;
@@ -84,11 +84,40 @@
             text-align: center;
             line-height: 1;
         }
-        /* Font size decrease for both mobile and desktop */
         .menu-item.tapped {
-            font-size: clamp(1.52rem, 3.04vw, 2.28rem) !important; /* 0.8 * clamp(1.9rem, 3.8vw, 2.85rem) */
+            font-size: clamp(1.52rem, 3.04vw, 2.28rem) !important;
             transition: none !important;
             -webkit-transition: none !important;
+        }
+
+        /* Fix for smartphone landscape */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .container {
+                overflow-y: auto; /* Allow scrolling if content exceeds height */
+                height: auto; /* Allow content to expand */
+            }
+            .title {
+                top: 5%; /* Move title to top */
+                font-size: clamp(1.5rem, 2.5vw, 2.5rem); /* Smaller and denser */
+            }
+            .title-at-top {
+                top: 2%; /* Adjusted position when menu is visible */
+            }
+            .menu-list {
+                top: 15%; /* Position menu below title */
+            }
+            .menu-list.visible {
+                top: 15%; /* Override centered positioning */
+                transform: translateX(-50%) translateY(0); /* Remove vertical centering */
+                max-height: 70vh; /* Increase max height to fit content */
+            }
+            .menu-item {
+                font-size: clamp(1.5rem, 2.2vw, 2.2rem); /* Smaller and denser */
+                margin: 10px 0; /* Reduce margin for density */
+            }
+            .menu-item.tapped {
+                font-size: clamp(1.2rem, 1.76vw, 1.76rem) !important; /* Adjusted for new base size */
+            }
         }
     </style>
 </head>
@@ -131,29 +160,23 @@
                 }
             }
 
-            // Set fixed dimensions for menu items to prevent layout shifts
             function setMenuItemDimensions() {
                 document.querySelectorAll(".menu-item").forEach(item => {
-                    // Remove any existing inline styles that might interfere
                     item.style.width = "";
                     item.style.height = "";
                     item.style.fontSize = "";
 
-                    // Calculate base dimensions (largest, since font size decreases)
                     const baseWidth = item.offsetWidth;
                     const baseHeight = item.offsetHeight;
 
-                    // Calculate dimensions with tapped font size (smaller)
-                    item.classList.add("T-tapped");
+                    item.classList.add("tapped");
                     const tappedWidth = item.offsetWidth;
                     const tappedHeight = item.offsetHeight;
                     item.classList.remove("tapped");
 
-                    // Use the larger dimensions (base) to accommodate the default state
                     const width = Math.max(baseWidth, tappedWidth);
                     const height = Math.max(baseHeight, tappedHeight);
 
-                    // Add a small buffer to prevent clipping
                     const buffer = 4;
                     item.style.width = `${width + buffer}px`;
                     item.style.height = `${height + buffer}px`;
@@ -249,7 +272,6 @@
                     smileText.classList.add("title-at-top");
                     smileText.style.cursor = "default";
                     menuList.classList.add("visible");
-                    // Set menu item dimensions when the menu becomes visible
                     setMenuItemDimensions();
                 } else {
                     isMenuVisible = false;
@@ -305,7 +327,6 @@
             });
 
             document.querySelectorAll(".menu-item").forEach(item => {
-                // Mouse events for desktop
                 item.addEventListener("mousedown", function(e) {
                     if (e.button === 0) {
                         item.classList.add("tapped");
@@ -320,13 +341,11 @@
                     item.classList.remove("tapped");
                 });
 
-                // Touch events for mobile
                 item.addEventListener("touchstart", function(e) {
                     if (!item.href) {
                         e.preventDefault();
                     }
                     item.classList.add("tapped");
-                    // Force repaint
                     const dummy = item.offsetHeight;
                 }, { passive: false });
 
@@ -335,7 +354,6 @@
                         e.preventDefault();
                     }
                     item.classList.remove("tapped");
-                    // Force repaint
                     const dummy = item.offsetHeight;
                 }, { passive: false });
 
