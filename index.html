@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Remorph Design</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         html, body {
             margin: 0;
-            height: 100vh;
+            height: 100%; /* Fallback for older browsers */
+            min-height: 100vh; /* Better for mobile */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -13,6 +15,7 @@
             background: black;
         }
         h1 {
+            font-size: 3rem;
             font-size: clamp(2.84765625rem, 5vw, 4.271484375rem);
             text-align: center;
             cursor: pointer;
@@ -20,9 +23,10 @@
             font-weight: 600;
             animation: glow 1.5s ease-in-out infinite alternate;
             transition: transform 0.2s ease;
+            margin: 0; /* Remove any default margins */
         }
         .rotated {
-            transform: rotate(90deg) scale(1.3);
+            transform: rotate(90deg) scale(1.2);
             transform-origin: center;
         }
         .stop-glow {
@@ -42,30 +46,31 @@
     <h1 id="smileText">REMORPH DESIGN</h1>
 
     <script>
-        // Prevent scrolling
         document.addEventListener("touchmove", function(e) {
-            e.preventDefault(); // Disable touch scrolling (iOS Safari)
+            e.preventDefault();
         }, { passive: false });
 
         document.addEventListener("wheel", function(e) {
-            e.preventDefault(); // Disable mouse wheel scrolling
+            e.preventDefault();
         }, { passive: false });
 
-        const smileText = document.getElementById("smileText");
-        let hasBeenClicked = false;
+        if (document.addEventListener) {
+            const smileText = document.getElementById("smileText");
+            let hasBeenClicked = false;
 
-        smileText.addEventListener("click", function() {
-            if (!hasBeenClicked) {
-                smileText.classList.add("stop-glow");
-                hasBeenClicked = true;
-            }
-            smileText.textContent = ":-)";
-            smileText.classList.add("rotated");
-            setTimeout(function() {
-                smileText.textContent = "REMORPH DESIGN";
-                smileText.classList.remove("rotated");
-            }, 1000);
-        });
+            smileText.addEventListener("click", function() {
+                if (!hasBeenClicked) {
+                    smileText.classList.add("stop-glow");
+                    hasBeenClicked = true;
+                }
+                smileText.textContent = ":-)";
+                smileText.classList.add("rotated");
+                setTimeout(function() {
+                    smileText.textContent = "REMORPH DESIGN";
+                    smileText.classList.remove("rotated");
+                }, 1000);
+            });
+        }
     </script>
 </body>
 </html>
