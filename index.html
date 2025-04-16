@@ -84,9 +84,9 @@
             text-align: center;
             line-height: 1;
         }
-        /* Font size increase for both mobile and desktop */
+        /* Font size decrease for both mobile and desktop */
         .menu-item.tapped {
-            font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important; /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
+            font-size: clamp(1.52rem, 3.04vw, 2.28rem) !important; /* 0.8 * clamp(1.9rem, 3.8vw, 2.85rem) */
             transition: none !important;
             -webkit-transition: none !important;
         }
@@ -139,17 +139,17 @@
                     item.style.height = "";
                     item.style.fontSize = "";
 
-                    // Calculate base dimensions
+                    // Calculate base dimensions (largest, since font size decreases)
                     const baseWidth = item.offsetWidth;
                     const baseHeight = item.offsetHeight;
 
-                    // Calculate dimensions with tapped font size
-                    item.classList.add("tapped");
+                    // Calculate dimensions with tapped font size (smaller)
+                    item.classList.add("T-tapped");
                     const tappedWidth = item.offsetWidth;
                     const tappedHeight = item.offsetHeight;
                     item.classList.remove("tapped");
 
-                    // Use the larger dimensions
+                    // Use the larger dimensions (base) to accommodate the default state
                     const width = Math.max(baseWidth, tappedWidth);
                     const height = Math.max(baseHeight, tappedHeight);
 
@@ -308,7 +308,7 @@
                 // Mouse events for desktop
                 item.addEventListener("mousedown", function(e) {
                     if (e.button === 0) {
-                        item.classList.add("tapped"); // Use tapped for desktop too
+                        item.classList.add("tapped");
                     }
                 });
                 item.addEventListener("mouseup", function(e) {
