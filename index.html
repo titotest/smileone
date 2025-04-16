@@ -40,6 +40,9 @@
             white-space: nowrap;
             max-width: 90%;
             box-sizing: border-box;
+            will-change: transform; /* Optimize transform animations */
+            backface-visibility: hidden; /* Reduce rendering artifacts */
+            transform-style: preserve-3d; /* Force hardware acceleration */
         }
         .title-at-top {
             transform: translate(-50%, 0) rotate(0deg) scale(1);
@@ -65,18 +68,20 @@
             visibility: visible;
         }
         .menu-item {
-            font-size: clamp(1.9rem, 3.8vw, 2.85rem); /* Reduced by 5% */
+            font-size: clamp(1.9rem, 3.8vw, 2.85rem);
             font-weight: 900;
             text-align: center;
             color: white;
             cursor: pointer;
             margin: 20px 0;
-            transition: transform 0.3s ease;
             transform: scale(1);
+            transition: transform 0.2s ease; /* Simplified to single transition */
+            will-change: transform; /* Optimize transform animations */
+            backface-visibility: hidden; /* Reduce rendering artifacts */
+            transform-style: preserve-3d; /* Force hardware acceleration */
         }
         .menu-item:hover {
             transform: scale(1.05);
-            transition: transform 0.2s ease;
         }
         .menu-item.clicked {
             transform: scale(1.1);
@@ -112,6 +117,7 @@
             let touchStartY = 0;
             let isAnimating = false;
             let currentRotation = 0;
+            let originalWidth = null; /* To store the title's original width */
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
@@ -174,6 +180,7 @@
 
             function revertToText(shouldFullCircle) {
                 smileText.textContent = "REMORPH DESIGN";
+                smileText.style.width = ""; /* Reset width */
                 isSmiley = false;
                 clearTimeout(timeoutId);
                 timeoutId = null;
@@ -192,6 +199,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
+                    smileText.style.width = ""; /* Reset width */
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -201,6 +209,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
+                    smileText.style.width = ""; /* Reset width */
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -221,6 +230,7 @@
                     timeoutId = null;
                     currentRotation = 0;
                     smileText.textContent = "REMORPH DESIGN";
+                    smileText.style.width = ""; /* Reset width */
                     isAnimating = false;
                     smileText.style.transition = "none";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -231,6 +241,9 @@
             smileText.addEventListener("click", function() {
                 if (!isMenuVisible && !isAnimating) {
                     if (!isSmiley) {
+                        /* Store the original width before changing text */
+                        originalWidth = smileText.offsetWidth + "px";
+                        smileText.style.width = originalWidth; /* Fix width to prevent jitter */
                         currentRotation = 0;
                         smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
                         smileText.textContent = ":-)";
