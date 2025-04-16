@@ -74,12 +74,8 @@
             color: white;
             cursor: pointer;
             margin: 20px 0;
-            transform: scale(1);
-            transition: transform 0.2s ease;
-            will-change: transform;
-            backface-visibility: hidden;
-            -webkit-transform-style: preserve-3d;
-            transform-style: preserve-3d;
+            transform: none; /* No scaling animations */
+            will-change: font-size; /* Optimize for font size changes */
             text-decoration: none;
             box-sizing: border-box;
             display: flex;
@@ -88,39 +84,11 @@
             text-align: center;
             line-height: 1;
         }
-        /* Desktop: Hover animation */
-        .menu-item:hover {
-            transform: scale(1.05);
-        }
-        /* Desktop: Click animation */
-        .menu-item.clicked {
-            transform: scale(1.1);
-            transition: transform 0.03s ease;
-            -webkit-transition: transform 0.03s ease;
-        }
-        .menu-item.short-word.clicked {
-            transform: scale(1.15);
-            transition: transform 0.03s ease;
-            -webkit-transition: transform 0.03s ease;
-        }
-        .menu-item:not(.clicked) {
-            transition: transform 0.3s ease-out;
-            -webkit-transition: transform 0.3s ease-out;
-        }
-        /* Mobile: Disable transform animations and handle font size */
-        @media (hover: none) and (pointer: coarse) {
-            .menu-item.clicked,
-            .menu-item.short-word.clicked,
-            .menu-item:not(.clicked) {
-                transform: none !important;
-                transition: none !important;
-                -webkit-transition: none !important;
-            }
-            .menu-item.tapped {
-                font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important;
-                transition: none !important;
-                -webkit-transition: none !important;
-            }
+        /* Font size increase for both mobile and desktop */
+        .menu-item.tapped {
+            font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important; /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
+            transition: none !important;
+            -webkit-transition: none !important;
         }
     </style>
 </head>
@@ -340,16 +308,16 @@
                 // Mouse events for desktop
                 item.addEventListener("mousedown", function(e) {
                     if (e.button === 0) {
-                        item.classList.add("clicked");
+                        item.classList.add("tapped"); // Use tapped for desktop too
                     }
                 });
                 item.addEventListener("mouseup", function(e) {
                     if (e.button === 0) {
-                        item.classList.remove("clicked");
+                        item.classList.remove("tapped");
                     }
                 });
                 item.addEventListener("mouseleave", function() {
-                    item.classList.remove("clicked");
+                    item.classList.remove("tapped");
                 });
 
                 // Touch events for mobile
