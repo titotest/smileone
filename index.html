@@ -6,11 +6,7 @@
     <style>
         html, body {
             margin: 0;
-            height: 100%; /* Fallback for older browsers */
-            min-height: 100vh; /* Better for mobile */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 100%;
             font-family: "Helvetica Rounded", "Helvetica Neue", "Helvetica", "Roboto", sans-serif;
             background: black;
         }
@@ -23,10 +19,14 @@
             font-weight: 600;
             animation: glow 1.5s ease-in-out infinite alternate;
             transition: transform 0.2s ease;
-            margin: 0; /* Remove any default margins */
+            margin: 0;
+            position: fixed; /* Use fixed positioning */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for element size */
         }
         .rotated {
-            transform: rotate(90deg) scale(1.2);
+            transform: translate(-50%, -50%) rotate(90deg) scale(1.2); /* Combine with centering */
             transform-origin: center;
         }
         .stop-glow {
