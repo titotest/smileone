@@ -20,13 +20,10 @@
             animation: glow 1.5s ease-in-out infinite alternate;
             transition: transform 0.2s ease;
             margin: 0;
-            position: fixed; /* Use fixed positioning */
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%); /* Adjust for element size */
-        }
-        .rotated {
-            transform: translate(-50%, -50%) rotate(90deg) scale(1.2); /* Combine with centering */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg) scale(1);
             transform-origin: center;
         }
         .stop-glow {
@@ -57,18 +54,68 @@
         if (document.addEventListener) {
             const smileText = document.getElementById("smileText");
             let hasBeenClicked = false;
+            let isSmiley = false;
+            let timeoutId = null;
+            let currentRotation = 0;
+            let isAnimating = false; // Track if an animation is in progress
+
+            function updateRotation(targetRotation, duration, scale) {
+                if (isAnimating) return; // Prevent new animations during an ongoing one
+                isAnimating = true;
+                // Ensure clockwise rotation
+                while (currentRotation > targetRotation) {
+                    currentRotation -= 360;
+                }
+                currentRotation = targetRotation;
+                smileText.style.transition = `transform ${duration}s ease`;
+                smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+            }
+
+            function revertToText(shouldFullCircle) {
+                smileText.textContent = "REMORPH DESIGN";
+                isSmiley = false;
+                timeoutId = null;
+                if (shouldFullCircle) {
+                    updateRotation(360, 0.4, 1); // Complete the circle clockwise
+                } else {
+                    updateRotation(0, 0.2, 1); // Rotate back counterclockwise
+                }
+            }
 
             smileText.addEventListener("click", function() {
+                if (isAnimating) return; // Ignore clicks during animation
+
                 if (!hasBeenClicked) {
                     smileText.classList.add("stop-glow");
                     hasBeenClicked = true;
                 }
-                smileText.textContent = ":-)";
-                smileText.classList.add("rotated");
-                setTimeout(function() {
-                    smileText.textContent = "REMORPH DESIGN";
-                    smileText.classList.remove("rotated");
-                }, 1000);
+
+                if (!isSmiley) {
+                    // Reset rotation to 0 before showing smiley
+                    currentRotation = 0;
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                    // Show smiley
+                    smileText.textContent = ":-)";
+                    isSmiley = true;
+                    updateRotation(90, 0.2, 1.2);
+                    timeoutId = setTimeout(function() {
+                        revertToText(false); // Revert counterclockwise after timer
+                    }, 1000);
+                } else {
+                    // Revert immediately with full circle
+                    clearTimeout(timeoutId);
+                    revertToText(true); // Revert with full circle
+                }
+            });
+
+            // Reset rotation and animation state after transitions
+            smileText.addEventListener("transitionend", function() {
+                if (currentRotation === 360) {
+                    currentRotation = 0;
+                    smileText.style.transition = "none";
+                    smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                }
+                isAnimating = false; // Allow new clicks after animation ends
             });
         }
     </script>
