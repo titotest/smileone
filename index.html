@@ -86,10 +86,10 @@
         }
         .menu-item.clicked {
             transform: scale(1.1);
-            transition: transform 0.1s ease;
+            transition: transform 0.05s ease; /* Faster inflate for both touch and mouse */
         }
         .menu-item:not(.clicked) {
-            transition: transform 0.4s ease-out;
+            transition: transform 0.4s ease-out; /* Keep deflate natural */
         }
     </style>
 </head>
@@ -292,7 +292,6 @@
 
                 // Touch events for mobile
                 item.addEventListener("touchstart", function(e) {
-                    // Only prevent default for non-link items to avoid interfering with navigation
                     if (!item.href) {
                         e.preventDefault();
                     }
@@ -300,16 +299,13 @@
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
-                    // Only prevent default for non-link items
                     if (!item.href) {
                         e.preventDefault();
                     }
                     item.classList.remove("clicked");
-                    // For the "VIDEOS" link, the browser will handle navigation automatically
                 }, { passive: false });
 
                 item.addEventListener("click", function(e) {
-                    // Only log for non-link items to avoid redundancy
                     if (!item.href) {
                         console.log(`${item.textContent} clicked!`);
                     }
