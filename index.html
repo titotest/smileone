@@ -22,7 +22,7 @@
             position: relative;
         }
         .title {
-            font-size: clamp(1.9rem, 4.2vw, 3.7rem); /* Increased by 5% */
+            font-size: clamp(1.9rem, 4.2vw, 3.7rem);
             text-align: center;
             cursor: pointer;
             color: white;
@@ -35,11 +35,11 @@
             transform-origin: center;
             z-index: 1;
             transition: top 0.5s ease, transform 0.5s ease;
-            padding: 0 10px; /* Add padding on sides for breathing room */
+            padding: 0 10px;
             line-height: 1;
             white-space: nowrap;
-            max-width: 90%; /* Prevent the title from stretching too close to edges */
-            box-sizing: border-box; /* Ensure padding doesn't increase the width */
+            max-width: 90%;
+            box-sizing: border-box;
         }
         .title-at-top {
             transform: translate(-50%, 0) rotate(0deg) scale(1);
@@ -65,7 +65,7 @@
             visibility: visible;
         }
         .menu-item {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(1.9rem, 3.8vw, 2.85rem); /* Reduced by 5% */
             font-weight: 900;
             text-align: center;
             color: white;
@@ -115,7 +115,7 @@
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
-                const titleBuffer = titleHeight + 30; /* Slightly increased buffer for larger title */
+                const titleBuffer = titleHeight + 30;
                 smileText.style.transition = "top 0.5s ease, transform 0.5s ease";
                 if (isMenuVisible) {
                     smileText.style.top = `${titleBuffer}px`;
