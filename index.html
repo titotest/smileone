@@ -81,9 +81,11 @@
             transform-style: preserve-3d;
             text-decoration: none;
         }
+        /* Desktop: Hover animation */
         .menu-item:hover {
             transform: scale(1.05);
         }
+        /* Desktop: Click animation */
         .menu-item.clicked {
             transform: scale(1.1);
             transition: transform 0.03s ease;
@@ -93,7 +95,21 @@
             transition: transform 0.03s ease;
         }
         .menu-item:not(.clicked) {
-            transition: transform 0.3s ease-out; /* Slightly faster deflation */
+            transition: transform 0.3s ease-out;
+        }
+        /* Mobile: Disable transform animations for touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .menu-item.clicked,
+            .menu-item.short-word.clicked,
+            .menu-item:not(.clicked) {
+                transform: none !important; /* Disable scaling animations */
+                transition: none !important; /* Disable transform transitions */
+            }
+            .menu-item.tapped {
+                /* Instant font size increase by 20% */
+                font-size: clamp(2.28rem, 4.56vw, 3.42rem); /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
+                transition: none; /* No transition for font size */
+            }
         }
     </style>
 </head>
@@ -134,18 +150,6 @@
                     smileText.style.top = "50%";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
                 }
-            }
-
-            // Function to reset animation state for mobile
-            function resetAnimationState(item, callback) {
-                requestAnimationFrame(() => {
-                    // Briefly toggle transform to force a repaint
-                    item.style.transform = "scale(1)";
-                    item.classList.remove("clicked");
-                    requestAnimationFrame(() => {
-                        if (callback) callback();
-                    });
-                });
             }
 
             document.addEventListener("wheel", function(e) {
@@ -311,17 +315,14 @@
                     if (!item.href) {
                         e.preventDefault();
                     }
-                    item.classList.add("clicked");
+                    item.classList.add("tapped"); // Use "tapped" class for font size increase
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
                     if (!item.href) {
                         e.preventDefault();
                     }
-                    // Reset animation state using requestAnimationFrame
-                    resetAnimationState(item, () => {
-                        item.classList.remove("clicked");
-                    });
+                    item.classList.remove("tapped");
                 }, { passive: false });
 
                 item.addEventListener("click", function(e) {
