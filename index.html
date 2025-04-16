@@ -80,11 +80,11 @@
             transform-style: preserve-3d;
             text-decoration: none;
             box-sizing: border-box;
-            display: flex; /* Use flex to center text */
+            display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
-            line-height: 1; /* Prevent line height from affecting layout */
+            line-height: 1;
         }
         /* Desktop: Hover animation */
         .menu-item:hover {
@@ -104,6 +104,9 @@
         }
         /* Mobile: Disable transform animations and handle font size */
         @media (hover: none) and (pointer: coarse) {
+            .menu-item {
+                transition: none !important; /* Ensure no transform transitions */
+            }
             .menu-item.clicked,
             .menu-item.short-word.clicked,
             .menu-item:not(.clicked) {
@@ -112,7 +115,7 @@
             }
             .menu-item.tapped {
                 font-size: clamp(2.28rem, 4.56vw, 3.42rem); /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
-                transition: none; /* No transition for font size */
+                transition: none !important; /* No transition for font size */
             }
         }
     </style>
@@ -160,29 +163,35 @@
             // Set fixed dimensions for menu items to prevent layout shifts
             function setMenuItemDimensions() {
                 document.querySelectorAll(".menu-item").forEach(item => {
+                    // Store the current font size to restore later
+                    const currentFontSize = item.style.fontSize || window.getComputedStyle(item).fontSize;
+                    
                     // Reset any previous inline styles
                     item.style.width = "";
                     item.style.height = "";
+                    item.style.fontSize = ""; // Reset to base font size
+
                     // Calculate dimensions at the original font size
-                    const originalFontSize = window.getComputedStyle(item).fontSize;
-                    item.style.fontSize = originalFontSize; // Ensure we're at the base font size
-                    let width = item.offsetWidth;
-                    let height = item.offsetHeight;
+                    const baseWidth = item.offsetWidth;
+                    const baseHeight = item.offsetHeight;
+
                     // Temporarily set the tapped font size to calculate max dimensions
-                    item.style.fontSize = "clamp(2.28rem, 4.56vw, 3.42rem)";
+                    item.classList.add("tapped");
                     const tappedWidth = item.offsetWidth;
                     const tappedHeight = item.offsetHeight;
+                    item.classList.remove("tapped");
+
                     // Use the larger dimensions to accommodate both states
-                    width = Math.max(width, tappedWidth);
-                    height = Math.max(height, tappedHeight);
+                    const width = Math.max(baseWidth, tappedWidth);
+                    const height = Math.max(baseHeight, tappedHeight);
+
                     // Add a small buffer to ensure no clipping
-                    width += 4; // Small buffer
-                    height += 4;
-                    // Set fixed dimensions
-                    item.style.width = `${width}px`;
-                    item.style.height = `${height}px`;
-                    // Restore font size for normal state
-                    item.style.fontSize = originalFontSize;
+                    const buffer = 4;
+                    item.style.width = `${width + buffer}px`;
+                    item.style.height = `${height + buffer}px`;
+
+                    // Restore the original font size
+                    item.style.fontSize = currentFontSize;
                 });
             }
 
