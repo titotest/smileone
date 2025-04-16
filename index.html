@@ -80,6 +80,9 @@
             backface-visibility: hidden;
             transform-style: preserve-3d;
             text-decoration: none;
+            box-sizing: border-box;
+            display: inline-block; /* Ensures the item takes only the space it needs */
+            line-height: 1; /* Prevent line height from affecting layout */
         }
         /* Desktop: Hover animation */
         .menu-item:hover {
@@ -97,7 +100,7 @@
         .menu-item:not(.clicked) {
             transition: transform 0.3s ease-out;
         }
-        /* Mobile: Disable transform animations for touch devices */
+        /* Mobile: Disable transform animations and handle font size */
         @media (hover: none) and (pointer: coarse) {
             .menu-item.clicked,
             .menu-item.short-word.clicked,
@@ -106,7 +109,6 @@
                 transition: none !important; /* Disable transform transitions */
             }
             .menu-item.tapped {
-                /* Instant font size increase by 20% */
                 font-size: clamp(2.28rem, 4.56vw, 3.42rem); /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
                 transition: none; /* No transition for font size */
             }
@@ -139,6 +141,7 @@
             let isAnimating = false;
             let currentRotation = 0;
             let originalWidth = null;
+            let originalHeight = null;
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
@@ -150,6 +153,25 @@
                     smileText.style.top = "50%";
                     smileText.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
                 }
+            }
+
+            // Set fixed dimensions for menu items to prevent layout shifts
+            function setMenuItemDimensions() {
+                document.querySelectorAll(".menu-item").forEach(item => {
+                    // Reset any previous inline styles
+                    item.style.width = "";
+                    item.style.height = "";
+                    // Calculate dimensions at the original font size
+                    const originalFontSize = window.getComputedStyle(item).fontSize;
+                    item.style.fontSize = originalFontSize; // Ensure we're at the base font size
+                    const width = item.offsetWidth;
+                    const height = item.offsetHeight;
+                    // Set fixed dimensions
+                    item.style.width = `${width}px`;
+                    item.style.height = `${height}px`;
+                    // Restore font size for tapped state
+                    item.style.fontSize = "";
+                });
             }
 
             document.addEventListener("wheel", function(e) {
@@ -241,6 +263,8 @@
                     smileText.classList.add("title-at-top");
                     smileText.style.cursor = "default";
                     menuList.classList.add("visible");
+                    // Set menu item dimensions when the menu becomes visible
+                    setMenuItemDimensions();
                 } else {
                     isMenuVisible = false;
                     smileText.classList.remove("title-at-top");
@@ -315,7 +339,7 @@
                     if (!item.href) {
                         e.preventDefault();
                     }
-                    item.classList.add("tapped"); // Use "tapped" class for font size increase
+                    item.classList.add("tapped");
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
@@ -332,7 +356,12 @@
                 });
             });
 
-            window.addEventListener("resize", updatePositions);
+            window.addEventListener("resize", () => {
+                updatePositions();
+                if (isMenuVisible) {
+                    setMenuItemDimensions();
+                }
+            });
             updatePositions();
         }
     </script>
