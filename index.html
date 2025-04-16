@@ -11,8 +11,6 @@
             align-items: center;
             font-family: "Helvetica Rounded", "Helvetica Neue", "Helvetica", "Roboto", sans-serif;
             background: black;
-            overflow: hidden; /* Disable scrolling */
-            -webkit-overflow-scrolling: none; /* Disable iOS momentum scrolling */
         }
         h1 {
             font-size: clamp(2.84765625rem, 5vw, 4.271484375rem);
@@ -24,7 +22,8 @@
             transition: transform 0.2s ease;
         }
         .rotated {
-            transform: rotate(90deg) scale(1.5);
+            transform: rotate(90deg) scale(1.3);
+            transform-origin: center;
         }
         .stop-glow {
             animation: none;
@@ -43,6 +42,15 @@
     <h1 id="smileText">REMORPH DESIGN</h1>
 
     <script>
+        // Prevent scrolling
+        document.addEventListener("touchmove", function(e) {
+            e.preventDefault(); // Disable touch scrolling (iOS Safari)
+        }, { passive: false });
+
+        document.addEventListener("wheel", function(e) {
+            e.preventDefault(); // Disable mouse wheel scrolling
+        }, { passive: false });
+
         const smileText = document.getElementById("smileText");
         let hasBeenClicked = false;
 
