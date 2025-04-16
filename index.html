@@ -22,7 +22,7 @@
             position: relative;
         }
         .title {
-            font-size: clamp(2.84rem, 5vw, 4.27rem);
+            font-size: clamp(1.9rem, 4.2vw, 3.7rem); /* Increased by 5% */
             text-align: center;
             cursor: pointer;
             color: white;
@@ -35,8 +35,11 @@
             transform-origin: center;
             z-index: 1;
             transition: top 0.5s ease, transform 0.5s ease;
-            padding: 0;
+            padding: 0 10px; /* Add padding on sides for breathing room */
             line-height: 1;
+            white-space: nowrap;
+            max-width: 90%; /* Prevent the title from stretching too close to edges */
+            box-sizing: border-box; /* Ensure padding doesn't increase the width */
         }
         .title-at-top {
             transform: translate(-50%, 0) rotate(0deg) scale(1);
@@ -68,20 +71,19 @@
             color: white;
             cursor: pointer;
             margin: 20px 0;
-            transition: transform 0.3s ease; /* Default transition for hover */
-            transform: scale(1); /* Ensure baseline scale */
+            transition: transform 0.3s ease;
+            transform: scale(1);
         }
         .menu-item:hover {
-            transform: scale(1.05); /* Scale up slightly on hover */
-            transition: transform 0.2s ease; /* Faster for hover */
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
         }
         .menu-item.clicked {
-            transform: scale(1.1); /* Larger scale on click */
-            transition: transform 0.1s ease; /* Instant scale-up on click */
+            transform: scale(1.1);
+            transition: transform 0.1s ease;
         }
-        /* Ensure smooth deflation when releasing */
         .menu-item:not(.clicked) {
-            transition: transform 0.4s ease-out; /* Slower deflation with ease-out for balloon effect */
+            transition: transform 0.4s ease-out;
         }
     </style>
 </head>
@@ -113,7 +115,7 @@
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
-                const titleBuffer = 80;
+                const titleBuffer = titleHeight + 30; /* Slightly increased buffer for larger title */
                 smileText.style.transition = "top 0.5s ease, transform 0.5s ease";
                 if (isMenuVisible) {
                     smileText.style.top = `${titleBuffer}px`;
@@ -259,29 +261,20 @@
                 isAnimating = false;
             });
 
-            // Menu item click and release handling
             document.querySelectorAll(".menu-item").forEach(item => {
-                // Mousedown: Scale up instantly
                 item.addEventListener("mousedown", function(e) {
-                    // Only respond to left mouse button (button 0)
                     if (e.button === 0) {
                         item.classList.add("clicked");
                     }
                 });
-
-                // Mouseup: Remove clicked state, allow deflation
                 item.addEventListener("mouseup", function(e) {
                     if (e.button === 0) {
                         item.classList.remove("clicked");
                     }
                 });
-
-                // Mouseleave: Remove clicked state if mouse leaves while held
                 item.addEventListener("mouseleave", function() {
                     item.classList.remove("clicked");
                 });
-
-                // Existing click handler for logging
                 item.addEventListener("click", function() {
                     console.log(`${item.textContent} clicked!`);
                 });
