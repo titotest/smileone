@@ -42,6 +42,7 @@
             box-sizing: border-box;
             will-change: transform;
             backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
             transform-style: preserve-3d;
         }
         .title-at-top {
@@ -77,6 +78,7 @@
             transition: transform 0.2s ease;
             will-change: transform;
             backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
             transform-style: preserve-3d;
             text-decoration: none;
             box-sizing: border-box;
@@ -103,20 +105,18 @@
             transition: transform 0.3s ease-out;
         }
         /* Mobile: Disable transform animations and handle font size */
-        @media (hover: none) and (pointer: coarse) {
-            .menu-item {
-                transition: none !important; /* Ensure no transform transitions */
-            }
-            .menu-item.clicked,
-            .menu-item.short-word.clicked,
-            .menu-item:not(.clicked) {
-                transform: none !important; /* Disable scaling animations */
-                transition: none !important; /* Disable transform transitions */
-            }
-            .menu-item.tapped {
-                font-size: clamp(2.28rem, 4.56vw, 3.42rem); /* 1.2 * clamp(1.9rem, 3.8vw, 2.85rem) */
-                transition: none !important; /* No transition for font size */
-            }
+        .menu-item.clicked,
+        .menu-item.short-word.clicked,
+        .menu-item:not(.clicked) {
+            transform: none !important;
+            transition: none !important;
+            -webkit-transition: none !important;
+        }
+        .menu-item.tapped {
+            font-size: clamp(2.28rem, 4.56vw, 3.42rem) !important;
+            transition: none !important;
+            -webkit-transition: none !important;
+            color: yellow !important; /* Fallback feedback to test */
         }
     </style>
 </head>
@@ -146,7 +146,6 @@
             let isAnimating = false;
             let currentRotation = 0;
             let originalWidth = null;
-            let originalHeight = null;
 
             function updatePositions() {
                 const titleHeight = smileText.offsetHeight;
@@ -163,35 +162,29 @@
             // Set fixed dimensions for menu items to prevent layout shifts
             function setMenuItemDimensions() {
                 document.querySelectorAll(".menu-item").forEach(item => {
-                    // Store the current font size to restore later
-                    const currentFontSize = item.style.fontSize || window.getComputedStyle(item).fontSize;
-                    
-                    // Reset any previous inline styles
+                    // Remove any existing inline styles that might interfere
                     item.style.width = "";
                     item.style.height = "";
-                    item.style.fontSize = ""; // Reset to base font size
+                    item.style.fontSize = "";
 
-                    // Calculate dimensions at the original font size
+                    // Calculate base dimensions
                     const baseWidth = item.offsetWidth;
                     const baseHeight = item.offsetHeight;
 
-                    // Temporarily set the tapped font size to calculate max dimensions
+                    // Calculate dimensions with tapped font size
                     item.classList.add("tapped");
                     const tappedWidth = item.offsetWidth;
                     const tappedHeight = item.offsetHeight;
                     item.classList.remove("tapped");
 
-                    // Use the larger dimensions to accommodate both states
+                    // Use the larger dimensions
                     const width = Math.max(baseWidth, tappedWidth);
                     const height = Math.max(baseHeight, tappedHeight);
 
-                    // Add a small buffer to ensure no clipping
+                    // Add a small buffer to prevent clipping
                     const buffer = 4;
                     item.style.width = `${width + buffer}px`;
                     item.style.height = `${height + buffer}px`;
-
-                    // Restore the original font size
-                    item.style.fontSize = currentFontSize;
                 });
             }
 
@@ -210,6 +203,7 @@
 
             document.addEventListener("touchstart", function(e) {
                 touchStartY = e.touches[0].clientY;
+                console.log("Global touchstart fired, target:", e.target); // Debug log
             }, { passive: true });
 
             document.addEventListener("touchmove", function(e) {
@@ -357,16 +351,27 @@
 
                 // Touch events for mobile
                 item.addEventListener("touchstart", function(e) {
+                    console.log(`Touchstart on menu item: ${item.textContent}, classList: ${item.classList}`); // Debug log
                     if (!item.href) {
                         e.preventDefault();
                     }
                     item.classList.add("tapped");
+                    // Force repaint
+                    const dummy = item.offsetHeight; // Accessing offsetHeight forces a repaint
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
+                    console.log(`Touchend on menu item: ${item.textContent}, classList: ${item.classList}`); // Debug log
                     if (!item.href) {
                         e.preventDefault();
                     }
+                    item.classList.remove("tapped");
+                    // Force repaint
+                    const dummy = item.offsetHeight;
+                }, { passive: false });
+
+                item.addEventListener("touchcancel", function(e) {
+                    console.log(`Touchcancel on menu item: ${item.textContent}`); // Debug log
                     item.classList.remove("tapped");
                 }, { passive: false });
 
