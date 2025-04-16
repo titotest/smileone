@@ -292,12 +292,18 @@
 
                 // Touch events for mobile
                 item.addEventListener("touchstart", function(e) {
-                    e.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+                    // Only prevent default for non-link items to avoid interfering with navigation
+                    if (!item.href) {
+                        e.preventDefault();
+                    }
                     item.classList.add("clicked");
                 }, { passive: false });
 
                 item.addEventListener("touchend", function(e) {
-                    e.preventDefault();
+                    // Only prevent default for non-link items
+                    if (!item.href) {
+                        e.preventDefault();
+                    }
                     item.classList.remove("clicked");
                     // For the "VIDEOS" link, the browser will handle navigation automatically
                 }, { passive: false });
