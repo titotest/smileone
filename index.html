@@ -98,17 +98,17 @@
                 height: auto; /* Allow content to expand */
             }
             .title {
-                top: 10%; /* Move title higher to ensure visibility */
-                font-size: clamp(1.5rem, 2.5vw, 2.5rem); /* Smaller and denser */
+                top: 2%; /* Move title higher */
+                font-size: clamp(1.2rem, 2vw, 2rem); /* Smaller text */
             }
             .title-at-top {
-                top: 5%; /* Adjusted position when menu is visible */
+                top: 0%; /* Adjusted to top when menu is visible */
             }
             .menu-list {
                 top: 100%; /* Initial position off-screen */
             }
             .menu-list.visible {
-                top: 30%; /* Position below title with larger gap */
+                top: 25%; /* Position below title */
                 transform: translateX(-50%) translateY(0); /* Remove vertical centering */
                 max-height: 70vh; /* Increase max height to fit content */
                 opacity: 1;
@@ -116,11 +116,11 @@
                 z-index: 2; /* Ensure menu is above other elements */
             }
             .menu-item {
-                font-size: clamp(1.5rem, 2.2vw, 2.2rem); /* Smaller and denser */
-                margin: 10px 0; /* Reduce margin for density */
+                font-size: clamp(1.2rem, 1.8vw, 1.8rem); /* Smaller and denser text */
+                margin: 5px 0; /* Tighter spacing */
             }
             .menu-item.tapped {
-                font-size: clamp(1.2rem, 1.76vw, 1.76rem) !important; /* Adjusted for new base size */
+                font-size: clamp(0.96rem, 1.44vw, 1.44rem) !important; /* Adjusted for new base size */
             }
         }
     </style>
