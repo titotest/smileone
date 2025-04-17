@@ -234,36 +234,6 @@
             // Fornoobies feature state
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
             let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
-
-            // Restore state from sessionStorage with error handling
-            try {
-                const savedState = sessionStorage.getItem('menuState');
-                if (savedState) {
-                    const state = JSON.parse(savedState);
-                    if (typeof state === 'object' && state !== null) {
-                        isMenuVisible = state.isMenuVisible === true; // Ensure boolean
-                        hasMenuBeenShown = state.hasMenuBeenShown === true; // Ensure boolean
-                        console.log('State restored from sessionStorage:', { isMenuVisible, hasMenuBeenShown });
-                    } else {
-                        console.warn('Invalid sessionStorage state format, resetting to default');
-                        isMenuVisible = false;
-                        hasMenuBeenShown = false;
-                        sessionStorage.removeItem('menuState'); // Clear invalid state
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to restore state from sessionStorage:', error);
-                isMenuVisible = false;
-                hasMenuBeenShown = false;
-                sessionStorage.removeItem('menuState'); // Clear potentially corrupted state
-            }
-
-            // Apply initial layout without animation
-            title.style.transition = 'none';
-            updateLayout();
-            title.offsetHeight; // Force reflow
-            title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore transition
-
             let idleTimeout; // Timer for inactivity detection
 
             // Debounce utility for resize events
@@ -303,24 +273,13 @@
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu visibility and save state to sessionStorage
+            // Toggle menu visibility and reset title on scroll
             const toggleMenu = () => {
-                const previousMenuVisible = isMenuVisible;
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
                 fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
-
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
-
-                // Save state to sessionStorage
-                try {
-                    sessionStorage.setItem('menuState', JSON.stringify({ isMenuVisible, hasMenuBeenShown }));
-                    console.log('State saved to sessionStorage:', { isMenuVisible, hasMenuBeenShown });
-                } catch (error) {
-                    console.error('Failed to save state to sessionStorage:', error);
-                }
-
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
             };
 
@@ -486,6 +445,7 @@
 
             // Start the idle timer for fornoobies animation
             startIdleTimer();
+            updateLayout(); // Initial layout setup
         });
     </script>
 </body>
