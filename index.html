@@ -275,11 +275,29 @@
 
             // Toggle menu visibility and reset title on scroll
             const toggleMenu = () => {
+                const previousMenuVisible = isMenuVisible;
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
                 fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
+
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
+
+                // Update URL hash only after the transition completes
+                if (isMenuVisible) {
+                    // Wait for the title's transition to complete before setting the hash
+                    const handleTransitionEnd = (e) => {
+                        if (e.propertyName === 'top' && e.target === title) {
+                            window.location.hash = 'menu';
+                            title.removeEventListener('transitionend', handleTransitionEnd);
+                        }
+                    };
+                    title.addEventListener('transitionend', handleTransitionEnd);
+                } else {
+                    // Remove hash immediately when hiding the menu
+                    window.location.hash = ''; // Remove hash when hiding the menu
+                }
+
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
             };
 
