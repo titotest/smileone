@@ -224,7 +224,7 @@
 
             // State variables
             let isSmiley = false; // Tracks if title is showing ":-)"
-            let isMenuVisible = false; // Tracks if menu is visible
+            let isMenuVisible = history.state?.menuVisible || false; // Initialize from history state (null on refresh)
             let isAnimating = false; // Prevents animation conflicts
             let currentRotation = 0; // Tracks title rotation angle
             let timeoutId = null; // Stores timeout for smiley revert
@@ -233,7 +233,7 @@
 
             // Fornoobies feature state
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
-            let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
+            let hasMenuBeenShown = isMenuVisible; // Track if menu has been shown (init from history)
             let idleTimeout; // Timer for inactivity detection
 
             // Debounce utility for resize events
@@ -252,7 +252,7 @@
                 if (!isSmiley) {
                     currentRotation = 0;
                     title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
-                    title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`; // Ensure starting transform for smooth transition
+                    title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`; // Ensure starting transform
                 }
             };
 
@@ -273,14 +273,16 @@
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu visibility and reset title on scroll
+            // Toggle menu visibility and update history state
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
                 fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
-                resetIdleTimer(); // Reset fornoobies timer on menu toggle
+                // Update history state without changing URL
+                history.pushState({ menuVisible: isMenuVisible }, '', window.location.href);
+                resetIdleTimer(); // Reset fornoobies timer
             };
 
             // Update title rotation and scale for animation
@@ -437,6 +439,16 @@
                 handleFornoobiesClick();
             }, { passive: false });
 
+            // Handle back/forward navigation to restore menu state
+            window.addEventListener('popstate', (e) => {
+                const menuVisible = e.state?.menuVisible || false;
+                if (isMenuVisible !== menuVisible) {
+                    isMenuVisible = menuVisible;
+                    hasMenuBeenShown = isMenuVisible; // Sync fornoobies state
+                    updateLayout();
+                }
+            });
+
             // Handle window resize with debouncing
             window.addEventListener('resize', debounce(() => {
                 updateLayout();
@@ -445,7 +457,7 @@
 
             // Start the idle timer for fornoobies animation
             startIdleTimer();
-            updateLayout(); // Initial layout setup
+            updateLayout(); // Initial layout setup based on history state
         });
     </script>
 </body>
