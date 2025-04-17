@@ -20,6 +20,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
+            min-height: 100vh; /* Ensure content is visible */
         }
         .title {
             font-size: clamp(1.9rem, 4.2vw, 3.7rem);
@@ -46,7 +47,6 @@
             transform-style: preserve-3d;
         }
         .title-at-top {
-            top: 10%; /* Adjusted for better spacing in portrait */
             transform: translate(-50%, 0) rotate(0deg) scale(1);
         }
         .menu-list {
@@ -98,21 +98,22 @@
                 height: auto; /* Allow content to expand */
             }
             .title {
-                top: 5%; /* Move title to top */
+                top: 10%; /* Move title higher to ensure visibility */
                 font-size: clamp(1.5rem, 2.5vw, 2.5rem); /* Smaller and denser */
             }
             .title-at-top {
-                top: 2%; /* Adjusted position when menu is visible */
+                top: 5%; /* Adjusted position when menu is visible */
             }
             .menu-list {
                 top: 100%; /* Initial position off-screen */
             }
             .menu-list.visible {
-                top: 25%; /* Position below title */
+                top: 30%; /* Position below title with larger gap */
                 transform: translateX(-50%) translateY(0); /* Remove vertical centering */
                 max-height: 70vh; /* Increase max height to fit content */
                 opacity: 1;
                 visibility: visible;
+                z-index: 2; /* Ensure menu is above other elements */
             }
             .menu-item {
                 font-size: clamp(1.5rem, 2.2vw, 2.2rem); /* Smaller and denser */
@@ -152,7 +153,14 @@
             let originalWidth = null;
 
             function updatePositions() {
-                // Only handle transform adjustments; let CSS control top
+                const titleHeight = smileText.offsetHeight;
+                const titleBuffer = titleHeight + 30;
+                smileText.style.transition = "top 0.5s ease, transform 0.5s ease";
+                if (isMenuVisible) {
+                    smileText.style.top = `${titleBuffer}px`; // Smooth transition to top
+                } else {
+                    smileText.style.top = "50%";
+                }
                 smileText.style.transform = isMenuVisible ? `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)` : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${isSmiley ? 1.2 : 1})`;
             }
 
