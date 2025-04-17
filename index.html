@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <style>
         /* === Global Styles === */
-        /* Define CSS variables for font sizes, transitions, and viewport */
+        /* Define CSS variables for font sizes and transitions */
         :root {
             --title-font-size: 5vmin; /* Title font size scales with shortest viewport axis */
             --menu-font-size: 4vmin; /* Menu item font size scales with shortest viewport axis */
             --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8); /* Reduced font size when tapped */
             --transition-duration: 0.5s; /* Duration for menu slide and title positioning animations */
             --safe-area-top: env(safe-area-inset-top, 0); /* Fallback to 0 if not supported */
-            --viewport-height: 100vh; /* Fallback for older browsers */
+            --viewport-height: 100vh; /* Fallback for dynamic viewport height */
         }
 
-        /* Use dynamic viewport height if supported */
+        /* Support for dynamic viewport height (dvh) */
         @supports (height: 100dvh) {
             :root {
-                --viewport-height: 100dvh; /* Exclude browser UI for better centering */
+                --viewport-height: 100dvh;
             }
         }
 
@@ -41,7 +41,7 @@
         }
 
         html, body {
-            height: var(--viewport-height); /* Dynamic viewport height */
+            height: var(--viewport-height); /* Dynamic viewport height to exclude browser UI */
             min-height: var(--viewport-height); /* Ensure compatibility */
             font-family: 'Nunito', Arial, sans-serif; /* Font stack with fallback */
             background: black; /* Black background */
@@ -64,10 +64,9 @@
         /* Title styling and positioning */
         .title {
             font-size: var(--title-font-size);
-            color: white;
+            color: #f5f5f7; /* Updated text color */
             font-weight: 900;
             text-align: center;
-            cursor: pointer;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -75,8 +74,8 @@
             white-space: nowrap; /* Prevent text wrapping */
             backface-visibility: hidden; /* Optimize transform animations */
             z-index: 2; /* Ensure title is above menu */
-            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
             will-change: top, transform; /* Optimize animation performance */
+            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
         }
 
         /* Move title to top when menu is visible, account for safe area */
@@ -101,10 +100,10 @@
             transform: translateX(-50%);
             opacity: 0;
             visibility: hidden;
+            will-change: top, transform, opacity, visibility; /* Optimize animation performance */
             transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease; /* Slide and fade animation */
             width: 100%;
             z-index: 1; /* Below title */
-            will-change: top, transform, opacity, visibility; /* Optimize animation performance */
         }
 
         /* Show menu by sliding up to center */
@@ -124,29 +123,20 @@
             padding: 0;
             gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height (tuned for Nunito's cap height); adjust to 0.3 or 0.35 if needed */
             max-height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title, account for safe area */
-            overflow-y: auto; /* Scroll if too tall */
         }
 
         /* Individual menu items */
         .menu-item {
             font-size: var(--menu-font-size);
-            color: white;
+            color: #f5f5f7; /* Updated text color */
             font-weight: 900;
             text-align: center;
-            cursor: pointer;
             text-decoration: none;
-            transition: font-size 0.1s ease, transform 0.1s ease, background-color 0.1s ease; /* Smooth tap and hover effects */
+            transition: font-size 0.1s ease, transform 0.1s ease, background-color 0.1s ease; /* Smooth tap effects */
             white-space: nowrap; /* Prevent wrapping */
         }
 
-        /* Hover effect for desktop */
-        @media (hover: hover) {
-            .menu-item:hover {
-                background-color: rgba(255, 255, 255, 0.1); /* Subtle hover feedback */
-            }
-        }
-
-        /* Reduce font size and scale when tapped */
+        /* Reduce font size and scale down when tapped */
         .menu-item.tapped {
             font-size: var(--menu-font-size-tapped);
             transform: scale(0.95); /* Slight scale down for tap feedback */
@@ -201,8 +191,6 @@
             const updateLayout = () => {
                 title.classList.toggle('at-top', isMenuVisible); // Move title to top if menu is visible
                 menu.classList.toggle('visible', isMenuVisible); // Show/hide menu
-                title.style.cursor = isMenuVisible ? 'default' : 'pointer'; // Disable cursor when menu is visible
-                title.style.pointerEvents = isMenuVisible ? 'none' : 'auto'; // Disable interactions when menu is visible
                 if (!isSmiley) {
                     currentRotation = 0;
                     title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
@@ -302,7 +290,7 @@
             // Handle touch swipe to toggle menu
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
-            }, { passive: true }); // Passive for performance, no preventDefault needed
+            }, { passive: true });
 
             document.addEventListener('touchmove', (e) => {
                 e.preventDefault();
@@ -312,7 +300,7 @@
                     if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
                     else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
                 }
-            }, { passive: false }); // Non-passive to allow preventDefault
+            }, { passive: false });
 
             // Title click interaction
             title.addEventListener('click', handleTitleClick);
