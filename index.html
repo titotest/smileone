@@ -141,6 +141,52 @@
             font-size: var(--menu-font-size-tapped);
             transform: scale(0.95); /* Slight scale down for tap feedback */
         }
+
+        /* === Fornoobies Animation === */
+        /* "heho" animation at the bottom of the screen */
+        .fornoobies {
+            position: absolute;
+            bottom: calc(var(--title-font-size) * 0.5); /* Space from bottom, half of title font size */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: calc(var(--title-font-size) * 0.5); /* Half of title font size */
+            font-family: 'Nunito', Arial, sans-serif;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+            display: flex; /* Inline "he" and "ho" */
+            white-space: nowrap;
+            z-index: 1; /* Below title */
+        }
+
+        .fornoobies.hidden {
+            display: none; /* Hidden by default */
+        }
+
+        .he, .ho {
+            opacity: 0; /* Start invisible */
+        }
+
+        .fornoobies.show .he {
+            animation: fadeInHold 0.7s ease forwards; /* Fade in and hold, then disappear instantly */
+        }
+
+        .fornoobies.show .ho {
+            animation: holdFadeOut 0.7s ease forwards;
+            animation-delay: 0.7s; /* Start instantly after "he" */
+        }
+
+        @keyframes fadeInHold {
+            0% { opacity: 0; }
+            42.86% { opacity: 1; } /* Fade in over 0.3s (0 to 0.3s) */
+            99.99% { opacity: 1; } /* Hold until just before 0.7s (0.3s to 0.7s) */
+            100% { opacity: 0; } /* Instantly disappear at 0.7s */
+        }
+
+        @keyframes holdFadeOut {
+            0% { opacity: 1; } /* Appear instantly at 0.7s */
+            57.14% { opacity: 1; } /* Hold for 0.4s (0.7s to 1.1s) */
+            100% { opacity: 0; } /* Fade out over 0.3s (1.1s to 1.4s) */
+        }
     </style>
 </head>
 <body>
@@ -157,6 +203,9 @@
                 <li><div class="menu-item">DISCORD</div></li>
             </ul>
         </nav>
+        <div class="fornoobies hidden">
+            <span class="he">he</span><span class="ho">ho</span>
+        </div>
     </div>
 
     <script>
@@ -164,8 +213,9 @@
             // Element references with error handling
             const title = document.getElementById('title');
             const menu = document.getElementById('menu');
-            if (!title || !menu) {
-                console.error('Required elements not found: title or menu');
+            const fornoobies = document.querySelector('.fornoobies');
+            if (!title || !menu || !fornoobies) {
+                console.error('Required elements not found: title, menu, or fornoobies');
                 return;
             }
 
@@ -177,6 +227,11 @@
             let timeoutId = null; // Stores timeout for smiley revert
             let touchStartY = 0; // Tracks touch start position for swipe
             const swipeThreshold = 50; // Minimum swipe distance to toggle menu
+
+            // Fornoobies feature state
+            const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
+            let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
+            let idleTimeout; // Timer for inactivity detection
 
             // Debounce utility for resize events
             const debounce = (func, wait) => {
@@ -218,8 +273,10 @@
             // Toggle menu visibility and reset title on scroll
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
+                hasMenuBeenShown = true; // Mark that menu has been shown
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
+                resetIdleTimer(); // Reset fornoobies timer on menu toggle
             };
 
             // Update title rotation and scale for animation
@@ -280,6 +337,33 @@
                 isAnimating = false;
             });
 
+            // Fornoobies animation: Show "heho" after 3s inactivity, repeat every 6s
+            const startIdleTimer = () => {
+                if (!fornoobiesMode) return; // Kill switch: do nothing if disabled
+                idleTimeout = setTimeout(() => {
+                    if (!isMenuVisible && !hasMenuBeenShown) {
+                        // Show "heho" animation
+                        fornoobies.classList.remove('hidden');
+                        fornoobies.classList.remove('show'); // Reset animation
+                        fornoobies.offsetHeight; // Force reflow to restart animation
+                        fornoobies.classList.add('show');
+                        // Hide after animation (1.4s total duration)
+                        setTimeout(() => {
+                            fornoobies.classList.add('hidden');
+                        }, 1400);
+                        // Repeat every 6s (subtract 1.4s animation duration)
+                        setTimeout(startIdleTimer, 6000 - 1400);
+                    }
+                }, 3000);
+            };
+
+            // Reset the idle timer on user interaction
+            const resetIdleTimer = () => {
+                if (!fornoobiesMode) return; // Kill switch: do nothing if disabled
+                clearTimeout(idleTimeout);
+                startIdleTimer();
+            };
+
             // Handle wheel scroll to toggle menu
             document.addEventListener('wheel', (e) => {
                 e.preventDefault();
@@ -290,6 +374,7 @@
             // Handle touch swipe to toggle menu
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
+                resetIdleTimer();
             }, { passive: true });
 
             document.addEventListener('touchmove', (e) => {
@@ -298,12 +383,15 @@
                 const deltaY = touchStartY - touchEndY;
                 if (Math.abs(deltaY) > swipeThreshold) {
                     if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
-                    else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
+                    else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
                 }
             }, { passive: false });
 
             // Title click interaction
-            title.addEventListener('click', handleTitleClick);
+            title.addEventListener('click', () => {
+                handleTitleClick();
+                resetIdleTimer();
+            });
 
             // Menu item interactions (tap, click)
             document.querySelectorAll('.menu-item').forEach(item => {
@@ -311,6 +399,7 @@
                 const handlePressEnd = () => item.classList.remove('tapped');
                 const handleClick = () => {
                     if (!item.href) console.log(`${item.textContent} clicked!`); // Placeholder for future functionality
+                    resetIdleTimer();
                 };
 
                 item.addEventListener('mousedown', handlePressStart);
@@ -329,7 +418,13 @@
             });
 
             // Handle window resize with debouncing
-            window.addEventListener('resize', debounce(updateLayout, 100));
+            window.addEventListener('resize', debounce(() => {
+                updateLayout();
+                resetIdleTimer();
+            }, 100));
+
+            // Start the idle timer for fornoobies animation
+            startIdleTimer();
             updateLayout(); // Initial layout setup
         });
     </script>
