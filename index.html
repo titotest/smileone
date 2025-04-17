@@ -195,11 +195,11 @@
         <h1 id="title" class="title">REMORPH DESIGN</h1>
         <nav id="menu" class="menu">
             <ul class="menu-list">
+                <li><div class="menu-item">OVERVIEW</div></li>
                 <li><div class="menu-item">SPECS</div></li>
-                <li><div class="menu-item">FEATURES</div></li>
-                <li><a href="https://www.youtube.com/@RemorphDesign" target="_blank" class="menu-item">VIDEOS</a></li>
-                <li><div class="menu-item">PICTURES</div></li>
-                <li><div class="menu-item">YAPPING</div></li>
+                <li><div class="menu-item">PHOTOS</div></li>
+                <li><a href="https://www.youtube.com/@RemorphDesign" class="menu-item">VIDEOS</a></li>
+                <li><div class="menu-item">3D</div></li>
                 <li><div class="menu-item">FILES</div></li>
                 <li><div class="menu-item">DISCORD</div></li>
             </ul>
@@ -235,6 +235,12 @@
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
             let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
             let idleTimeout; // Timer for inactivity detection
+
+            // Restore state from URL hash on page load
+            if (window.location.hash === '#menu') {
+                isMenuVisible = true;
+                hasMenuBeenShown = true;
+            }
 
             // Debounce utility for resize events
             const debounce = (func, wait) => {
@@ -273,11 +279,19 @@
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu visibility and reset title on scroll
+            // Toggle menu visibility, update URL hash, and reset title on scroll
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
                 fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
+
+                // Update URL hash when showing the menu
+                if (isMenuVisible) {
+                    window.location.hash = 'menu';
+                } else {
+                    window.location.hash = ''; // Remove hash when hiding the menu
+                }
+
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
@@ -368,11 +382,23 @@
                 startIdleTimer();
             };
 
+            // Handle hash changes (e.g., user navigates back/forward)
+            window.addEventListener('hashchange', () => {
+                if (window.location.hash === '#menu') {
+                    isMenuVisible = true;
+                    hasMenuBeenShown = true;
+                } else {
+                    isMenuVisible = false;
+                    hasMenuBeenShown = false; // Reset if hash is removed
+                }
+                updateLayout();
+            });
+
             // Handle wheel scroll to toggle menu
             document.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide menu
-                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
+                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll IOUs
             }, { passive: false });
 
             // Handle touch swipe to toggle menu
