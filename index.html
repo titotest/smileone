@@ -236,12 +236,6 @@
             let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
             let idleTimeout; // Timer for inactivity detection
 
-            // Restore state from URL hash on page load
-            if (window.location.hash === '#menu') {
-                isMenuVisible = true;
-                hasMenuBeenShown = true;
-            }
-
             // Debounce utility for resize events
             const debounce = (func, wait) => {
                 let timeout;
@@ -279,19 +273,11 @@
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu visibility, update URL hash, and reset title on scroll
+            // Toggle menu visibility and reset title on scroll
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
                 fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
-
-                // Update URL hash when showing the menu
-                if (isMenuVisible) {
-                    window.location.hash = 'menu';
-                } else {
-                    window.location.hash = ''; // Remove hash when hiding the menu
-                }
-
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
@@ -382,23 +368,11 @@
                 startIdleTimer();
             };
 
-            // Handle hash changes (e.g., user navigates back/forward)
-            window.addEventListener('hashchange', () => {
-                if (window.location.hash === '#menu') {
-                    isMenuVisible = true;
-                    hasMenuBeenShown = true;
-                } else {
-                    isMenuVisible = false;
-                    hasMenuBeenShown = false; // Reset if hash is removed
-                }
-                updateLayout();
-            });
-
             // Handle wheel scroll to toggle menu
             document.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide menu
-                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll IOUs
+                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
             }, { passive: false });
 
             // Handle touch swipe to toggle menu
