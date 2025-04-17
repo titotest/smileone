@@ -234,6 +234,20 @@
             // Fornoobies feature state
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
             let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
+
+            // Restore state from sessionStorage
+            const savedState = sessionStorage.getItem('menuState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                isMenuVisible = state.isMenuVisible || false;
+                hasMenuBeenShown = state.hasMenuBeenShown || false;
+                // Disable transition for initial state to avoid animation on reload
+                title.style.transition = 'none';
+                updateLayout();
+                title.offsetHeight; // Force reflow
+                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore transition
+            }
+
             let idleTimeout; // Timer for inactivity detection
 
             // Debounce utility for resize events
@@ -273,7 +287,7 @@
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu visibility and reset title on scroll
+            // Toggle menu visibility and save state to sessionStorage
             const toggleMenu = () => {
                 const previousMenuVisible = isMenuVisible;
                 isMenuVisible = !isMenuVisible;
@@ -283,20 +297,8 @@
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
 
-                // Update URL hash only after the transition completes
-                if (isMenuVisible) {
-                    // Wait for the title's transition to complete before setting the hash
-                    const handleTransitionEnd = (e) => {
-                        if (e.propertyName === 'top' && e.target === title) {
-                            window.location.hash = 'menu';
-                            title.removeEventListener('transitionend', handleTransitionEnd);
-                        }
-                    };
-                    title.addEventListener('transitionend', handleTransitionEnd);
-                } else {
-                    // Remove hash immediately when hiding the menu
-                    window.location.hash = ''; // Remove hash when hiding the menu
-                }
+                // Save state to sessionStorage
+                sessionStorage.setItem('menuState', JSON.stringify({ isMenuVisible, hasMenuBeenShown }));
 
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
             };
@@ -463,7 +465,6 @@
 
             // Start the idle timer for fornoobies animation
             startIdleTimer();
-            updateLayout(); // Initial layout setup
         });
     </script>
 </body>
