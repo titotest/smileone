@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Remorph Design</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <style>
@@ -12,6 +12,7 @@
             --menu-font-size: 4vmin; /* Menu item font size scales with shortest viewport axis */
             --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8); /* Reduced font size when tapped */
             --transition-duration: 0.5s; /* Duration for menu slide and title positioning animations */
+            --safe-area-top: env(safe-area-inset-top, 0); /* Fallback to 0 if not supported */
         }
 
         /* In portrait mode, scale font sizes with viewport height for better proportionality */
@@ -31,7 +32,8 @@
         }
 
         html, body {
-            height: 100vh; /* Full viewport height */
+            height: 100dvh; /* Dynamic viewport height to exclude browser UI */
+            min-height: 100dvh; /* Ensure compatibility */
             font-family: 'Nunito', Arial, sans-serif; /* Font stack with fallback */
             background: black; /* Black background */
             overflow: hidden; /* Prevent scrolling */
@@ -40,7 +42,7 @@
 
         /* Center container for title and menu */
         .container {
-            height: 100vh;
+            height: 100dvh; /* Match dynamic viewport height */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -65,10 +67,17 @@
             transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
         }
 
-        /* Move title to top when menu is visible */
+        /* Move title to top when menu is visible, account for safe area */
         .title.at-top {
-            top: var(--title-font-size); /* Spacing from top equals title text height */
+            top: calc(var(--title-font-size) + var(--safe-area-top)); /* Add safe area inset */
             transform: translateX(-50%) rotate(0deg) scale(1); /* Maintain rotation/scale state */
+        }
+
+        /* Ensure title stays visible in landscape mode with small viewport height */
+        @media (orientation: landscape) and (max-height: 400px) {
+            .title.at-top {
+                top: calc(var(--title-font-size) * 0.5 + var(--safe-area-top)); /* Reduce top spacing */
+            }
         }
 
         /* Menu container, initially hidden below viewport */
@@ -100,7 +109,7 @@
             list-style: none;
             padding: 0;
             gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height (tuned for Nunito's cap height); adjust to 0.3 or 0.35 if needed */
-            max-height: calc(100vh - var(--title-font-size) * 2); /* Fit below title */
+            max-height: calc(100dvh - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title, account for safe area */
             overflow-y: auto; /* Scroll if too tall */
         }
 
