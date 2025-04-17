@@ -6,13 +6,22 @@
     <title>Remorph Design</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <style>
-        /* Define CSS variables for font sizes and transitions */
+        /* === Global Styles === */
+        /* Define CSS variables for font sizes, transitions, and viewport */
         :root {
             --title-font-size: 5vmin; /* Title font size scales with shortest viewport axis */
             --menu-font-size: 4vmin; /* Menu item font size scales with shortest viewport axis */
             --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8); /* Reduced font size when tapped */
             --transition-duration: 0.5s; /* Duration for menu slide and title positioning animations */
             --safe-area-top: env(safe-area-inset-top, 0); /* Fallback to 0 if not supported */
+            --viewport-height: 100vh; /* Fallback for older browsers */
+        }
+
+        /* Use dynamic viewport height if supported */
+        @supports (height: 100dvh) {
+            :root {
+                --viewport-height: 100dvh; /* Exclude browser UI for better centering */
+            }
         }
 
         /* In portrait mode, scale font sizes with viewport height for better proportionality */
@@ -32,17 +41,18 @@
         }
 
         html, body {
-            height: 100dvh; /* Dynamic viewport height to exclude browser UI */
-            min-height: 100dvh; /* Ensure compatibility */
+            height: var(--viewport-height); /* Dynamic viewport height */
+            min-height: var(--viewport-height); /* Ensure compatibility */
             font-family: 'Nunito', Arial, sans-serif; /* Font stack with fallback */
             background: black; /* Black background */
             overflow: hidden; /* Prevent scrolling */
             overscroll-behavior: none; /* Disable pull-to-refresh on mobile */
         }
 
+        /* === Container === */
         /* Center container for title and menu */
         .container {
-            height: 100dvh; /* Match dynamic viewport height */
+            height: var(--viewport-height); /* Match dynamic viewport height */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -50,6 +60,7 @@
             position: relative;
         }
 
+        /* === Title === */
         /* Title styling and positioning */
         .title {
             font-size: var(--title-font-size);
@@ -65,6 +76,7 @@
             backface-visibility: hidden; /* Optimize transform animations */
             z-index: 2; /* Ensure title is above menu */
             transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
+            will-change: top, transform; /* Optimize animation performance */
         }
 
         /* Move title to top when menu is visible, account for safe area */
@@ -80,6 +92,7 @@
             }
         }
 
+        /* === Menu === */
         /* Menu container, initially hidden below viewport */
         .menu {
             position: absolute;
@@ -91,6 +104,7 @@
             transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease; /* Slide and fade animation */
             width: 100%;
             z-index: 1; /* Below title */
+            will-change: top, transform, opacity, visibility; /* Optimize animation performance */
         }
 
         /* Show menu by sliding up to center */
@@ -109,7 +123,7 @@
             list-style: none;
             padding: 0;
             gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height (tuned for Nunito's cap height); adjust to 0.3 or 0.35 if needed */
-            max-height: calc(100dvh - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title, account for safe area */
+            max-height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title, account for safe area */
             overflow-y: auto; /* Scroll if too tall */
         }
 
@@ -121,42 +135,49 @@
             text-align: center;
             cursor: pointer;
             text-decoration: none;
-            transition: font-size 0.1s ease, background-color 0.1s ease; /* Smooth tap and focus effects */
+            transition: font-size 0.1s ease, transform 0.1s ease, background-color 0.1s ease; /* Smooth tap and hover effects */
             white-space: nowrap; /* Prevent wrapping */
         }
 
-        /* Reduce font size when tapped */
-        .menu-item.tapped {
-            font-size: var(--menu-font-size-tapped);
+        /* Hover effect for desktop */
+        @media (hover: hover) {
+            .menu-item:hover {
+                background-color: rgba(255, 255, 255, 0.1); /* Subtle hover feedback */
+            }
         }
 
-        /* Subtle focus indicator for accessibility */
-        .menu-item:focus {
-            background-color: rgba(255, 255, 255, 0.1);
+        /* Reduce font size and scale when tapped */
+        .menu-item.tapped {
+            font-size: var(--menu-font-size-tapped);
+            transform: scale(0.95); /* Slight scale down for tap feedback */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="title" class="title" role="button" aria-expanded="false" tabindex="0">REMORPH DESIGN</h1>
-        <nav id="menu" class="menu" aria-hidden="true">
+        <h1 id="title" class="title">REMORPH DESIGN</h1>
+        <nav id="menu" class="menu">
             <ul class="menu-list">
-                <li><div class="menu-item" tabindex="0">SPECS</div></li>
-                <li><div class="menu-item" tabindex="0">FEATURES</div></li>
+                <li><div class="menu-item">SPECS</div></li>
+                <li><div class="menu-item">FEATURES</div></li>
                 <li><a href="https://www.youtube.com/@RemorphDesign" target="_blank" class="menu-item">VIDEOS</a></li>
-                <li><div class="menu-item" tabindex="0">PICTURES</div></li>
-                <li><div class="menu-item" tabindex="0">YAPPING</div></li>
-                <li><div class="menu-item" tabindex="0">FILES</div></li>
-                <li><div class="menu-item" tabindex="0">DISCORD</div></li>
+                <li><div class="menu-item">PICTURES</div></li>
+                <li><div class="menu-item">YAPPING</div></li>
+                <li><div class="menu-item">FILES</div></li>
+                <li><div class="menu-item">DISCORD</div></li>
             </ul>
         </nav>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Element references
+            // Element references with error handling
             const title = document.getElementById('title');
             const menu = document.getElementById('menu');
+            if (!title || !menu) {
+                console.error('Required elements not found: title or menu');
+                return;
+            }
 
             // State variables
             let isSmiley = false; // Tracks if title is showing ":-)"
@@ -180,8 +201,6 @@
             const updateLayout = () => {
                 title.classList.toggle('at-top', isMenuVisible); // Move title to top if menu is visible
                 menu.classList.toggle('visible', isMenuVisible); // Show/hide menu
-                title.setAttribute('aria-expanded', isMenuVisible); // Update ARIA state
-                menu.setAttribute('aria-hidden', !isMenuVisible); // Update ARIA state
                 title.style.cursor = isMenuVisible ? 'default' : 'pointer'; // Disable cursor when menu is visible
                 title.style.pointerEvents = isMenuVisible ? 'none' : 'auto'; // Disable interactions when menu is visible
                 if (!isSmiley) {
@@ -283,7 +302,7 @@
             // Handle touch swipe to toggle menu
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
-            }, { passive: true });
+            }, { passive: true }); // Passive for performance, no preventDefault needed
 
             document.addEventListener('touchmove', (e) => {
                 e.preventDefault();
@@ -293,18 +312,12 @@
                     if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
                     else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
                 }
-            }, { passive: false });
+            }, { passive: false }); // Non-passive to allow preventDefault
 
-            // Title click and keyboard interactions
+            // Title click interaction
             title.addEventListener('click', handleTitleClick);
-            title.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleTitleClick();
-                }
-            });
 
-            // Menu item interactions (tap, click, keyboard)
+            // Menu item interactions (tap, click)
             document.querySelectorAll('.menu-item').forEach(item => {
                 const handlePressStart = () => item.classList.add('tapped');
                 const handlePressEnd = () => item.classList.remove('tapped');
@@ -325,12 +338,6 @@
                 }, { passive: false });
                 item.addEventListener('touchcancel', handlePressEnd);
                 item.addEventListener('click', handleClick);
-                item.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleClick();
-                    }
-                });
             });
 
             // Handle window resize with debouncing
