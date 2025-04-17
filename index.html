@@ -164,6 +164,7 @@
 
         .he, .ho {
             opacity: 0; /* Start invisible */
+            cursor: pointer; /* Indicate clickability */
         }
 
         .fornoobies.show .he {
@@ -214,8 +215,10 @@
             const title = document.getElementById('title');
             const menu = document.getElementById('menu');
             const fornoobies = document.querySelector('.fornoobies');
-            if (!title || !menu || !fornoobies) {
-                console.error('Required elements not found: title, menu, or fornoobies');
+            const he = document.querySelector('.he');
+            const ho = document.querySelector('.ho');
+            if (!title || !menu || !fornoobies || !he || !ho) {
+                console.error('Required elements not found: title, menu, fornoobies, he, or ho');
                 return;
             }
 
@@ -274,6 +277,7 @@
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
                 hasMenuBeenShown = true; // Mark that menu has been shown
+                fornoobies.classList.add('hidden'); // Instantly hide fornoobies on scroll
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
@@ -383,7 +387,7 @@
                 const deltaY = touchStartY - touchEndY;
                 if (Math.abs(deltaY) > swipeThreshold) {
                     if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
-                    else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
+                    else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
                 }
             }, { passive: false });
 
@@ -416,6 +420,22 @@
                 item.addEventListener('touchcancel', handlePressEnd);
                 item.addEventListener('click', handleClick);
             });
+
+            // Fornoobies click/tap interaction: clicking "he" or "ho" toggles menu
+            const handleFornoobiesClick = () => {
+                if (!isMenuVisible) toggleMenu(); // Show menu if not visible
+            };
+
+            he.addEventListener('click', handleFornoobiesClick);
+            ho.addEventListener('click', handleFornoobiesClick);
+            he.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleFornoobiesClick();
+            }, { passive: false });
+            ho.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleFornoobiesClick();
+            }, { passive: false });
 
             // Handle window resize with debouncing
             window.addEventListener('resize', debounce(() => {
