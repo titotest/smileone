@@ -235,18 +235,34 @@
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
             let hasMenuBeenShown = false; // Tracks if menu has ever been shown (persists until refresh)
 
-            // Restore state from sessionStorage
-            const savedState = sessionStorage.getItem('menuState');
-            if (savedState) {
-                const state = JSON.parse(savedState);
-                isMenuVisible = state.isMenuVisible || false;
-                hasMenuBeenShown = state.hasMenuBeenShown || false;
-                // Disable transition for initial state to avoid animation on reload
-                title.style.transition = 'none';
-                updateLayout();
-                title.offsetHeight; // Force reflow
-                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore transition
+            // Restore state from sessionStorage with error handling
+            try {
+                const savedState = sessionStorage.getItem('menuState');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    if (typeof state === 'object' && state !== null) {
+                        isMenuVisible = state.isMenuVisible === true; // Ensure boolean
+                        hasMenuBeenShown = state.hasMenuBeenShown === true; // Ensure boolean
+                        console.log('State restored from sessionStorage:', { isMenuVisible, hasMenuBeenShown });
+                    } else {
+                        console.warn('Invalid sessionStorage state format, resetting to default');
+                        isMenuVisible = false;
+                        hasMenuBeenShown = false;
+                        sessionStorage.removeItem('menuState'); // Clear invalid state
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to restore state from sessionStorage:', error);
+                isMenuVisible = false;
+                hasMenuBeenShown = false;
+                sessionStorage.removeItem('menuState'); // Clear potentially corrupted state
             }
+
+            // Apply initial layout without animation
+            title.style.transition = 'none';
+            updateLayout();
+            title.offsetHeight; // Force reflow
+            title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore transition
 
             let idleTimeout; // Timer for inactivity detection
 
@@ -298,7 +314,12 @@
                 updateLayout();
 
                 // Save state to sessionStorage
-                sessionStorage.setItem('menuState', JSON.stringify({ isMenuVisible, hasMenuBeenShown }));
+                try {
+                    sessionStorage.setItem('menuState', JSON.stringify({ isMenuVisible, hasMenuBeenShown }));
+                    console.log('State saved to sessionStorage:', { isMenuVisible, hasMenuBeenShown });
+                } catch (error) {
+                    console.error('Failed to save state to sessionStorage:', error);
+                }
 
                 resetIdleTimer(); // Reset fornoobies timer on menu toggle
             };
