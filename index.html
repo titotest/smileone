@@ -6,22 +6,24 @@
     <title>Remorph Design</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <style>
+        /* Define CSS variables for font sizes and transitions */
         :root {
-            --title-font-size: 5vmin;
-            --menu-font-size: 4vmin;
-            --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
-            --transition-duration: 0.5s;
+            --title-font-size: 5vmin; /* Title font size scales with shortest viewport axis */
+            --menu-font-size: 4vmin; /* Menu item font size scales with shortest viewport axis */
+            --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8); /* Reduced font size when tapped */
+            --transition-duration: 0.5s; /* Duration for menu slide and title positioning animations */
         }
 
-        /* Adjust font sizes for portrait orientation (height > width) */
+        /* In portrait mode, scale font sizes with viewport height for better proportionality */
         @media (orientation: portrait) {
             :root {
-                --title-font-size: 5vmax; /* Scale with viewport height */
+                --title-font-size: 5vmax; /* Scales with viewport height (longer axis) */
                 --menu-font-size: 4vmax;
                 --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
             }
         }
 
+        /* Reset default margins and ensure full viewport height */
         * {
             margin: 0;
             padding: 0;
@@ -29,13 +31,14 @@
         }
 
         html, body {
-            height: 100vh;
-            font-family: 'Nunito', Arial, sans-serif;
-            background: black;
-            overflow: hidden;
-            overscroll-behavior: none;
+            height: 100vh; /* Full viewport height */
+            font-family: 'Nunito', Arial, sans-serif; /* Font stack with fallback */
+            background: black; /* Black background */
+            overflow: hidden; /* Prevent scrolling */
+            overscroll-behavior: none; /* Disable pull-to-refresh on mobile */
         }
 
+        /* Center container for title and menu */
         .container {
             height: 100vh;
             display: flex;
@@ -45,6 +48,7 @@
             position: relative;
         }
 
+        /* Title styling and positioning */
         .title {
             font-size: var(--title-font-size);
             color: white;
@@ -54,33 +58,33 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg) scale(1);
-            white-space: nowrap;
-            max-width: 90vmin;
-            will-change: transform;
-            backface-visibility: hidden;
-            z-index: 2;
-            transition: top var(--transition-duration) ease;
+            transform: translate(-50%, -50%) rotate(0deg) scale(1); /* Initial transform state */
+            white-space: nowrap; /* Prevent text wrapping */
+            backface-visibility: hidden; /* Optimize transform animations */
+            z-index: 2; /* Ensure title is above menu */
+            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
         }
 
+        /* Move title to top when menu is visible */
         .title.at-top {
-            top: var(--title-font-size);
-            transform: translateX(-50%) rotate(0deg) scale(1);
+            top: var(--title-font-size); /* Spacing from top equals title text height */
+            transform: translateX(-50%) rotate(0deg) scale(1); /* Maintain rotation/scale state */
         }
 
+        /* Menu container, initially hidden below viewport */
         .menu {
             position: absolute;
-            top: 100%;
+            top: 100%; /* Start below viewport */
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
             visibility: hidden;
-            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease;
+            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease; /* Slide and fade animation */
             width: 100%;
-            max-width: 90vmin;
-            z-index: 1;
+            z-index: 1; /* Below title */
         }
 
+        /* Show menu by sliding up to center */
         .menu.visible {
             top: 50%;
             transform: translate(-50%, -50%);
@@ -88,17 +92,19 @@
             visibility: visible;
         }
 
+        /* Menu list styling */
         .menu-list {
             display: flex;
             flex-direction: column;
             align-items: center;
             list-style: none;
             padding: 0;
-            gap: calc(var(--menu-font-size) * 0.4); /* Adjust with --menu-font-size; try 0.3 (smaller) or 0.35 if needed */
-            max-height: calc(100vh - var(--title-font-size) * 2);
-            overflow-y: auto;
+            gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height (tuned for Nunito's cap height); adjust to 0.3 or 0.35 if needed */
+            max-height: calc(100vh - var(--title-font-size) * 2); /* Fit below title */
+            overflow-y: auto; /* Scroll if too tall */
         }
 
+        /* Individual menu items */
         .menu-item {
             font-size: var(--menu-font-size);
             color: white;
@@ -106,15 +112,16 @@
             text-align: center;
             cursor: pointer;
             text-decoration: none;
-            transition: font-size 0.1s ease, background-color 0.1s ease;
-            white-space: nowrap;
-            width: max-content;
+            transition: font-size 0.1s ease, background-color 0.1s ease; /* Smooth tap and focus effects */
+            white-space: nowrap; /* Prevent wrapping */
         }
 
+        /* Reduce font size when tapped */
         .menu-item.tapped {
             font-size: var(--menu-font-size-tapped);
         }
 
+        /* Subtle focus indicator for accessibility */
         .menu-item:focus {
             background-color: rgba(255, 255, 255, 0.1);
         }
@@ -138,41 +145,44 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Element references
             const title = document.getElementById('title');
             const menu = document.getElementById('menu');
-            let isSmiley = false;
-            let isMenuVisible = false;
-            let isAnimating = false;
-            let currentRotation = 0;
-            let timeoutId = null;
-            let touchStartY = 0;
-            const swipeThreshold = 50;
 
-            // Debounce utility
+            // State variables
+            let isSmiley = false; // Tracks if title is showing ":-)"
+            let isMenuVisible = false; // Tracks if menu is visible
+            let isAnimating = false; // Prevents animation conflicts
+            let currentRotation = 0; // Tracks title rotation angle
+            let timeoutId = null; // Stores timeout for smiley revert
+            let touchStartY = 0; // Tracks touch start position for swipe
+            const swipeThreshold = 50; // Minimum swipe distance to toggle menu
+
+            // Debounce utility for resize events
             const debounce = (func, wait) => {
                 let timeout;
                 return (...args) => {
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(null, args), wait);
+                    timeout = setTimeout(() => func(...args), wait);
                 };
             };
 
-            // Update layout
+            // Update layout based on menu visibility
             const updateLayout = () => {
-                title.classList.toggle('at-top', isMenuVisible);
-                menu.classList.toggle('visible', isMenuVisible);
-                title.setAttribute('aria-expanded', isMenuVisible);
-                menu.setAttribute('aria-hidden', !isMenuVisible);
-                title.style.cursor = isMenuVisible ? 'default' : 'pointer';
-                title.style.pointerEvents = isMenuVisible ? 'none' : 'auto';
+                title.classList.toggle('at-top', isMenuVisible); // Move title to top if menu is visible
+                menu.classList.toggle('visible', isMenuVisible); // Show/hide menu
+                title.setAttribute('aria-expanded', isMenuVisible); // Update ARIA state
+                menu.setAttribute('aria-hidden', !isMenuVisible); // Update ARIA state
+                title.style.cursor = isMenuVisible ? 'default' : 'pointer'; // Disable cursor when menu is visible
+                title.style.pointerEvents = isMenuVisible ? 'none' : 'auto'; // Disable interactions when menu is visible
                 if (!isSmiley) {
                     currentRotation = 0;
-                    title.style.transition = `top var(--transition-duration) ease`;
-                    title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                    title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+                    title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`; // Ensure starting transform for smooth transition
                 }
             };
 
-            // Reset title state
+            // Reset title to "REMORPH DESIGN" with a quick transition
             const resetTitle = () => {
                 isSmiley = false;
                 clearTimeout(timeoutId);
@@ -180,26 +190,27 @@
                 isAnimating = false;
                 currentRotation = 0;
                 title.textContent = 'REMORPH DESIGN';
-                title.style.width = '';
-                title.style.transition = `transform 0.1s ease`;
+                title.style.width = ''; // Clear fixed width
+                title.style.transition = 'transform 0.1s ease'; // Quick reset transition
                 title.style.transform = isMenuVisible
                     ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
                     : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
-                title.offsetHeight; // Force reflow
-                title.style.transition = `top var(--transition-duration) ease`;
+                title.offsetHeight; // Force reflow to ensure transition
+                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
 
-            // Toggle menu
+            // Toggle menu visibility and reset title on scroll
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
             };
 
-            // Update rotation
+            // Update title rotation and scale for animation
             const updateRotation = (targetRotation, duration, scale) => {
                 if (isAnimating) return;
                 isAnimating = true;
+                // Normalize rotation to avoid large values
                 while (currentRotation > targetRotation) {
                     currentRotation -= 360;
                 }
@@ -208,25 +219,25 @@
                 title.style.transform = isMenuVisible
                     ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
                     : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
-                title.offsetHeight; // Force reflow
+                title.offsetHeight; // Force reflow to ensure transition
             };
 
-            // Handle title click
+            // Handle title click to trigger smiley animation
             const handleTitleClick = () => {
                 if (isMenuVisible || isAnimating) return;
                 
                 if (!isSmiley) {
                     const width = title.offsetWidth + 'px';
-                    title.style.width = width;
+                    title.style.width = width; // Fix width to prevent layout shift
                     title.textContent = ':-)';
                     isSmiley = true;
-                    updateRotation(90, 0.2, 1.2);
+                    updateRotation(90, 0.2, 1.2); // Rotate 90° clockwise, scale up
                     timeoutId = setTimeout(() => {
                         if (!isMenuVisible) {
                             title.textContent = 'REMORPH DESIGN';
                             title.style.width = '';
                             isSmiley = false;
-                            updateRotation(0, 0.2, 1);
+                            updateRotation(0, 0.2, 1); // Rotate back 90° counterclockwise
                             timeoutId = null;
                         }
                     }, 1000);
@@ -236,31 +247,31 @@
                     title.textContent = 'REMORPH DESIGN';
                     title.style.width = '';
                     isSmiley = false;
-                    updateRotation(360, 0.4, 1);
+                    updateRotation(360, 0.4, 1); // Complete 270° clockwise to 360°
                 }
             };
 
-            // Reset rotation after animation
+            // Reset rotation after full circle animation
             title.addEventListener('transitionend', (e) => {
                 if (e.propertyName === 'transform' && currentRotation === 360) {
                     currentRotation = 0;
                     title.style.transition = 'none';
                     title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
                     setTimeout(() => {
-                        title.style.transition = `top var(--transition-duration) ease`;
+                        title.style.transition = `top var(--transition-duration) ease, transform var(--transition-duration) ease`;
                     }, 0);
                 }
                 isAnimating = false;
             });
 
-            // Wheel event
+            // Handle wheel scroll to toggle menu
             document.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                if (e.deltaY < 0 && isMenuVisible) toggleMenu();
-                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu();
+                if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide menu
+                else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
             }, { passive: false });
 
-            // Touch events
+            // Handle touch swipe to toggle menu
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
             }, { passive: true });
@@ -270,12 +281,12 @@
                 const touchEndY = e.touches[0].clientY;
                 const deltaY = touchStartY - touchEndY;
                 if (Math.abs(deltaY) > swipeThreshold) {
-                    if (deltaY < 0 && isMenuVisible) toggleMenu();
-                    else if (deltaY > 0 && !isMenuVisible) toggleMenu();
+                    if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
+                    else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
                 }
             }, { passive: false });
 
-            // Title interactions
+            // Title click and keyboard interactions
             title.addEventListener('click', handleTitleClick);
             title.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -284,12 +295,12 @@
                 }
             });
 
-            // Menu item interactions
+            // Menu item interactions (tap, click, keyboard)
             document.querySelectorAll('.menu-item').forEach(item => {
                 const handlePressStart = () => item.classList.add('tapped');
                 const handlePressEnd = () => item.classList.remove('tapped');
                 const handleClick = () => {
-                    if (!item.href) console.log(`${item.textContent} clicked!`);
+                    if (!item.href) console.log(`${item.textContent} clicked!`); // Placeholder for future functionality
                 };
 
                 item.addEventListener('mousedown', handlePressStart);
@@ -313,9 +324,9 @@
                 });
             });
 
-            // Debounced resize
+            // Handle window resize with debouncing
             window.addEventListener('resize', debounce(updateLayout, 100));
-            updateLayout();
+            updateLayout(); // Initial layout setup
         });
     </script>
 </body>
