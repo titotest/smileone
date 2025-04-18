@@ -6,6 +6,7 @@
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
     --iframe-overflow: -2px;
+    --transition-easing: cubic-bezier(0.4, 0, 0.2, 1); /* Smoother curve */
 }
 
 @supports (height: 100dvh) {
@@ -55,7 +56,7 @@ html, body {
     white-space: nowrap;
     backface-visibility: hidden;
     will-change: top, transform;
-    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease;
+    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
 }
 
 .title {
@@ -87,8 +88,8 @@ body:not([data-page="index"]) .title.at-top {
     transform: translateX(-50%);
     opacity: 0;
     visibility: hidden;
-    will-change: top, transform, opacity, visibility;
-    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease;
+    will-change: top, transform, opacity;
+    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing);
     width: 100%;
     z-index: 1;
 }

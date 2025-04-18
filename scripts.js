@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRotation = 0;
     let timeoutId = null;
     let touchStartY = 0;
+    let lastTouchMoveTime = 0;
     const swipeThreshold = 50;
+    const touchDebounceTime = 50; // Debounce touchmove to prevent jumpy triggers
     
     const fornoobiesMode = !!menu;
     let hasMenuBeenShown = isMenuVisible;
@@ -48,8 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             title.classList.add('at-top');
             menu.classList.add('visible');
             setTimeout(() => {
-                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
-                menu.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease';
+                title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
+                menu.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing)';
             }, 0);
         } else {
             title.classList.toggle('at-top', isMenuVisible);
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
                 title.offsetHeight;
                 setTimeout(() => {
-                    title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+                    title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
                 }, 0);
             }
         }
@@ -75,12 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentRotation = 0;
         title.textContent = 'REMORPH DESIGN';
         title.style.width = '';
-        title.style.transition = 'transform 0.1s ease';
+        title.style.transition = 'transform 0.1s var(--transition-easing)';
         title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
             : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
         title.offsetHeight;
-        title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+        title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
     };
     
     const toggleMenu = () => {
@@ -99,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnimating = true;
         while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
-        title.style.transition = `transform ${duration}s ease`;
+        title.style.transition = `transform ${duration}s var(--transition-easing)`;
         title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
             : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
@@ -145,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
                 : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
             setTimeout(() => {
-                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+                title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
             }, 0);
         }
         isAnimating = false;
@@ -199,11 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
+            const currentTime = Date.now();
+            if (currentTime - lastTouchMoveTime < touchDebounceTime) return;
+            lastTouchMoveTime = currentTime;
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
             if (Math.abs(deltaY) > swipeThreshold) {
                 if (deltaY < 0 && isMenuVisible) toggleMenu();
                 else if (deltaY > 0 && !isMenuVisible) toggleMenu();
+                touchStartY = touchEndY; // Reset to prevent rapid toggling
             }
         }, { passive: false });
         
