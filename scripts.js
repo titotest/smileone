@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentRotation = 0;
         title.textContent = 'REMORPH DESIGN';
         title.style.width = '';
-        title.style.transition = 'transform 0.1s var(--transition-easing)';
+        title.style.transition = 'transform 0.1s ease-out';
         title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
             : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnimating = true;
         while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
-        title.style.transition = `transform ${duration}s var(--transition-easing)`;
+        title.style.transition = `transform ${duration}s ease-out`;
         title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
             : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     title.textContent = 'REMORPH DESIGN';
                     title.style.width = '';
                     isSmiley = false;
-                    updateRotation(0, 0.2, 1);
+                    updateRotation(0, 0.3, 1); // Increased duration to 0.3s
                     timeoutId = null;
                 }
             }, 1000);
