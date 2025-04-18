@@ -6,7 +6,7 @@
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
     --iframe-overflow: -2px;
-    --transition-easing: cubic-bezier(0.4, 0, 0.2, 1); /* Smoother curve */
+    --transition-easing: cubic-bezier(0.25, 0.8, 0.25, 1); /* Gentle start, smooth finish */
 }
 
 @supports (height: 100dvh) {

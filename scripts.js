@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartY = 0;
     let lastTouchMoveTime = 0;
     const swipeThreshold = 50;
-    const touchDebounceTime = 50; // Debounce touchmove to prevent jumpy triggers
+    const touchDebounceTime = 50;
     
     const fornoobiesMode = !!menu;
     let hasMenuBeenShown = isMenuVisible;
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (iframe.offsetWidth < window.innerWidth - 8 || iframe.offsetHeight < window.innerHeight - 8) {
                 iframe.style.width = '100vw';
                 iframe.style.height = '100dvh';
-                iframe.style.paddingBottom = '20px'; // Fallback for safe-area-inset-bottom
+                iframe.style.paddingBottom = '20px';
             }
             requestAnimationFrame(ensureIframeSize);
         };
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Math.abs(deltaY) > swipeThreshold) {
                 if (deltaY < 0 && isMenuVisible) toggleMenu();
                 else if (deltaY > 0 && !isMenuVisible) toggleMenu();
-                touchStartY = touchEndY; // Reset to prevent rapid toggling
+                touchStartY = touchEndY;
             }
         }, { passive: false });
         
