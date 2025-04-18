@@ -60,12 +60,13 @@
             position: absolute;
             top: calc(var(--title-font-size) + var(--safe-area-top));
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(0deg) scale(1); /* Match index.html exactly */
             white-space: nowrap;
             backface-visibility: hidden;
             z-index: 2; /* Ensure title is above iframe */
             will-change: top, transform;
             cursor: pointer; /* Indicate clickability */
+            transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Match index.html */
         }
 
         @media (orientation: landscape) and (max-height: 400px) {
