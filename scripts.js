@@ -40,12 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update layout based on menu visibility (main page only)
     const updateLayout = () => {
         if (!menu || !title) return; // Skip for subpages or if elements are missing
-        title.classList.toggle('at-top', isMenuVisible); // Move title to top
-        menu.classList.toggle('visible', isMenuVisible); // Show/hide menu
+        // Toggle classes to handle positioning via CSS
+        title.classList.toggle('at-top', isMenuVisible);
+        menu.classList.toggle('visible', isMenuVisible);
+        // Reset inline styles to prevent conflicts with CSS transitions
         if (!isSmiley) {
-            currentRotation = 0;
-            title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
-            title.style.transform = `translate(-50%, ${isMenuVisible ? '0' : '-50%'}) rotate(${currentRotation}deg) scale(1)`; // Adjust transform
+            title.style.transition = ''; // Inherit from CSS
+            title.style.transform = ''; // Let CSS handle transform
+            title.style.width = ''; // Clear any fixed width
         }
     };
 
@@ -59,11 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
         title.textContent = 'REMORPH DESIGN';
         title.style.width = ''; // Clear fixed width
         title.style.transition = 'transform 0.1s ease'; // Quick reset
-        title.style.transform = menu && isMenuVisible
-            ? `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)`
-            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+        title.style.transform = ''; // Reset to CSS-defined transform
         title.offsetHeight; // Force reflow
-        title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default
+        title.style.transition = ''; // Restore CSS transition
     };
 
     // Toggle menu visibility and update history state (main page only)
@@ -87,9 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
-        title.style.transform = menu && isMenuVisible
-            ? `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`
-            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+        title.style.transform = `translate(-50%, ${menu && isMenuVisible ? '0' : '-50%'}) rotate(${currentRotation}deg) scale(${scale})`;
         title.offsetHeight; // Force reflow
     };
 
@@ -133,11 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.propertyName === 'transform' && currentRotation === 360) {
                 currentRotation = 0;
                 title.style.transition = 'none';
-                title.style.transform = menu && isMenuVisible
-                    ? `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)`
-                    : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                title.style.transform = ''; // Reset to CSS-defined transform
                 setTimeout(() => {
-                    title.style.transition = `top var(--transition-duration) ease, transform var(--transition-duration) ease`;
+                    title.style.transition = ''; // Restore CSS transition
                 }, 0);
             }
             isAnimating = false;
