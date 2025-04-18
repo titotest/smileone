@@ -174,13 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (iframe) {
         const ensureIframeSize = () => {
-            if (iframe.offsetWidth < window.innerWidth || iframe.offsetHeight < window.innerHeight) {
+            if (iframe.offsetWidth < window.innerWidth - 8 || iframe.offsetHeight < window.innerHeight - 8) {
                 iframe.style.width = '100vw';
-                iframe.style.height = '100vh';
+                iframe.style.height = '100dvh';
+                iframe.style.paddingBottom = '20px'; // Fallback for safe-area-inset-bottom
             }
+            requestAnimationFrame(ensureIframeSize);
         };
-        window.addEventListener('resize', debounce(ensureIframeSize, 100));
-        ensureIframeSize();
+        requestAnimationFrame(ensureIframeSize);
+        window.addEventListener('resize', ensureIframeSize);
     }
     
     if (menu) {
