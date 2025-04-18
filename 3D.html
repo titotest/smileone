@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Remorph Design - 3D Viewer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
+    <style>
+        /* === Global Styles === */
+        :root {
+            --title-font-size: 5vmin;
+            --transition-duration: 0.5s;
+            --safe-area-top: env(safe-area-inset-top, 0);
+            --viewport-height: 100vh;
+        }
+
+        @supports (height: 100dvh) {
+            :root {
+                --viewport-height: 100dvh;
+            }
+        }
+
+        @media (orientation: portrait) {
+            :root {
+                --title-font-size: 5vmax;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: var(--viewport-height);
+            min-height: var(--viewport-height);
+            font-family: 'Nunito', Arial, sans-serif;
+            background: black;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* === Container === */
+        .container {
+            height: var(--viewport-height);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* === Title === */
+        .title {
+            font-size: var(--title-font-size);
+            color: #f5f5f7;
+            font-weight: 900;
+            text-align: center;
+            position: absolute;
+            top: calc(var(--title-font-size) + var(--safe-area-top));
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            backface-visibility: hidden;
+            z-index: 2;
+            will-change: top, transform;
+        }
+
+        @media (orientation: landscape) and (max-height: 400px) {
+            .title {
+                top: calc(var(--title-font-size) * 0.5 + var(--safe-area-top));
+            }
+        }
+
+        /* === Iframe === */
+        .viewer {
+            width: 100%;
+            max-width: 1024px;
+            height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top));
+            border: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        @media (orientation: landscape) and (max-height: 400px) {
+            .viewer {
+                height: calc(var(--viewport-height) - var(--title-font-size) - var(--safe-area-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">REMORPH DESIGN</h1>
+        <iframe
+            class="viewer"
+            src="https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcf1c2c25334967fc1?mode=embed"
+            width="1024"
+            height="768"
+            allowfullscreen="true"
+            webkitallowfullscreen="true"
+            mozallowfullscreen="true"
+            frameborder="0"
+        ></iframe>
+    </div>
+</body>
+</html>
