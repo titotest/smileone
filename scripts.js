@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const fornoobies = document.querySelector('.fornoobies');
     const he = document.querySelector('.he');
     const ho = document.querySelector('.ho');
+    if (!title || (!menu && window.location.pathname.includes('index'))) {
+        console.error('Required elements not found: title or menu');
+        return;
+    }
 
     // State variables
     let isSmiley = false; // Tracks if title is showing ":-)"
@@ -25,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menu && urlParams.get('menu') === 'visible') {
         isMenuVisible = true;
         hasMenuBeenShown = true;
-        history.replaceState({ menuVisible: true }, '', window.location.pathname); // Clear URL param, update history
+        history.replaceState({ menuVisible: true }, '', window.location.pathname); // Clear URL param
     }
 
     // Debounce utility for resize events
@@ -39,19 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update layout based on menu visibility (main page only)
     const updateLayout = () => {
-        if (!menu || !title) return; // Skip for subpages or if elements are missing
-        // Toggle classes to handle positioning via CSS
-        title.classList.toggle('at-top', isMenuVisible);
-        menu.classList.toggle('visible', isMenuVisible);
-        // Reset inline styles to prevent conflicts with CSS transitions
-        if (!isSmiley) {
-            title.style.transition = ''; // Inherit from CSS
-            title.style.transform = ''; // Let CSS handle transform
-            title.style.width = ''; // Clear any fixed width
-        }
+        if (!menu) return; // Skip for subpages
+        requestAnimationFrame(() => {
+            title.classList.toggle('at-top', isMenuVisible); // Move title to top
+            menu.classList.toggle('visible', isMenuVisible); // Show/hide menu
+            if (!isSmiley) {
+                currentRotation = 0;
+                title.style.transform = ''; // Clear inline transform to rely on CSS
+            }
+        });
     };
 
-    // Reset title to "REMORPH DESIGN" with a quick transition (main page only)
+    // Reset title to "REMORPH DESIGN" with a quick transition
     const resetTitle = () => {
         isSmiley = false;
         clearTimeout(timeoutId);
@@ -60,58 +63,63 @@ document.addEventListener('DOMContentLoaded', () => {
         currentRotation = 0;
         title.textContent = 'REMORPH DESIGN';
         title.style.width = ''; // Clear fixed width
-        title.style.transition = 'transform 0.1s ease'; // Quick reset
-        title.style.transform = ''; // Reset to CSS-defined transform
-        title.offsetHeight; // Force reflow
-        title.style.transition = ''; // Restore CSS transition
+        title.style.transition = 'transform 0.1s ease'; // Quick reset transition
+        title.style.transform = isMenuVisible
+            ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
+            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+        title.offsetHeight; // Force reflow to ensure transition
+        title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
     };
 
     // Toggle menu visibility and update history state (main page only)
     const toggleMenu = () => {
         if (!menu) return; // Skip for subpages
         isMenuVisible = !isMenuVisible;
-        hasMenuBeenShown = true; // Mark menu shown
+        hasMenuBeenShown = true; // Mark that menu has been shown
         if (fornoobies) fornoobies.classList.add('hidden'); // Hide fornoobies
-        resetTitle(); // Reset title
+        resetTitle(); // Reset title on any scroll
         updateLayout();
         history.pushState({ menuVisible: isMenuVisible }, '', window.location.pathname); // Update history
         resetIdleTimer(); // Reset fornoobies timer
     };
 
-    // Update title rotation and scale for animation (main page only)
+    // Update title rotation and scale for animation
     const updateRotation = (targetRotation, duration, scale) => {
         if (isAnimating) return;
         isAnimating = true;
+        // Normalize rotation to avoid large values
         while (currentRotation > targetRotation) {
-            currentRotation -= 360; // Normalize rotation
+            currentRotation -= 360;
         }
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
-        title.style.transform = `translate(-50%, ${menu && isMenuVisible ? '0' : '-50%'}) rotate(${currentRotation}deg) scale(${scale})`;
-        title.offsetHeight; // Force reflow
+        title.style.transform = isMenuVisible
+            ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
+            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+        title.offsetHeight; // Force reflow to ensure transition
     };
 
-    // Handle title click: smiley animation for main page, navigation for subpages
+    // Handle title click to trigger smiley animation
     const handleTitleClick = () => {
         if (!menu) {
             // Subpage: Navigate to index.html with menu visible
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             return;
         }
-        if (isMenuVisible) return; // Disable in menu mode
+        if (isMenuVisible || isAnimating) return;
         
         if (!isSmiley) {
             const width = title.offsetWidth + 'px';
-            title.style.width = width; // Fix width
+            title.style.width = width; // Fix width to prevent layout shift
             title.textContent = ':-)';
             isSmiley = true;
-            updateRotation(90, 0.2, 1.2); // Rotate 90°, scale up
+            updateRotation(90, 0.2, 1.2); // Rotate 90° clockwise, scale up
             timeoutId = setTimeout(() => {
                 if (!isMenuVisible) {
                     title.textContent = 'REMORPH DESIGN';
-                    title.style.width = '';
+                    title.style.width = ''; // Clear fixed width
                     isSmiley = false;
-                    updateRotation(0, 0.2, 1); // Rotate back
+                    updateRotation(0, 0.2, 1); // Rotate back 90° counterclockwise
                     timeoutId = null;
                 }
             }, 1000);
@@ -119,45 +127,41 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timeoutId);
             timeoutId = null;
             title.textContent = 'REMORPH DESIGN';
-            title.style.width = '';
+            title.style.width = ''; // Clear fixed width
             isSmiley = false;
-            updateRotation(360, 0.4, 1); // Complete to 360°
+            updateRotation(360, 0.4, 1); // Complete 270° clockwise to 360°
         }
     };
 
     // Reset rotation after full circle animation
-    if (title) {
-        title.addEventListener('transitionend', (e) => {
-            if (e.propertyName === 'transform' && currentRotation === 360) {
-                currentRotation = 0;
-                title.style.transition = 'none';
-                title.style.transform = ''; // Reset to CSS-defined transform
-                setTimeout(() => {
-                    title.style.transition = ''; // Restore CSS transition
-                }, 0);
-            }
-            isAnimating = false;
-        });
+    title.addEventListener('transitionend', (e) => {
+        if (e.propertyName === 'transform' && currentRotation === 360) {
+            currentRotation = 0;
+            title.style.transition = 'none';
+            title.style.transform = isMenuVisible
+                ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
+                : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+            setTimeout(() => {
+                title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+            }, 0);
+        }
+        isAnimating = false;
+    });
 
-        // Title click interaction
-        title.addEventListener('click', () => {
-            handleTitleClick();
-            resetIdleTimer();
-        });
-    }
-
-    // Fornoobies animation: Show "heho" after 3s inactivity (main page only)
+    // Fornoobies animation: Show "heho" after 3s inactivity, repeat every 6s (main page only)
     const startIdleTimer = () => {
-        if (!fornoobiesMode || !fornoobies) return;
+        if (!fornoobiesMode || !fornoobies) return; // Skip if disabled or subpage
         idleTimeout = setTimeout(() => {
             if (!isMenuVisible && !hasMenuBeenShown) {
+                // Show "heho" animation
                 fornoobies.classList.remove('hidden');
-                fornoobies.classList.remove('show');
-                fornoobies.offsetHeight; // Force reflow
+                fornoobies.classList.remove('show'); // Reset animation
                 fornoobies.classList.add('show');
+                // Hide after animation (1.4s total duration)
                 setTimeout(() => {
                     fornoobies.classList.add('hidden');
                 }, 1400);
+                // Repeat every 6s (subtract 1.4s animation duration)
                 setTimeout(startIdleTimer, 6000 - 1400);
             }
         }, 3000);
@@ -165,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset the idle timer on user interaction
     const resetIdleTimer = () => {
-        if (!fornoobiesMode || !fornoobies) return;
+        if (!fornoobiesMode || !fornoobies) return; // Skip if disabled or subpage
         clearTimeout(idleTimeout);
         startIdleTimer();
     };
@@ -175,8 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle wheel scroll to toggle menu
         document.addEventListener('wheel', (e) => {
             e.preventDefault();
-            if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide
-            else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show
+            if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide menu
+            else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
         }, { passive: false });
 
         // Handle touch swipe to toggle menu
@@ -190,17 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
             if (Math.abs(deltaY) > swipeThreshold) {
-                if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide
-                else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show
+                if (deltaY < 0 && isMenuVisible) toggleMenu(); // Swipe up: hide menu
+                else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
             }
         }, { passive: false });
 
-        // Menu item interactions
+        // Title click interaction
+        title.addEventListener('click', () => {
+            handleTitleClick();
+            resetIdleTimer();
+        });
+
+        // Menu item interactions (tap, click)
         document.querySelectorAll('.menu-item').forEach(item => {
             const handlePressStart = () => item.classList.add('tapped');
             const handlePressEnd = () => item.classList.remove('tapped');
             const handleClick = () => {
-                if (!item.href) console.log(`${item.textContent} clicked!`);
+                if (!item.href) console.log(`${item.textContent} clicked!`); // Placeholder
                 resetIdleTimer();
             };
 
@@ -219,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
             item.addEventListener('click', handleClick);
         });
 
-        // Fornoobies click/tap interaction
+        // Fornoobies click/tap interaction: clicking "he" or "ho" toggles menu
         if (fornoobies && he && ho) {
             const handleFornoobiesClick = () => {
-                if (!isMenuVisible) toggleMenu();
+                if (!isMenuVisible) toggleMenu(); // Show menu if not visible
             };
 
             he.addEventListener('click', handleFornoobiesClick);
@@ -237,24 +247,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { passive: false });
         }
 
-        // Handle back/forward navigation
+        // Handle back/forward navigation to restore menu state
         window.addEventListener('popstate', (e) => {
             const menuVisible = e.state?.menuVisible || false;
             if (isMenuVisible !== menuVisible) {
                 isMenuVisible = menuVisible;
-                hasMenuBeenShown = isMenuVisible;
+                hasMenuBeenShown = isMenuVisible; // Sync fornoobies state
                 updateLayout();
             }
         });
 
-        // Handle window resize
+        // Handle window resize with debouncing
         window.addEventListener('resize', debounce(() => {
             updateLayout();
             resetIdleTimer();
         }, 100));
 
-        // Start fornoobies timer
+        // Start the idle timer for fornoobies animation
         startIdleTimer();
-        updateLayout(); // Initial layout
+        updateLayout(); // Initial layout setup based on history state
+    } else {
+        // Subpage-specific logic (e.g., 3d.html)
+        title.addEventListener('click', () => {
+            window.location.href = 'https://www.remorphdesign.com/?menu=visible';
+            resetIdleTimer();
+        });
     }
 });

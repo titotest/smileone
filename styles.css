@@ -62,19 +62,24 @@ html, body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(0deg) scale(1); /* Initial transform state */
+    transform: translate(-50%, -50%) rotate(0deg) scale(1) translateZ(0); /* Initial transform state with hardware acceleration */
     white-space: nowrap; /* Prevent text wrapping */
     backface-visibility: hidden; /* Optimize transform animations */
-    z-index: 2; /* Ensure title is above menu */
     will-change: top, transform; /* Optimize animation performance */
-    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth top and transform changes */
+    z-index: 2; /* Ensure title is above menu */
+    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Smooth transitions */
 }
 
 /* Move title to top when menu is visible, account for safe area */
 .title.at-top {
     top: calc(var(--title-font-size) + var(--safe-area-top)); /* Add safe area inset */
-    transform: translate(-50%, 0); /* Center horizontally, no vertical offset */
-    transition: none; /* Disable transitions for static positioning */
+    transform: translateX(-50%) rotate(0deg) scale(1) translateZ(0); /* Center horizontally with hardware acceleration */
+    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease; /* Consistent transitions */
+}
+
+/* Disable transitions for static at-top positioning (e.g., 3d.html) */
+body:not([data-page="index"]) .title.at-top {
+    transition: none; /* No transitions for subpages */
 }
 
 /* Ensure title stays visible in landscape mode with small viewport height */
@@ -94,7 +99,7 @@ html, body {
     opacity: 0;
     visibility: hidden;
     will-change: top, transform, opacity, visibility; /* Optimize animation performance */
-    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease; /* Slide and fade animation */
+    transition: top var(--transition-duration) ease, transform var(--transition-duration) ease, opacity var(--transition-duration) ease, visibility var(--transition-duration) ease; /* Smooth slide and fade */
     width: 100%;
     z-index: 1; /* Below title */
 }
