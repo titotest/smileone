@@ -47,8 +47,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             position: relative;
+            overflow: hidden; /* Clip oversized iframe */
         }
 
         /* === Title === */
@@ -63,8 +63,9 @@
             transform: translateX(-50%);
             white-space: nowrap;
             backface-visibility: hidden;
-            z-index: 2;
+            z-index: 2; /* Ensure title is above iframe */
             will-change: top, transform;
+            cursor: pointer; /* Indicate clickability */
         }
 
         @media (orientation: landscape) and (max-height: 400px) {
@@ -75,37 +76,55 @@
 
         /* === Iframe === */
         .viewer {
-            width: 100%;
-            max-width: 1024px;
-            height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top));
+            width: calc(100% + 2px); /* Oversize by 2px to hide border */
+            height: calc(var(--viewport-height) + 2px); /* Full viewport height plus 2px */
             border: none;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
+            top: -1px; /* Offset to center oversize and align near top edge */
+            left: -1px; /* Offset to center oversize */
+            transform: none;
+            z-index: 1; /* Below title */
+            background: black; /* Match page background */
         }
 
         @media (orientation: landscape) and (max-height: 400px) {
             .viewer {
-                height: calc(var(--viewport-height) - var(--title-font-size) - var(--safe-area-top));
+                height: calc(var(--viewport-height) + 2px);
+                top: -1px;
             }
+        }
+
+        /* Ensure no iframe border */
+        iframe.viewer {
+            border: 0;
+            outline: none;
+            display: block;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">REMORPH DESIGN</h1>
+        <h1 id="title" class="title">REMORPH DESIGN</h1>
         <iframe
             class="viewer"
             src="https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed"
-            width="1024"
-            height="768"
             allowfullscreen="true"
             webkitallowfullscreen="true"
             mozallowfullscreen="true"
             frameborder="0"
         ></iframe>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const title = document.getElementById('title');
+            if (!title) {
+                console.error('Title element not found');
+                return;
+            }
+            title.addEventListener('click', () => {
+                window.location.href = '/?menu=open'; // Navigate to index.html with menu open
+            });
+        });
+    </script>
 </body>
 </html>

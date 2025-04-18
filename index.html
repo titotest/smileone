@@ -199,7 +199,7 @@
                 <li><div class="menu-item">SPECS</div></li>
                 <li><div class="menu-item">PHOTOS</div></li>
                 <li><a href="https://www.youtube.com/@RemorphDesign" class="menu-item">VIDEOS</a></li>
-                <li><a href="/3D" class="menu-item">3D!</a></li>
+                <li><a href="/3D" class="menu-item">3D</a></li>
                 <li><div class="menu-item">FILES</div></li>
                 <li><div class="menu-item">DISCORD</div></li>
             </ul>
@@ -221,21 +221,21 @@
                 console.error('Required elements not found: title, menu, fornoobies, he, or ho');
                 return;
             }
-
+    
             // State variables
             let isSmiley = false; // Tracks if title is showing ":-)"
-            let isMenuVisible = history.state?.menuVisible || false; // Initialize from history state (null on refresh)
+            let isMenuVisible = history.state?.menuVisible || new URLSearchParams(window.location.search).get('menu') === 'open' || false; // Initialize from history or query param
             let isAnimating = false; // Prevents animation conflicts
             let currentRotation = 0; // Tracks title rotation angle
             let timeoutId = null; // Stores timeout for smiley revert
             let touchStartY = 0; // Tracks touch start position for swipe
             const swipeThreshold = 50; // Minimum swipe distance to toggle menu
-
+    
             // Fornoobies feature state
             const fornoobiesMode = true; // Kill switch: set to false to disable fornoobies feature
-            let hasMenuBeenShown = isMenuVisible; // Track if menu has been shown (init from history)
+            let hasMenuBeenShown = isMenuVisible; // Track if menu has been shown (init from history or query)
             let idleTimeout; // Timer for inactivity detection
-
+    
             // Debounce utility for resize events
             const debounce = (func, wait) => {
                 let timeout;
@@ -244,7 +244,7 @@
                     timeout = setTimeout(() => func(...args), wait);
                 };
             };
-
+    
             // Update layout based on menu visibility
             const updateLayout = () => {
                 title.classList.toggle('at-top', isMenuVisible); // Move title to top if menu is visible
@@ -254,8 +254,12 @@
                     title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
                     title.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`; // Ensure starting transform
                 }
+                // Clean up URL query parameter if present
+                if (new URLSearchParams(window.location.search).get('menu') === 'open') {
+                    history.replaceState({ menuVisible: isMenuVisible }, '', window.location.pathname);
+                }
             };
-
+    
             // Reset title to "REMORPH DESIGN" with a quick transition
             const resetTitle = () => {
                 isSmiley = false;
@@ -272,7 +276,7 @@
                 title.offsetHeight; // Force reflow to ensure transition
                 title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease'; // Restore default transition
             };
-
+    
             // Toggle menu visibility and update history state
             const toggleMenu = () => {
                 isMenuVisible = !isMenuVisible;
@@ -281,10 +285,10 @@
                 resetTitle(); // Reset title on any scroll
                 updateLayout();
                 // Update history state without changing URL
-                history.pushState({ menuVisible: isMenuVisible }, '', window.location.href);
+                history.pushState({ menuVisible: isMenuVisible }, '', window.location.pathname);
                 resetIdleTimer(); // Reset fornoobies timer
             };
-
+    
             // Update title rotation and scale for animation
             const updateRotation = (targetRotation, duration, scale) => {
                 if (isAnimating) return;
@@ -300,7 +304,7 @@
                     : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
                 title.offsetHeight; // Force reflow to ensure transition
             };
-
+    
             // Handle title click to trigger smiley animation
             const handleTitleClick = () => {
                 if (isMenuVisible || isAnimating) return;
@@ -329,7 +333,7 @@
                     updateRotation(360, 0.4, 1); // Complete 270° clockwise to 360°
                 }
             };
-
+    
             // Reset rotation after full circle animation
             title.addEventListener('transitionend', (e) => {
                 if (e.propertyName === 'transform' && currentRotation === 360) {
@@ -342,7 +346,7 @@
                 }
                 isAnimating = false;
             });
-
+    
             // Fornoobies animation: Show "heho" after 3s inactivity, repeat every 6s
             const startIdleTimer = () => {
                 if (!fornoobiesMode) return; // Kill switch: do nothing if disabled
@@ -362,27 +366,27 @@
                     }
                 }, 3000);
             };
-
+    
             // Reset the idle timer on user interaction
             const resetIdleTimer = () => {
                 if (!fornoobiesMode) return; // Kill switch: do nothing if disabled
                 clearTimeout(idleTimeout);
                 startIdleTimer();
             };
-
+    
             // Handle wheel scroll to toggle menu
             document.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) toggleMenu(); // Scroll up: hide menu
                 else if (e.deltaY > 0 && !isMenuVisible) toggleMenu(); // Scroll down: show menu
             }, { passive: false });
-
+    
             // Handle touch swipe to toggle menu
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.touches[0].clientY;
                 resetIdleTimer();
             }, { passive: true });
-
+    
             document.addEventListener('touchmove', (e) => {
                 e.preventDefault();
                 const touchEndY = e.touches[0].clientY;
@@ -392,13 +396,13 @@
                     else if (deltaY > 0 && !isMenuVisible) toggleMenu(); // Swipe down: show menu
                 }
             }, { passive: false });
-
+    
             // Title click interaction
             title.addEventListener('click', () => {
                 handleTitleClick();
                 resetIdleTimer();
             });
-
+    
             // Menu item interactions (tap, click)
             document.querySelectorAll('.menu-item').forEach(item => {
                 const handlePressStart = () => item.classList.add('tapped');
@@ -407,7 +411,7 @@
                     if (!item.href) console.log(`${item.textContent} clicked!`); // Placeholder for future functionality
                     resetIdleTimer();
                 };
-
+    
                 item.addEventListener('mousedown', handlePressStart);
                 item.addEventListener('mouseup', handlePressEnd);
                 item.addEventListener('mouseleave', handlePressEnd);
@@ -422,12 +426,12 @@
                 item.addEventListener('touchcancel', handlePressEnd);
                 item.addEventListener('click', handleClick);
             });
-
+    
             // Fornoobies click/tap interaction: clicking "he" or "ho" toggles menu
             const handleFornoobiesClick = () => {
                 if (!isMenuVisible) toggleMenu(); // Show menu if not visible
             };
-
+    
             he.addEventListener('click', handleFornoobiesClick);
             ho.addEventListener('click', handleFornoobiesClick);
             he.addEventListener('touchstart', (e) => {
@@ -438,7 +442,7 @@
                 e.preventDefault();
                 handleFornoobiesClick();
             }, { passive: false });
-
+    
             // Handle back/forward navigation to restore menu state
             window.addEventListener('popstate', (e) => {
                 const menuVisible = e.state?.menuVisible || false;
@@ -448,16 +452,16 @@
                     updateLayout();
                 }
             });
-
+    
             // Handle window resize with debouncing
             window.addEventListener('resize', debounce(() => {
                 updateLayout();
                 resetIdleTimer();
             }, 100));
-
+    
             // Start the idle timer for fornoobies animation
             startIdleTimer();
-            updateLayout(); // Initial layout setup based on history state
+            updateLayout(); // Initial layout setup based on history state or query param
         });
     </script>
 </body>
