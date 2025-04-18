@@ -48,12 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             title.classList.toggle('at-top', isMenuVisible);
             menu.classList.toggle('visible', isMenuVisible);
-        }
-        if (!isSmiley) {
-            currentRotation = 0;
-            title.style.transform = isMenuVisible
-                ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
-                : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+            if (!isSmiley) {
+                currentRotation = 0;
+                title.style.transform = isMenuVisible
+                    ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
+                    : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                title.offsetHeight;
+                setTimeout(() => {
+                    title.style.transition = 'top var(--transition-duration) ease, transform var(--transition-duration) ease';
+                }, 0);
+            }
         }
     };
     
