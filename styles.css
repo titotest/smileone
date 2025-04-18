@@ -73,7 +73,8 @@ html, body {
 /* Move title to top when menu is visible, account for safe area */
 .title.at-top {
     top: calc(var(--title-font-size) + var(--safe-area-top)); /* Add safe area inset */
-    transform: translateX(-50%) rotate(0deg) scale(1); /* Maintain rotation/scale state */
+    transform: translate(-50%, 0); /* Center horizontally, no vertical offset */
+    transition: none; /* Disable transitions for static positioning */
 }
 
 /* Ensure title stays visible in landscape mode with small viewport height */
@@ -113,8 +114,8 @@ html, body {
     align-items: center;
     list-style: none;
     padding: 0;
-    gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height (tuned for Nunito's cap height); adjust to 0.3 or 0.35 if needed */
-    max-height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title, account for safe area */
+    gap: calc(var(--menu-font-size) * 0.4); /* Gap matches visual text height */
+    max-height: calc(var(--viewport-height) - var(--title-font-size) * 2 - var(--safe-area-top)); /* Fit below title */
 }
 
 /* Individual menu items */
@@ -138,7 +139,7 @@ html, body {
 /* "heho" animation at the bottom of the screen */
 .fornoobies {
     position: absolute;
-    bottom: calc(var(--title-font-size) * 0.5); /* Space from bottom, half of title font size */
+    bottom: calc(var(--title-font-size) * 0.5); /* Space from bottom */
     left: 50%;
     transform: translateX(-50%);
     font-size: calc(var(--title-font-size) * 0.5); /* Half of title font size */
@@ -160,23 +161,23 @@ html, body {
 }
 
 .fornoobies.show .he {
-    animation: fadeInHold 0.7s ease forwards; /* Fade in and hold, then disappear instantly */
+    animation: fadeInHold 0.7s ease forwards; /* Fade in and hold */
 }
 
 .fornoobies.show .ho {
     animation: holdFadeOut 0.7s ease forwards;
-    animation-delay: 0.7s; /* Start instantly after "he" */
+    animation-delay: 0.7s; /* Start after "he" */
 }
 
 @keyframes fadeInHold {
     0% { opacity: 0; }
-    42.86% { opacity: 1; } /* Fade in over 0.3s (0 to 0.3s) */
-    99.99% { opacity: 1; } /* Hold until just before 0.7s (0.3s to 0.7s) */
-    100% { opacity: 0; } /* Instantly disappear at 0.7s */
+    42.86% { opacity: 1; } /* Fade in over 0.3s */
+    99.99% { opacity: 1; } /* Hold until 0.7s */
+    100% { opacity: 0; } /* Disappear at 0.7s */
 }
 
 @keyframes holdFadeOut {
-    0% { opacity: 1; } /* Appear instantly at 0.7s */
-    57.14% { opacity: 1; } /* Hold for 0.4s (0.7s to 1.1s) */
-    100% { opacity: 0; } /* Fade out over 0.3s (1.1s to 1.4s) */
+    0% { opacity: 1; } /* Appear at 0.7s */
+    57.14% { opacity: 1; } /* Hold for 0.4s */
+    100% { opacity: 0; } /* Fade out over 0.3s */
 }
