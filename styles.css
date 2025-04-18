@@ -175,8 +175,11 @@ body:not([data-page="index"]) .title.at-top {
     left: -1px;
     right: -1px;
     bottom: -1px;
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
+    width: 100vw;
+    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
     border: none;
     z-index: 1;
+    transform: translateZ(0);
 }

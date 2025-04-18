@@ -4,7 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fornoobies = document.querySelector('.fornoobies');
     const he = document.querySelector('.he');
     const ho = document.querySelector('.ho');
-    if (!title || (!menu && window.location.pathname.includes('index'))) return;
+    const iframe = document.getElementById('fullscreen-iframe');
+    
+    if (!title || (!menu && window.location.pathname.includes('index'))) {
+        if (iframe) {
+            iframe.src = `https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed&t=${Date.now()}`;
+        }
+    }
     
     let isSmiley = false;
     let isMenuVisible = history.state?.menuVisible || false;
@@ -165,6 +171,17 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(idleTimeout);
         startIdleTimer();
     };
+    
+    if (iframe) {
+        const ensureIframeSize = () => {
+            if (iframe.offsetWidth < window.innerWidth || iframe.offsetHeight < window.innerHeight) {
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+            }
+        };
+        window.addEventListener('resize', debounce(ensureIframeSize, 100));
+        ensureIframeSize();
+    }
     
     if (menu) {
         document.addEventListener('wheel', (e) => {
