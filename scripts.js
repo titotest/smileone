@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     title.textContent = 'REMORPH DESIGN';
                     title.style.width = '';
                     isSmiley = false;
-                    updateRotation(0, 0.3, 1); // Increased duration to 0.3s
+                    updateRotation(0, 0.2, 1); // Reverted to 0.2s
                     timeoutId = null;
                 }
             }, 1000);
