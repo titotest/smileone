@@ -5,7 +5,7 @@
     --transition-duration: 0.5s;
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
-    --iframe-overflow: -4px;
+    --iframe-overflow: -2px;
 }
 
 @supports (height: 100dvh) {
