@@ -17,15 +17,15 @@
 
 @media (orientation: portrait) {
     :root {
-        --title-font-size: 5vmax;
-        --menu-font-size: 4vmax;
+        --title-font-size: clamp(4vmin, 5vmin, 6vmin); /* Consistent scaling with vmin */
+        --menu-font-size: 4vmin;
         --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
     }
 }
 
 @media (max-width: 600px) {
     :root {
-        --title-font-size: 6vmax;
+        --title-font-size: clamp(4vmin, 5vmin, 6vmin); /* Match portrait for consistency */
     }
 }
 
