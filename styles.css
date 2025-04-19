@@ -205,7 +205,7 @@ body:not([data-page="index"]) .title.at-top {
     height: 100dvh;
     margin: 0;
     padding: 0;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 2px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 4px);
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -222,17 +222,17 @@ body:not([data-page="index"]) .title.at-top {
 
 .iframe-bottom-mask {
     position: absolute;
-    bottom: calc(2px + env(safe-area-inset-bottom, 0));
+    bottom: env(safe-area-inset-bottom, 0);
     left: 0;
     width: 100vw;
-    height: 4px;
+    height: 6px;
     background: black;
     z-index: 6;
 }
 
 @media (orientation: landscape) and (max-width: 1024px) {
     .iframe-bottom-mask {
-        height: 5px;
+        height: 7px;
     }
 }
 
