@@ -17,15 +17,15 @@
 
 @media (orientation: portrait) {
     :root {
-        --title-font-size: clamp(5vmin, 6vmin, 7vmin); /* Increased for better legibility */
-        --menu-font-size: 4.5vmin; /* Slightly larger menu text */
+        --title-font-size: clamp(5.5vmin, 6.5vmin, 7.5vmin); /* Slightly larger for legibility */
+        --menu-font-size: 4.8vmin; /* Slightly larger menu text */
         --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
     }
 }
 
 @media (max-width: 600px) {
     :root {
-        --title-font-size: clamp(5vmin, 6vmin, 7vmin); /* Match portrait for consistency */
+        --title-font-size: clamp(5.5vmin, 6.5vmin, 7.5vmin); /* Match portrait for consistency */
     }
 }
 
@@ -193,8 +193,9 @@ body:not([data-page="index"]) .title.at-top {
     bottom: var(--iframe-overflow);
     width: calc(100vw - 2 * var(--iframe-overflow));
     height: calc(100dvh - env(safe-area-inset-bottom, 0) - 2 * var(--iframe-overflow));
-    min-width: 100vw;
-    min-height: 100dvh;
+    min-width: calc(100vw - 2 * var(--iframe-overflow));
+    min-height: calc(100dvh - env(safe-area-inset-bottom, 0) - 2 * var(--iframe-overflow));
+    margin: var(--iframe-overflow); /* Ensure overflow hides border */
     padding-bottom: env(safe-area-inset-bottom, 0);
     border: none;
     z-index: 5;
@@ -205,6 +206,7 @@ body:not([data-page="index"]) .title.at-top {
 @supports not (height: 100dvh) {
     .fullscreen-iframe {
         height: calc(100vh - env(safe-area-inset-bottom, 0) - 2 * var(--iframe-overflow));
+        min-height: calc(100vh - env(safe-area-inset-bottom, 0) - 2 * var(--iframe-overflow));
     }
 }
 
