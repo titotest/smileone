@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 iframe.style.width = '100vw';
                 iframe.style.height = '100dvh';
                 iframe.style.paddingBottom = '20px';
+                iframe.style.zIndex = '1'; /* Ensure below title */
             }
             requestAnimationFrame(ensureIframeSize);
         };

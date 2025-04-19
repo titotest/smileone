@@ -62,15 +62,21 @@ html, body {
 
 .title {
     top: calc(100dvh / 2 - var(--title-font-size) / 2);
-    top: calc(50vh - var(--title-font-size) / 2); /* Fallback for older browsers */
+    top: calc(50vh - var(--title-font-size) / 2); /* Fallback */
     left: 50%;
-    transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
+    transform: translate(-50%, 0) rotate(0deg) scale(1); /* Removed translateZ(0) */
     transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+    position: absolute; /* Ensure positioning */
+    z-index: 10; /* Above iframe */
 }
 
 .title.at-top {
     top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
-    transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
+    transform: translate(-50%, 0) rotate(0deg) scale(1);
+}
+
+#fullscreen-iframe {
+    z-index: 1; /* Below title */
 }
 
 body:not([data-page="index"]) .title.at-top {
