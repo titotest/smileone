@@ -204,7 +204,13 @@ body:not([data-page="index"]) .title.at-top {
     border: none;
     z-index: 5;
     background: transparent;
-    clip-path: inset(2px);
+    clip-path: inset(2px 2px 4px 2px);
+}
+
+@media (orientation: landscape) {
+    .fullscreen-iframe {
+        height: calc(100dvh + 2px);
+    }
 }
 
 @supports not (height: 100dvh) {
