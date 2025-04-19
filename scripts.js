@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.addEventListener('resize', debounce(() => {
-            updateLayout(true); // Reapply initial positioning on resize
+            updateLayout(true);
             resetIdleTimer();
         }, 100));
 
