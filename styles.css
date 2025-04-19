@@ -46,24 +46,13 @@ html, body {
 
 .container {
     width: 100vw;
-    height: calc(100dvh + env(safe-area-inset-bottom, 0));
+    height: calc(100dvh + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
-}
-
-.iframe-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
-    overflow: hidden;
-    clip-path: inset(0 0 env(safe-area-inset-bottom, 0) 0);
-    z-index: 5;
 }
 
 .title, .title.at-top {
@@ -205,23 +194,28 @@ body:not([data-page="index"]) .title.at-top {
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: calc(100dvh + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
     margin: 0;
     padding: 0;
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-bottom: max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0));
     box-sizing: border-box;
     outline: none;
     border: none;
     z-index: 5;
     background: transparent;
-    transform: scale(1.01);
-    transform-origin: center;
+    clip-path: inset(2px);
+}
+
+@media (orientation: landscape) {
+    .fullscreen-iframe {
+        clip-path: inset(2px 2px 4px 2px);
+    }
 }
 
 @supports not (height: 100dvh) {
-    .iframe-wrapper {
-        height: 100vh;
+    .fullscreen-iframe {
+        height: calc(100vh + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
     }
 }
 
