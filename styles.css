@@ -2,11 +2,11 @@
     --title-font-size: 5vmin;
     --menu-font-size: 4vmin;
     --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
-    --transition-duration: 0.5s;
+    --transition-duration: 0.3s; /* Reduced to 0.3s for more reactivity */
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
     --iframe-overflow: -2px;
-    --transition-easing: cubic-bezier(0.25, 0.8, 0.25, 1); /* Gentle start, smooth finish */
+    --transition-easing: cubic-bezier(0, 0, 0.58, 1); /* Ease-out for reactivity */
 }
 
 @supports (height: 100dvh) {
@@ -57,18 +57,19 @@ html, body {
     backface-visibility: hidden;
     will-change: top, transform;
     transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+    transform: translateZ(0);
 }
 
 .title {
-    top: 50%;
+    top: calc(50vh - var(--title-font-size) / 2);
     left: 50%;
-    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
     z-index: 2;
 }
 
 .title.at-top {
     top: calc(var(--title-font-size) + var(--safe-area-top));
-    transform: translateX(-50%) rotate(0deg) scale(1);
+    transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
 }
 
 body:not([data-page="index"]) .title.at-top {

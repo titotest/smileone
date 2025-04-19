@@ -18,9 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRotation = 0;
     let timeoutId = null;
     let touchStartY = 0;
-    let lastTouchMoveTime = 0;
-    const swipeThreshold = 50;
-    const touchDebounceTime = 50;
+    let pendingToggle = null;
     
     const fornoobiesMode = !!menu;
     let hasMenuBeenShown = isMenuVisible;
@@ -44,24 +42,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const updateLayout = (isInitialLoad = false) => {
         if (!menu) return;
-        if (isInitialLoad && isInitialMenuVisible) {
+        if (isInitialLoad) {
             title.style.transition = 'none';
+            title.style.transform = '';
+            title.style.top = isInitialMenuVisible ? `calc(var(--title-font-size) + var(--safe-area-top))` : `calc(50vh - var(--title-font-size) / 2)`;
             menu.style.transition = 'none';
-            title.classList.add('at-top');
-            menu.classList.add('visible');
+            title.classList.add(isInitialMenuVisible ? 'at-top' : '');
+            menu.classList.add(isInitialMenuVisible ? 'visible' : '');
             setTimeout(() => {
                 title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
                 menu.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing)';
             }, 0);
         } else {
+            const wasAnimating = isAnimating;
+            title.style.transition = wasAnimating ? 'none' : 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
+            title.style.transform = '';
+            title.offsetHeight;
             title.classList.toggle('at-top', isMenuVisible);
             menu.classList.toggle('visible', isMenuVisible);
-            if (!isSmiley) {
-                currentRotation = 0;
-                title.style.transform = isMenuVisible
-                    ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
-                    : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
-                title.offsetHeight;
+            title.offsetHeight;
+            if (wasAnimating) {
                 setTimeout(() => {
                     title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
                 }, 0);
@@ -77,23 +77,36 @@ document.addEventListener('DOMContentLoaded', () => {
         currentRotation = 0;
         title.textContent = 'REMORPH DESIGN';
         title.style.width = '';
-        title.style.transition = 'transform 0.1s ease-out';
+        title.style.transition = 'none';
         title.style.transform = isMenuVisible
-            ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
-            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+            ? `translateX(-50%) rotate(0deg) scale(1)`
+            : `translate(-50%, 0) rotate(0deg) scale(1)`;
         title.offsetHeight;
-        title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
+        setTimeout(() => {
+            title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
+        }, 0);
     };
     
-    const toggleMenu = () => {
+    const toggleMenu = (newState) => {
         if (!menu) return;
-        isMenuVisible = !isMenuVisible;
+        
+        isMenuVisible = newState;
         hasMenuBeenShown = true;
         if (fornoobies) fornoobies.classList.add('hidden');
         resetTitle();
         updateLayout();
         history.pushState({ menuVisible: isMenuVisible }, '', window.location.pathname);
         resetIdleTimer();
+        
+        if (pendingToggle !== null) {
+            const nextState = pendingToggle;
+            pendingToggle = null;
+            requestAnimationFrame(() => toggleMenu(nextState));
+        }
+    };
+    
+    const handleScroll = (showMenu) => {
+        toggleMenu(showMenu);
     };
     
     const updateRotation = (targetRotation, duration, scale) => {
@@ -101,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnimating = true;
         while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
-        title.style.transition = `transform ${duration}s ease-out`;
+        title.style.transition = `transform ${duration}s ease`;
         title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
-            : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(${scale})`;
+            : `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`;
         title.offsetHeight;
     };
     
@@ -125,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     title.textContent = 'REMORPH DESIGN';
                     title.style.width = '';
                     isSmiley = false;
-                    updateRotation(0, 0.2, 1); // Reverted to 0.2s
+                    updateRotation(0, 0.2, 1);
                     timeoutId = null;
                 }
             }, 1000);
@@ -145,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title.style.transition = 'none';
             title.style.transform = isMenuVisible
                 ? `translateX(-50%) rotate(${currentRotation}deg) scale(1)`
-                : `translate(-50%, -50%) rotate(${currentRotation}deg) scale(1)`;
+                : `translate(-50%, 0) rotate(${currentRotation}deg) scale(1)`;
             setTimeout(() => {
                 title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
             }, 0);
@@ -190,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menu) {
         document.addEventListener('wheel', (e) => {
             e.preventDefault();
-            if (e.deltaY < 0 && isMenuVisible) toggleMenu();
-            else if (e.deltaY > 0 && !isMenuVisible) toggleMenu();
+            if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
+            else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
         }, { passive: false });
         
         document.addEventListener('touchstart', (e) => {
@@ -201,14 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const currentTime = Date.now();
-            if (currentTime - lastTouchMoveTime < touchDebounceTime) return;
-            lastTouchMoveTime = currentTime;
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
-            if (Math.abs(deltaY) > swipeThreshold) {
-                if (deltaY < 0 && isMenuVisible) toggleMenu();
-                else if (deltaY > 0 && !isMenuVisible) toggleMenu();
+            if (Math.abs(deltaY) > 30) {
+                if (deltaY < 0 && isMenuVisible) handleScroll(false);
+                else if (deltaY > 0 && !isMenuVisible) handleScroll(true);
                 touchStartY = touchEndY;
             }
         }, { passive: false });
@@ -243,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (fornoobies && he && ho) {
             const handleFornoobiesClick = () => {
-                if (!isMenuVisible) toggleMenu();
+                if (!isMenuVisible) handleScroll(true);
             };
             
             he.addEventListener('click', handleFornoobiesClick);
