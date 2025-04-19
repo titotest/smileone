@@ -209,13 +209,21 @@ body:not([data-page="index"]) .title.at-top {
 
 @media (orientation: landscape) {
     .fullscreen-iframe {
-        clip-path: inset(2px 2px 4px 2px);
+        height: calc(100dvh + 6px + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
+        padding-bottom: calc(6px + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
+        clip-path: inset(2px 2px 5px 2px);
     }
 }
 
 @supports not (height: 100dvh) {
     .fullscreen-iframe {
         height: calc(100vh + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
+    }
+}
+
+@media (orientation: landscape) and (not (height: 100dvh)) {
+    .fullscreen-iframe {
+        height: calc(100vh + 6px + max(env(safe-area-inset-bottom, 0), env(safe-area-inset-left, 0), env(safe-area-inset-right, 0)));
     }
 }
 
