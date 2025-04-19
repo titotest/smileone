@@ -198,7 +198,7 @@ body:not([data-page="index"]) .title.at-top {
     height: 100dvh;
     margin: 0;
     padding: 0;
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 2px);
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -210,6 +210,22 @@ body:not([data-page="index"]) .title.at-top {
 @supports not (height: 100dvh) {
     .fullscreen-iframe {
         height: 100vh;
+    }
+}
+
+.iframe-bottom-mask {
+    position: absolute;
+    bottom: env(safe-area-inset-bottom, 0);
+    left: 0;
+    width: 100vw;
+    height: 2px;
+    background: black;
+    z-index: 6;
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+    .iframe-bottom-mask {
+        height: 3px;
     }
 }
 
