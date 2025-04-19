@@ -42,30 +42,31 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const updateLayout = (isInitialLoad = false) => {
         if (!menu) return;
+        title.style.transform = '';
+        title.style.top = '';
+        title.offsetHeight;
         if (isInitialLoad) {
             title.style.transition = 'none';
-            title.style.transform = '';
-            title.style.top = isInitialMenuVisible ? `calc(var(--title-font-size) + var(--safe-area-top))` : `calc(50vh - var(--title-font-size) / 2)`;
+            title.classList.remove('at-top');
+            menu.classList.remove('visible');
+            if (isInitialMenuVisible) {
+                title.classList.add('at-top');
+                menu.classList.add('visible');
+                title.style.top = `calc(var(--title-font-size) + var(--safe-area-top))`;
+            } else {
+                title.style.top = `calc(100dvh / 2 - var(--title-font-size) / 2)`;
+            }
             menu.style.transition = 'none';
-            title.classList.add(isInitialMenuVisible ? 'at-top' : '');
-            menu.classList.add(isInitialMenuVisible ? 'visible' : '');
             setTimeout(() => {
                 title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
                 menu.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing)';
             }, 0);
         } else {
-            const wasAnimating = isAnimating;
-            title.style.transition = wasAnimating ? 'none' : 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
-            title.style.transform = '';
-            title.offsetHeight;
+            title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
             title.classList.toggle('at-top', isMenuVisible);
+            title.style.top = isMenuVisible ? `calc(var(--title-font-size) + var(--safe-area-top))` : `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             menu.classList.toggle('visible', isMenuVisible);
             title.offsetHeight;
-            if (wasAnimating) {
-                setTimeout(() => {
-                    title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
-                }, 0);
-            }
         }
     };
     
@@ -75,16 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         timeoutId = null;
         isAnimating = false;
         currentRotation = 0;
+        title.style.transition = 'none';
         title.textContent = 'REMORPH DESIGN';
         title.style.width = '';
-        title.style.transition = 'none';
-        title.style.transform = isMenuVisible
-            ? `translateX(-50%) rotate(0deg) scale(1)`
-            : `translate(-50%, 0) rotate(0deg) scale(1)`;
+        title.style.transform = '';
         title.offsetHeight;
-        setTimeout(() => {
-            title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
-        }, 0);
     };
     
     const toggleMenu = (newState) => {
@@ -278,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         window.addEventListener('resize', debounce(() => {
-            updateLayout();
+            updateLayout(true); // Reapply initial positioning on resize
             resetIdleTimer();
         }, 100));
         
