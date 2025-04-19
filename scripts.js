@@ -5,13 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const he = document.querySelector('.he');
     const ho = document.querySelector('.ho');
     const iframe = document.getElementById('fullscreen-iframe');
-    
+    const loadingMessage = document.querySelector('.loading-message');
+    const errorMessage = document.querySelector('.error-message');
+
     if (!title || (!menu && window.location.pathname.includes('index'))) {
         if (iframe) {
             iframe.src = `https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed&t=${Date.now()}`;
         }
     }
-    
+
     let isSmiley = false;
     let isMenuVisible = history.state?.menuVisible || false;
     let isAnimating = false;
@@ -19,11 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeoutId = null;
     let touchStartY = 0;
     let pendingToggle = null;
-    
+
     const fornoobiesMode = !!menu;
     let hasMenuBeenShown = isMenuVisible;
     let idleTimeout;
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const isInitialMenuVisible = menu && urlParams.get('menu') === 'visible';
     if (isInitialMenuVisible) {
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hasMenuBeenShown = true;
         history.replaceState({ menuVisible: true }, '', window.location.pathname);
     }
-    
+
     const debounce = (func, wait) => {
         let timeout;
         return (...args) => {
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timeout = setTimeout(() => func(...args), wait);
         };
     };
-    
+
     const updateLayout = (isInitialLoad = false) => {
         if (!menu) return;
         title.style.transform = '';
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title.offsetHeight;
         }
     };
-    
+
     const resetTitle = () => {
         isSmiley = false;
         clearTimeout(timeoutId);
@@ -83,10 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
         title.style.transform = '';
         title.offsetHeight;
     };
-    
+
     const toggleMenu = (newState) => {
         if (!menu) return;
-        
+
         isMenuVisible = newState;
         hasMenuBeenShown = true;
         if (fornoobies) fornoobies.classList.add('hidden');
@@ -94,22 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLayout();
         history.pushState({ menuVisible: isMenuVisible }, '', window.location.pathname);
         resetIdleTimer();
-        
+
         if (pendingToggle !== null) {
             const nextState = pendingToggle;
             pendingToggle = null;
             requestAnimationFrame(() => toggleMenu(nextState));
         }
     };
-    
+
     const handleScroll = (showMenu) => {
         toggleMenu(showMenu);
     };
-    
+
     const updateRotation = (targetRotation, duration, scale) => {
         if (isAnimating) return;
         isAnimating = true;
-        while (currentRotation > targetRotation) currentRotation -= 360;
+        while (currentRotation > targetRotation) currentRotation -= 360 | 0;
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
         title.style.transform = isMenuVisible
@@ -117,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`;
         title.offsetHeight;
     };
-    
+
     const handleTitleClick = () => {
         if (!menu) {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateRotation(360, 0.4, 1);
         }
     };
-    
+
     title.addEventListener('transitionend', (e) => {
         if (e.propertyName === 'transform' && currentRotation === 360) {
             currentRotation = 0;
@@ -162,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         isAnimating = false;
     });
-    
+
     const startIdleTimer = () => {
         if (!fornoobiesMode || !fornoobies) return;
         idleTimeout = setTimeout(() => {
@@ -177,13 +179,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 3000);
     };
-    
+
     const resetIdleTimer = () => {
         if (!fornoobiesMode || !fornoobies) return;
         clearTimeout(idleTimeout);
         startIdleTimer();
     };
-    
+
     if (iframe) {
         const ensureIframeSize = () => {
             if (iframe.offsetWidth < window.innerWidth - 8 || iframe.offsetHeight < window.innerHeight - 8) {
@@ -196,20 +198,35 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         requestAnimationFrame(ensureIframeSize);
         window.addEventListener('resize', ensureIframeSize);
+
+        // Handle iframe loading and error messages
+        if (loadingMessage && errorMessage) {
+            iframe.addEventListener('load', () => {
+                loadingMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+            });
+
+            setTimeout(() => {
+                if (iframe.contentDocument === null) {
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                }
+            }, 59000); // 59 seconds timeout
+        }
     }
-    
+
     if (menu) {
         document.addEventListener('wheel', (e) => {
             e.preventDefault();
             if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
             else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
         }, { passive: false });
-        
+
         document.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
             resetIdleTimer();
         }, { passive: true });
-        
+
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touchEndY = e.touches[0].clientY;
@@ -220,12 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 touchStartY = touchEndY;
             }
         }, { passive: false });
-        
+
         title.addEventListener('click', () => {
             handleTitleClick();
             resetIdleTimer();
         });
-        
+
         document.querySelectorAll('.menu-item').forEach(item => {
             const handlePressStart = () => item.classList.add('tapped');
             const handlePressEnd = () => item.classList.remove('tapped');
@@ -233,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!item.href) console.log(`${item.textContent} clicked!`);
                 resetIdleTimer();
             };
-            
+
             item.addEventListener('mousedown', handlePressStart);
             item.addEventListener('mouseup', handlePressEnd);
             item.addEventListener('mouseleave', handlePressEnd);
@@ -248,12 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
             item.addEventListener('touchcancel', handlePressEnd);
             item.addEventListener('click', handleClick);
         });
-        
+
         if (fornoobies && he && ho) {
             const handleFornoobiesClick = () => {
                 if (!isMenuVisible) handleScroll(true);
             };
-            
+
             he.addEventListener('click', handleFornoobiesClick);
             ho.addEventListener('click', handleFornoobiesClick);
             he.addEventListener('touchstart', (e) => {
@@ -265,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleFornoobiesClick();
             }, { passive: false });
         }
-        
+
         window.addEventListener('popstate', (e) => {
             const menuVisible = e.state?.menuVisible || false;
             if (isMenuVisible !== menuVisible) {
@@ -274,12 +291,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateLayout();
             }
         });
-        
+
         window.addEventListener('resize', debounce(() => {
             updateLayout(true); // Reapply initial positioning on resize
             resetIdleTimer();
         }, 100));
-        
+
         startIdleTimer();
         updateLayout(isInitialMenuVisible);
     } else {
