@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title.style.transform = '';
         title.style.top = '';
         title.offsetHeight;
+        getComputedStyle(title).top; // Force style recalculation
         if (isInitialLoad) {
             title.style.transition = 'none';
             title.classList.remove('at-top');
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isInitialMenuVisible) {
                 title.classList.add('at-top');
                 menu.classList.add('visible');
-                title.style.top = `calc(var(--title-font-size) + var(--safe-area-top))`;
+                title.style.top = `calc(var(--title-font-size) + env(safe-area-inset-top, 0))`;
             } else {
                 title.style.top = `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             }
@@ -62,11 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 menu.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), opacity var(--transition-duration) var(--transition-easing), visibility var(--transition-duration) var(--transition-easing)';
             }, 0);
         } else {
-            title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
-            title.classList.toggle('at-top', isMenuVisible);
-            title.style.top = isMenuVisible ? `calc(var(--title-font-size) + var(--safe-area-top))` : `calc(100dvh / 2 - var(--title-font-size) / 2)`;
-            menu.classList.toggle('visible', isMenuVisible);
+            title.style.top = isMenuVisible ? `calc(var(--title-font-size) + env(safe-area-inset-top, 0))` : `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             title.offsetHeight;
+            requestAnimationFrame(() => {
+                title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
+                title.classList.toggle('at-top', isMenuVisible);
+                menu.classList.toggle('visible', isMenuVisible);
+            });
         }
     };
     

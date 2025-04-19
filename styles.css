@@ -61,14 +61,15 @@ html, body {
 }
 
 .title {
-    top: calc(50vh - var(--title-font-size) / 2);
+    top: calc(100dvh / 2 - var(--title-font-size) / 2);
+    top: calc(50vh - var(--title-font-size) / 2); /* Fallback for older browsers */
     left: 50%;
     transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
-    z-index: 2;
+    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
 }
 
 .title.at-top {
-    top: calc(var(--title-font-size) + var(--safe-area-top));
+    top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
     transform: translate(-50%, 0) rotate(0deg) scale(1) translateZ(0);
 }
 
