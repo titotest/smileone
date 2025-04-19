@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateRotation = (targetRotation, duration, scale) => {
         if (isAnimating) return;
         isAnimating = true;
-        while (currentRotation > targetRotation) currentRotation -= 360 | 0;
+        while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
         title.style.transform = isMenuVisible
@@ -188,30 +188,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (iframe) {
         const ensureIframeSize = () => {
-            if (iframe.offsetWidth < window.innerWidth - 8 || iframe.offsetHeight < window.innerHeight - 8) {
-                iframe.style.width = '100vw';
-                iframe.style.height = '100dvh';
-                iframe.style.paddingBottom = '20px';
-                iframe.style.zIndex = '1'; /* Ensure below title */
-            }
+            iframe.style.width = '100vw';
+            iframe.style.height = '100dvh';
+            iframe.style.paddingBottom = 'env(safe-area-inset-bottom, 0)';
+            iframe.style.zIndex = '5';
             requestAnimationFrame(ensureIframeSize);
         };
         requestAnimationFrame(ensureIframeSize);
         window.addEventListener('resize', ensureIframeSize);
 
-        // Handle iframe loading and error messages
         if (loadingMessage && errorMessage) {
-            iframe.addEventListener('load', () => {
-                loadingMessage.style.display = 'none';
-                errorMessage.style.display = 'none';
-            });
+            loadingMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
 
-            setTimeout(() => {
-                if (iframe.contentDocument === null) {
+            iframe.addEventListener('load', () => {
+                try {
+                    if (iframe.contentWindow.document.body) {
+                        loadingMessage.style.display = 'none';
+                        errorMessage.style.display = 'none';
+                    }
+                } catch (e) {
                     loadingMessage.style.display = 'none';
                     errorMessage.style.display = 'block';
                 }
-            }, 59000); // 59 seconds timeout
+            });
+
+            setTimeout(() => {
+                try {
+                    if (!iframe.contentWindow.document.body || iframe.contentWindow.document.body.innerHTML === '') {
+                        loadingMessage.style.display = 'none';
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (e) {
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                }
+            }, 59000);
         }
     }
 

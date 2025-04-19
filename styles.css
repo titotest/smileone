@@ -23,6 +23,12 @@
     }
 }
 
+@media (max-width: 600px) {
+    :root {
+        --title-font-size: 6vmax;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -76,7 +82,7 @@ html, body {
 }
 
 #fullscreen-iframe {
-    z-index: 1; /* Below title */
+    z-index: 5; /* Below title, above messages */
 }
 
 body:not([data-page="index"]) .title.at-top {
@@ -191,9 +197,9 @@ body:not([data-page="index"]) .title.at-top {
     min-height: 100dvh;
     padding-bottom: env(safe-area-inset-bottom, 0);
     border: none;
-    z-index: 1;
+    z-index: 5;
     transform: translateZ(0);
-    background: black;
+    background: transparent;
 }
 
 @supports not (height: 100dvh) {
@@ -212,9 +218,11 @@ body:not([data-page="index"]) .title.at-top {
     font-size: calc(var(--title-font-size) * 0.5);
     color: #f5f5f7;
     text-align: center;
-    white-space: nowrap;
-    z-index: 0; /* Behind iframe */
+    max-width: 90vw; /* Prevent text from overflowing */
+    white-space: normal; /* Allow wrapping */
+    z-index: 0; /* Behind iframe and title */
     pointer-events: none;
+    padding: 10px;
 }
 
 .loading-message {
@@ -224,6 +232,19 @@ body:not([data-page="index"]) .title.at-top {
 .error-message {
     opacity: 0.5;
     display: none;
+}
+
+@media (max-width: 600px) {
+    .loading-message, .error-message {
+        font-size: calc(var(--title-font-size) * 0.4); /* Slightly smaller on mobile */
+        max-width: 85vw; /* Tighter constraint for smaller screens */
+    }
+}
+
+@media (orientation: portrait) and (max-width: 600px) {
+    .loading-message, .error-message {
+        font-size: calc(var(--title-font-size) * 0.35); /* Further adjustment for portrait mobile */
+    }
 }
 
 @keyframes glow {
