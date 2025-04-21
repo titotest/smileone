@@ -216,7 +216,7 @@ body:not([data-page="index"]) .title.at-top {
 
 @media (max-width: 600px) {
     .fullscreen-iframe {
-        zoom: 0.9;
+        zoom: 0.75;
     }
 }
 
