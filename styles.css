@@ -214,12 +214,6 @@ body:not([data-page="index"]) .title.at-top {
     clip-path: inset(2px);
 }
 
-@media (max-width: 600px) {
-    .fullscreen-iframe {
-        zoom: 0.75;
-    }
-}
-
 @supports not (height: 100dvh) {
     .fullscreen-iframe {
         height: 100vh;
