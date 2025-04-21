@@ -17,7 +17,7 @@
 @media (orientation: portrait) {
     :root {
         --title-font-size: clamp(5.5vmin, 6.5vmin, 7.5vmin);
-        --menu-font-size: 4.8vmin;
+        --menu-font-size: 6.5vmin;
         --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
     }
 }
