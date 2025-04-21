@@ -251,6 +251,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (menu) {
+        // Add click listener to the entire document to show the menu when the title is by itself
+        document.addEventListener('click', (e) => {
+            // Check if the click target is the title, "he", or "ho" (or their descendants)
+            const isTitleClick = title.contains(e.target);
+            const isHeClick = he && he.contains(e.target);
+            const isHoClick = ho && ho.contains(e.target);
+
+            // If the click is outside the title and "he/ho", and the menu is not visible, show the menu
+            if (!isTitleClick && !isHeClick && !isHoClick && !isMenuVisible) {
+                handleScroll(true);
+            }
+        });
+
         document.addEventListener('wheel', (e) => {
             e.preventDefault();
             if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
