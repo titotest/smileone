@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Dynamically set viewport meta tag for smartphones
+    // Dynamically set viewport meta tag for smartphones, but only on the 3D page
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
         const isSmartphone = window.innerWidth <= 600;
-        const viewportContent = isSmartphone
+        const is3DPage = document.body.getAttribute('data-page') === '3D';
+        const viewportContent = (isSmartphone && is3DPage)
             ? 'width=device-width, initial-scale=0.85, viewport-fit=cover'
             : 'width=device-width, initial-scale=1.0, viewport-fit=cover';
 
