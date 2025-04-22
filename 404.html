@@ -42,6 +42,17 @@
             text-decoration: none;
         }
     </style>
+    <script>
+        // Get the requested URL path
+        const path = window.location.pathname.toLowerCase();
+        
+        // Check if the path is /video or /videos
+        if (path === '/video' || path === '/videos') {
+            window.location.href = 'https://www.youtube.com/@RemorphDesign';
+        } else {
+            window.location.href = '/';
+        }
+    </script>
 </head>
 <body>
     <div>
