@@ -148,7 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             return;
         }
-        if (isMenuVisible || isAnimating) return;
+        // When the menu is visible, clicking the title hides the menu (like scrolling up)
+        if (isMenuVisible) {
+            handleScroll(false);
+            return;
+        }
+        // When the menu is not visible, keep the existing smiley animation behavior
+        if (isAnimating) return;
         if (!isSmiley) {
             const width = title.offsetWidth + 'px';
             title.style.width = width;
