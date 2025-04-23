@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Dynamically set viewport meta tag for smartphones, but only on the 3D page
+    // Disable or enable fornoobies mode (set to false to disable)
+    const fornoobiesEnabled = false;
+
+    // Dynamically set viewport meta tag for smartphones, but only on the CAD Preview page
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
         const isSmartphone = window.innerWidth <= 600;
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartY = 0;
     let pendingToggle = null;
 
-    const fornoobiesMode = !!menu;
+    const fornoobiesMode = !!menu && fornoobiesEnabled;
     let hasMenuBeenShown = isMenuVisible;
     let idleTimeout;
 
