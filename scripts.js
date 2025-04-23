@@ -2,14 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Dynamically set viewport meta tag for smartphones, but only on the CAD Preview page
+    // Dynamically set viewport meta tag for smartphones, for CAD Preview and Files pages
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
         const isSmartphone = window.innerWidth <= 600;
-        const is3DPage = document.body.getAttribute('data-page') === 'CAD-Preview';
+        const is3DPage = document.body.getAttribute('data-page') === 'CAD-Preview' || document.body.getAttribute('data-page') === 'files';
         const viewportContent = (isSmartphone && is3DPage)
-            ? 'width=device-width, initial-scale=0.85, viewport-fit=cover'
-            : 'width=device-width, initial-scale=1.0, viewport-fit=cover';
+            ? 'width=device-width, initial-scale=0.85, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'
+            : 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
 
         if (viewportMeta) {
             viewportMeta.setAttribute('content', viewportContent);
@@ -321,6 +321,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { passive: false });
             item.addEventListener('touchcancel', handlePressEnd);
             item.addEventListener('click', handleClick);
+        });
+
+        // Add tapped effect to file buttons
+        document.querySelectorAll('.file-button').forEach(button => {
+            const handlePressStart = () => button.classList.add('tapped');
+            const handlePressEnd = () => button.classList.remove('tapped');
+            button.addEventListener('mousedown', handlePressStart);
+            button.addEventListener('mouseup', handlePressEnd);
+            button.addEventListener('mouseleave', handlePressEnd);
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handlePressStart();
+            }, { passive: false });
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handlePressEnd();
+            }, { passive: false });
+            button.addEventListener('touchcancel', handlePressEnd);
         });
 
         if (fornoobies && he && ho) {
