@@ -42,6 +42,7 @@ html, body {
     background: black;
     overflow: hidden;
     overscroll-behavior: none;
+    touch-action: none;
 }
 
 .container {
@@ -297,7 +298,7 @@ body[data-page="CAD-Preview"] .title {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10vmin;
+    gap: 12vmin;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -313,11 +314,13 @@ body[data-page="CAD-Preview"] .title {
     border: none;
     cursor: pointer;
     padding: 0;
-    transition: transform 0.1s ease;
+    font-size: 4vmin;
+    transition: transform 0.1s ease, font-size 0.1s ease;
 }
 
 .file-button.tapped {
     transform: scale(0.95);
+    font-size: calc(var(--menu-font-size) * 0.8);
 }
 
 .file-icon {
@@ -326,33 +329,48 @@ body[data-page="CAD-Preview"] .title {
     max-width: 96px;
     max-height: 96px;
     object-fit: contain;
+    pointer-events: none;
 }
 
 .file-title {
     font-family: 'Nunito', Arial, sans-serif;
     font-weight: 900;
-    font-size: 4vmin;
     color: #f5f5f7;
     margin-top: 2vmin;
     text-align: center;
     white-space: nowrap;
+    font-size: inherit;
+    transition: none;
 }
 
 @media (orientation: portrait) {
     .file-buttons {
-        gap: 8vmin;
+        gap: 10vmin;
+    }
+    .file-icon {
+        width: 14vmin;
+        max-width: 112px;
+    }
+    .file-button {
+        font-size: 5vmin;
+    }
+    .file-button.tapped {
+        font-size: calc(5vmin * 0.8);
     }
 }
 
 @media (max-width: 600px) {
     .file-buttons {
-        gap: 6vmin;
+        gap: 8vmin;
     }
     .file-icon {
-        width: 10vmin;
-        max-width: 80px;
+        width: 12vmin;
+        max-width: 96px;
     }
-    .file-title {
-        font-size: 3.5vmin;
+    .file-button {
+        font-size: 4.5vmin;
+    }
+    .file-button.tapped {
+        font-size: calc(4.5vmin * 0.8);
     }
 }
