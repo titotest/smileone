@@ -300,7 +300,7 @@ body[data-page="CAD-Preview"] .title {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 14.4vmin;
+    gap: 18vmin;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -349,7 +349,7 @@ body[data-page="CAD-Preview"] .title {
 
 @media (orientation: portrait) {
     .file-buttons {
-        gap: 12vmin;
+        gap: 15vmin;
     }
     .file-icon {
         width: 16.8vmin;
@@ -363,7 +363,7 @@ body[data-page="CAD-Preview"] .title {
 
 @media (max-width: 600px) {
     .file-buttons {
-        gap: 9.6vmin;
+        gap: 12vmin;
     }
     .file-icon {
         width: 12vmin;
