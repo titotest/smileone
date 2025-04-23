@@ -91,7 +91,7 @@ html, body {
 }
 
 @media (hover: hover) {
-    body[data-page="3D"] .title {
+    body[data-page="CAD-Preview"] .title {
         cursor: pointer;
     }
 }
