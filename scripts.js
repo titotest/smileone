@@ -2,9 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Debug: Confirm scripts.js version
-    console.log('Loaded scripts.js version: 20250425');
-
     // Dynamically set viewport meta tag for smartphones, for CAD Preview and Files pages
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -222,10 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Add tapped effect to file buttons
-    console.log('Binding file-button listeners:', document.querySelectorAll('.file-button').length);
     document.querySelectorAll('.file-button').forEach(button => {
         const handlePressStart = (e) => {
-            console.log('File button tapped:', button.querySelector('.file-title').textContent, 'Target:', e.target.tagName);
             button.classList.add('tapped');
         };
         const handlePressEnd = () => {
