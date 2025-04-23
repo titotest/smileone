@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
         const isSmartphone = window.innerWidth <= 600;
-        const is3DPage = document.body.getAttribute('data-page') === '3D';
+        const is3DPage = document.body.getAttribute('data-page') === 'CAD-Preview';
         const viewportContent = (isSmartphone && is3DPage)
             ? 'width=device-width, initial-scale=0.85, viewport-fit=cover'
             : 'width=device-width, initial-scale=1.0, viewport-fit=cover';
