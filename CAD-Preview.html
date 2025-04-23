@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta http-equiv="Cache-Control" content="no-store">
     <meta name="description" content="Endurance filament 3D printer, with performance and user experience in mind.">
     <title>Remorph Design - CAD Preview</title>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
@@ -12,18 +11,18 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?t=20250501">
 </head>
 <body data-page="CAD-Preview">
     <div class="container">
         <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
         <div class="iframe-container">
-            <iframe id="fullscreen-iframe" class="fullscreen-iframe" title="CAD Preview" allow="fullscreen"></iframe>
+            <iframe id="fullscreen-iframe" class="fullscreen-iframe" frameborder="0"></iframe>
             <div class="iframe-bottom-mask"></div>
+            <div class="loading-message">Loading...</div>
+            <div class="error-message">Failed to load the model. Please try again later.</div>
         </div>
-        <div class="loading-message">Loading 3D viewer. This shouldn’t take more than a minute.</div>
-        <div class="error-message">Something broke. Try refreshing or come back later.</div>
     </div>
-    <script src="scripts.js"></script>
+    <script src="scripts.js?t=20250501"></script>
 </body>
 </html>
