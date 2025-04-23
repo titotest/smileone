@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingMessage = document.querySelector('.loading-message');
     const errorMessage = document.querySelector('.error-message');
 
-    if (!title || (!menu && window.location.pathname.includes('index'))) {
-        if (iframe) {
-            iframe.src = `https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed&t=${Date.now()}`;
-        }
-    }
+    // if (!title || (!menu && window.location.pathname.includes('index'))) {
+    //     if (iframe) {
+    //         iframe.src = `https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed&t=${Date.now()}`;
+    //     }
+    // }
 
     let isSmiley = false;
     let isMenuVisible = history.state?.menuVisible || false;
