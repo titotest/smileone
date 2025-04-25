@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isInitialMenuVisible) {
                 title.classList.add('at-top');
                 menu.classList.add('visible');
-                title.style.top = `calc(var(--title-font-size) + env(safe-area-inset-top, 0))`;
+                // Removed: title.style.top = `calc(var(--title-font-size) + env(safe-area-inset-top, 0))`;
             } else {
-                title.style.top = `calc(100dvh / 2 - var(--title-font-size) / 2)`;
+                // Removed: title.style.top = `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             }
             menu.style.transition = 'none';
             setTimeout(() => {
@@ -86,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
             title.style.transition = 'top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing)';
             title.offsetHeight;
             title.classList.toggle('at-top', isMenuVisible);
-            title.style.top = isMenuVisible ? `calc(var(--title-font-size) + env(safe-area-inset-top, 0))` : `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             menu.classList.toggle('visible', isMenuVisible);
             title.offsetHeight;
         }
@@ -133,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
- title.style.transform = isMenuVisible
+        title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
             : `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`;
         title.offsetHeight;
@@ -221,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         button.addEventListener('mousedown', handlePressStart);
         button.addEventListener('mouseup', handlePressEnd);
-        button.addEventEventListener('mouseleave', handlePressEnd);
+        button.addEventListener('mouseleave', handlePressEnd);
         button.addEventListener('touchstart', handlePressStart, { passive: true });
         button.addEventListener('touchend', handlePressEnd, { passive: true });
         button.addEventListener('touchcancel', handlePressEnd);
@@ -273,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.body.getAttribute('data-page') === 'index' && !isInitialMenuVisible) {
             setTimeout(() => {
                 toggleMenu(true);
-            }, 100); // Small delay to ensure smooth rendering
+            }, 1000); // Delay of 1 second for smoother animation
         }
 
         // Add click listener to the entire document to show the menu when the title is by itself
@@ -366,13 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.addEventListener('resize', debounce(() => {
-            updateLayout(true);
+            updateLayout();
             resetIdleTimer();
         }, 100));
 
         startIdleTimer();
         updateLayout(isInitialMenuVisible);
     } else {
+        // Ensure title click redirects to menu on non-menu pages
         title.addEventListener('click', () => {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             resetIdleTimer();

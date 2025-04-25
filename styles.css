@@ -1,30 +1,24 @@
 :root {
-    --title-font-size: 5vmin;
+    --title-font-size: 6vmin;
     --menu-font-size: 4vmin;
     --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
-    --transition-duration: 0.3s;
+    --transition-duration: 0.1s;
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
     --transition-easing: cubic-bezier(0, 0, 0.58, 1);
 }
 
-@supports (height: 100dvh) {
+@media (max-width: 666px) {
     :root {
-        --viewport-height: 100dvh;
-    }
-}
-
-@media (orientation: portrait) {
-    :root {
-        --title-font-size: clamp(5.5vmin, 6.5vmin, 7.5vmin);
-        --menu-font-size: 6.5vmin;
+        --title-font-size: 7vmin;
+        --menu-font-size: 6vmin;
         --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
     }
 }
 
-@media (max-width: 600px) {
+@supports (height: 100dvh) {
     :root {
-        --title-font-size: clamp(5.5vmin, 6.5vmin, 7.5vmin);
+        --viewport-height: 100dvh;
     }
 }
 
@@ -72,22 +66,21 @@ html, body {
     white-space: nowrap;
     backface-visibility: hidden;
     will-change: top, transform;
-    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), font-size 0s;
     transform: translateZ(0);
 }
 
 .title {
     top: calc(100dvh / 2 - var(--title-font-size) / 2);
-    top: calc(50vh - var(--title-font-size) / 2);
     left: 50%;
     transform: translate(-50%, 0) rotate(0deg) scale(1);
-    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+    transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), font-size 0s;
     position: absolute;
     z-index: 10;
 }
 
 .title.at-top {
-    top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
+    top: calc(0.5 * var(--title-font-size) + env(safe-area-inset-top, 0));
     transform: translate(-50%, 0) rotate(0deg) scale(1);
 }
 
@@ -101,7 +94,7 @@ body:not([data-page="index"]) .title.at-top {
 
 @media (orientation: landscape) and (max-height: 400px) {
     .title.at-top {
-        top: calc(var(--title-font-size) * 0.5 + var(--safe-area-top));
+        top: calc(0.25 * var(--title-font-size) + env(safe-area-inset-top, 0));
     }
 }
 
@@ -141,7 +134,7 @@ body:not([data-page="index"]) .title.at-top {
     font-weight: 900;
     text-align: center;
     text-decoration: none;
-    transition: font-size 0.1s ease, transform 0.1s ease, background-color 0.1s ease;
+    transition: font-size 0.1s, transform 0.1s ease, background-color 0.1s ease;
     white-space: nowrap;
 }
 
