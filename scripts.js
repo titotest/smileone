@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Run on load and on resize
     setViewportForSmartphones();
     window.addEventListener('resize', setViewportForSmartphones);
 
@@ -134,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         while (currentRotation > targetRotation) currentRotation -= 360;
         currentRotation = targetRotation;
         title.style.transition = `transform ${duration}s ease`;
-        title.style.transform = isMenuVisible
+ title.style.transform = isMenuVisible
             ? `translateX(-50%) rotate(${currentRotation}deg) scale(${scale})`
             : `translate(-50%, 0) rotate(${currentRotation}deg) scale(${scale})`;
         title.offsetHeight;
@@ -145,12 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             return;
         }
-        // When the menu is visible, clicking the title hides the menu (like scrolling up)
+
         if (isMenuVisible) {
             handleScroll(false);
             return;
         }
-        // When the menu is not visible, keep the existing smiley animation behavior
+
         if (isAnimating) return;
         if (!isSmiley) {
             const width = title.offsetWidth + 'px';
@@ -222,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         button.addEventListener('mousedown', handlePressStart);
         button.addEventListener('mouseup', handlePressEnd);
-        button.addEventListener('mouseleave', handlePressEnd);
+        button.addEventEventListener('mouseleave', handlePressEnd);
         button.addEventListener('touchstart', handlePressStart, { passive: true });
         button.addEventListener('touchend', handlePressEnd, { passive: true });
         button.addEventListener('touchcancel', handlePressEnd);
@@ -270,6 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (menu) {
+        // Auto-trigger menu on index page load, unless menu=visible is already set
+        if (document.body.getAttribute('data-page') === 'index' && !isInitialMenuVisible) {
+            setTimeout(() => {
+                toggleMenu(true);
+            }, 100); // Small delay to ensure smooth rendering
+        }
+
         // Add click listener to the entire document to show the menu when the title is by itself
         document.addEventListener('click', (e) => {
             // Check if the click target is the title, "he", or "ho" (or their descendants)
