@@ -2,7 +2,7 @@
     --title-font-size: 6vmin;
     --menu-font-size: 4vmin;
     --menu-font-size-tapped: calc(var(--menu-font-size) * 0.8);
-    --transition-duration: 0.1s;
+    --transition-duration: 0.3s;
     --safe-area-top: env(safe-area-inset-top, 0);
     --viewport-height: 100vh;
     --transition-easing: cubic-bezier(0, 0, 0.58, 1);
@@ -309,7 +309,7 @@ body[data-page="files"] .title {
 }
 
 .file-button.tapped {
-    transform: scale(0.8) !important;
+    transform: scale(0.8)
 }
 
 .file-icon {
