@@ -2,27 +2,23 @@
 <html lang="en">
 <head>
     <script>
-        // Block Cmd + scroll and other zoom gestures as early as possible
+        // Block zoom gestures and Cmd + scroll, exactly as in files.html
         window.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-            }
-        }, { passive: false, capture: true });
-        document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
-        document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
-        document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
+            if (e.ctrlKey || e.metaKey) e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('gesturechange', (e) => e.preventDefault());
+        document.addEventListener('gestureend', (e) => e.preventDefault());
         document.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
-        // Fallback to reset browser zoom
-        document.addEventListener('DOMContentLoaded', () => {
+        // Additional zoom reset for pre-load state
+        setInterval(() => {
             document.body.style.zoom = '1';
-        });
+        }, 10);
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="description" content="Endurance filament 3D printer, with performance and user experience in mind.">
     <title>Remorph Design - CAD Preview</title>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
@@ -33,17 +29,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
     <style>
-        html, body, .container, .iframe-container {
+        html, body {
             touch-action: none !important;
             transform: scale(1) !important;
             -webkit-transform: scale(1) !important;
             overflow: hidden !important;
             -webkit-text-size-adjust: none !important;
             user-select: none !important;
-            -webkit-user-select: none !important;
-            -webkit-touch-callout: none !important;
         }
-        .loading-message, .error-message {
+        .container, .iframe-container, .loading-message, .error-message {
             touch-action: none !important;
             -webkit-text-size-adjust: none !important;
             user-select: none !important;
@@ -63,5 +57,17 @@
         </div>
     </div>
     <script src="scripts.js"></script>
+    <script>
+        // Reset zoom after iframe load attempt
+        const iframe = document.getElementById('fullscreen-iframe');
+        if (iframe) {
+            iframe.addEventListener('load', () => {
+                document.body.style.zoom = '1';
+            });
+            setTimeout(() => {
+                document.body.style.zoom = '1';
+            }, 59000); // Match error message timeout
+        }
+    </script>
 </body>
 </html>
