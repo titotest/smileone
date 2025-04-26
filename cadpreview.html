@@ -49,6 +49,11 @@
             background: rgba(0, 0, 0, 1); /* Fully opaque */
             z-index: 500;
             pointer-events: all !important;
+            opacity: 1;
+            transition: opacity 0.3s ease; /* Fade-out effect */
+        }
+        .overlay.hidden {
+            opacity: 0;
         }
         .wall-loading-message {
             position: absolute;
@@ -61,7 +66,7 @@
             color: #f5f5f7;
             text-align: center;
             max-width: 90vw;
-            animation: color-glow 2s ease-in-out infinite; /* Same glow as .loading-message */
+            animation: color-glow 2s ease-in-out infinite;
         }
         .loading-message, .error-message {
             display: none;
@@ -89,6 +94,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOMContentLoaded, starting iframe load');
+
+            // Editable post-load delay (in milliseconds)
+            const POST_LOAD_DELAY = 7000; // 7 seconds, change this to adjust delay (e.g., 10000 for 10 seconds)
+
             const overlay = document.querySelector('.overlay');
             const wallLoadingMessage = document.querySelector('.wall-loading-message');
             const loadingMessage = document.querySelector('.loading-message');
@@ -121,21 +130,24 @@
             document.body.style.zoom = '1';
             console.log('Iframe and mask appended');
 
-            // Hide overlay after 3 seconds
-            setTimeout(() => {
-                console.log('Hiding overlay after 3 seconds');
-                overlay.style.display = 'none';
-                iframeContainer.classList.add('loaded');
-            }, 3000);
-
             // Handle iframe load
             let hasLoaded = false;
             iframe.addEventListener('load', () => {
                 console.log('Iframe load event triggered');
                 try {
                     hasLoaded = true;
-                    loadingMessage.style.display = 'none';
-                    console.log('Loading message hidden, iframe assumed loaded successfully');
+                    // Wait POST_LOAD_DELAY (7 seconds) after load
+                    setTimeout(() => {
+                        if (hasLoaded) {
+                            loadingMessage.style.display = 'none';
+                            overlay.classList.add('hidden');
+                            setTimeout(() => {
+                                overlay.style.display = 'none'; // Fully remove after fade
+                            }, 300); // Match transition duration
+                            iframeContainer.classList.add('loaded');
+                            console.log(`Overlay hidden after ${POST_LOAD_DELAY/1000}-second post-load delay, iframe content likely rendered`);
+                        }
+                    }, POST_LOAD_DELAY);
                 } catch (e) {
                     console.log('Iframe load error:', e);
                     // Defer error handling to timeout
@@ -143,13 +155,17 @@
                 document.body.style.zoom = '1';
             });
 
-            // Handle iframe timeout
+            // Handle iframe timeout for error message
             setTimeout(() => {
                 console.log('Iframe timeout triggered');
                 if (!hasLoaded) {
                     loadingMessage.style.display = 'none';
                     errorMessage.style.display = 'block';
-                    console.log('Error message shown due to timeout');
+                    overlay.classList.add('hidden');
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                    console.log('Error message shown due to timeout, overlay hidden');
                 }
                 document.body.style.zoom = '1';
             }, 59000);

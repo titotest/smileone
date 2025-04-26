@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.body.getAttribute('data-page') === 'index' && !isInitialMenuVisible) {
             setTimeout(() => {
                 toggleMenu(true);
-            }, 1000); // Delay of 1 second for smoother animation
+            }, 500); // 1s = 1000
         }
 
         // Add click listener to the entire document to show the menu when the title is by itself
