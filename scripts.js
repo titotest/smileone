@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title.offsetHeight;
         if (isInitialLoad) {
             title.style.transition = 'none';
-            title.classList.remove('at-top');
+            title.classList.remove('at-top', 'initial');
             menu.classList.remove('visible');
             if (isInitialMenuVisible) {
                 title.classList.add('at-top');
@@ -214,6 +214,47 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('touchend', handlePressEnd, { passive: true });
         button.addEventListener('touchcancel', handlePressEnd);
     });
+
+    if (iframe) {
+        const ensureIframeSize = () => {
+            iframe.style.width = '100vw';
+            iframe.style.height = '100dvh';
+            iframe.style.paddingBottom = 'env(safe-area-inset-bottom, 0)';
+            iframe.style.zIndex = '5';
+            requestAnimationFrame(ensureIframeSize);
+        };
+        requestAnimationFrame(ensureIframeSize);
+        window.addEventListener('resize', ensureIframeSize);
+
+        if (loadingMessage && errorMessage) {
+            loadingMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            iframe.addEventListener('load', () => {
+                try {
+                    if (iframe.contentWindow.document.body) {
+                        loadingMessage.style.display = 'none';
+                        errorMessage.style.display = 'none';
+                    }
+                } catch (e) {
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                }
+            });
+
+            setTimeout(() => {
+                try {
+                    if (!iframe.contentWindow.document.body || iframe.contentWindow.document.body.innerHTML === '') {
+                        loadingMessage.style.display = 'none';
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (e) {
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                }
+            }, 59000);
+        }
+    }
 
     if (menu) {
         // Auto-trigger menu on index page load, unless menu=visible is already set
