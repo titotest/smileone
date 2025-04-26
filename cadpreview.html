@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="touch-action: none;">
 <head>
+    <script>
+        // Block zoom gestures and Cmd + scroll
+        window.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('gesturechange', (e) => e.preventDefault());
+        document.addEventListener('gestureend', (e) => e.preventDefault());
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta http-equiv="Cache-Control" content="no-store">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Endurance filament 3D printer, with performance and user experience in mind.">
     <title>Remorph Design - CAD Preview</title>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
@@ -13,17 +24,149 @@
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        html, body {
+            touch-action: none !important;
+            overflow: hidden !important;
+        }
+        .container, .loading-message, .error-message, .iframe-container, .wall-loading-message {
+            touch-action: none !important;
+        }
+        .title {
+            z-index: 1000;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 1);
+            z-index: 500;
+            pointer-events: all !important;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.hidden {
+            opacity: 0;
+        }
+        .wall-loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Nunito', Arial, sans-serif;
+            font-weight: 900;
+            font-size: calc(6vmin * 0.5);
+            color: #f5f5f7;
+            text-align: center;
+            max-width: 90vw;
+            animation: color-glow 2s ease-in-out infinite;
+        }
+        .loading-message, .error-message {
+            display: none;
+        }
+        .iframe-container {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .iframe-container.loaded {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .fullscreen-iframe {
+                zoom: 80%;
+            }
+        }
+    </style>
 </head>
-<body data-page="cadpreview">
+<body data-page="cadpreview" style="touch-action: none;">
     <div class="container">
         <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
+        <div class="overlay">
+            <div class="wall-loading-message">Loading viewer. This shouldn't take more than a minute.</div>
+        </div>
         <div class="loading-message">Loading viewer. This shouldn't take more than a minute.</div>
         <div class="error-message">Failed to load. Reload page or try from another browser or device please.</div>
-        <div class="iframe-container">
-            <iframe id="fullscreen-iframe" src="https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed" class="fullscreen-iframe" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" frameborder="0"></iframe>
-            <div class="iframe-bottom-mask"></div>
-        </div>
+        <div class="iframe-container"></div>
     </div>
     <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded, starting iframe load');
+
+            // Editable post-load delay (in milliseconds)
+            const POST_LOAD_DELAY = 7000; // 7 seconds, change this to adjust delay (e.g., 10000 for 10 seconds)
+
+            const overlay = document.querySelector('.overlay');
+            const wallLoadingMessage = document.querySelector('.wall-loading-message');
+            const loadingMessage = document.querySelector('.loading-message');
+            const errorMessage = document.querySelector('.error-message');
+            const iframeContainer = document.querySelector('.iframe-container');
+
+            // Show loading message
+            loadingMessage.style.display = 'block';
+            console.log('Loading message shown');
+
+            // Create iframe
+            const iframe = document.createElement('iframe');
+            iframe.id = 'fullscreen-iframe';
+            iframe.src = 'https://icloud114617.autodesk360.com/shares/public/SH30dd5QT870c25f12fcad51161a21665f9c?mode=embed';
+            iframe.className = 'fullscreen-iframe';
+            iframe.setAttribute('allowfullscreen', 'true');
+            iframe.setAttribute('webkitallowfullscreen', 'true');
+            iframe.setAttribute('mozallowfullscreen', 'true');
+            iframe.setAttribute('frameborder', '0');
+            console.log('Iframe created');
+
+            // Create bottom mask
+            const bottomMask = document.createElement('div');
+            bottomMask.className = 'iframe-bottom-mask';
+            console.log('Bottom mask created');
+
+            // Append iframe and mask
+            iframeContainer.appendChild(iframe);
+            iframeContainer.appendChild(bottomMask);
+            console.log('Iframe and mask appended');
+
+            // Handle iframe load
+            let hasLoaded = false;
+            iframe.addEventListener('load', () => {
+                console.log('Iframe load event triggered');
+                try {
+                    hasLoaded = true;
+                    // Wait POST_LOAD_DELAY (7 seconds) after load
+                    setTimeout(() => {
+                        if (hasLoaded) {
+                            loadingMessage.style.display = 'none';
+                            overlay.classList.add('hidden');
+                            setTimeout(() => {
+                                overlay.style.display = 'none'; // Fully remove after fade
+                            }, 300); // Match transition duration
+                            iframeContainer.classList.add('loaded');
+                            console.log(`Overlay hidden after ${POST_LOAD_DELAY/1000}-second post-load delay, iframe content likely rendered`);
+                        }
+                    }, POST_LOAD_DELAY);
+                } catch (e) {
+                    console.log('Iframe load error:', e);
+                    // Defer error handling to timeout
+                }
+            });
+
+            // Handle iframe timeout for error message
+            setTimeout(() => {
+                console.log('Iframe timeout triggered');
+                if (!hasLoaded) {
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    overlay.classList.add('hidden');
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                    console.log('Error message shown due to timeout, overlay hidden');
+                }
+            }, 59000);
+        });
+    </script>
 </body>
 </html>
