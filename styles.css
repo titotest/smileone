@@ -37,6 +37,14 @@ html, body {
     overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
+    -webkit-text-size-adjust: 100%; /* Prevent font scaling */
+    -webkit-user-select: none; /* Prevent text selection */
+    user-select: none; /* Prevent text selection */
+    zoom: 1 !important; /* Lock zoom level, enforce with !important */
+    -webkit-transform: scale(1) !important; /* Prevent scaling */
+    transform: scale(1) !important; /* Prevent scaling */
+    -webkit-user-zoom: fixed; /* Safari-specific: attempt to disable zooming */
+    user-zoom: fixed; /* Attempt to disable zooming */
 }
 
 .container {
@@ -48,6 +56,7 @@ html, body {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    touch-action: none; /* Reinforce no touch zooming */
 }
 
 .iframe-container {
@@ -309,7 +318,7 @@ body[data-page="files"] .title {
 }
 
 .file-button.tapped {
-    transform: scale(0.8)
+    transform: scale(0.8);
 }
 
 .file-icon {

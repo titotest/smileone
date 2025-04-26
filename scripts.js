@@ -2,27 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Dynamically set viewport meta tag for smartphones
-    const setViewportForSmartphones = () => {
-        const viewportMeta = document.querySelector('meta[name="viewport"]');
-        const isSmartphone = window.innerWidth <= 600;
-        const viewportContent = isSmartphone
-            ? 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'
-            : 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-
-        if (viewportMeta) {
-            viewportMeta.setAttribute('content', viewportContent);
-        } else {
-            const newMeta = document.createElement('meta');
-            newMeta.name = 'viewport';
-            newMeta.content = viewportContent;
-            document.head.appendChild(newMeta);
-        }
-    };
-
-    setViewportForSmartphones();
-    window.addEventListener('resize', setViewportForSmartphones);
-
     const title = document.getElementById('title');
     const menu = document.getElementById('menu');
     const fornoobies = document.querySelector('.fornoobies');
