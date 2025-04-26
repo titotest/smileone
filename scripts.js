@@ -2,13 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Dynamically set viewport meta tag for smartphones, for CAD Preview and Files pages
+    // Dynamically set viewport meta tag for smartphones
     const setViewportForSmartphones = () => {
         const viewportMeta = document.querySelector('meta[name="viewport"]');
         const isSmartphone = window.innerWidth <= 600;
-        const is3DPage = document.body.getAttribute('data-page') === 'cadpreview' || document.body.getAttribute('data-page') === 'files';
-        const viewportContent = (isSmartphone && is3DPage)
-            ? 'width=device-width, initial-scale=0.85, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'
+        const viewportContent = isSmartphone
+            ? 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'
             : 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
 
         if (viewportMeta) {
@@ -72,9 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isInitialMenuVisible) {
                 title.classList.add('at-top');
                 menu.classList.add('visible');
-                // Removed: title.style.top = `calc(var(--title-font-size) + env(safe-area-inset-top, 0))`;
-            } else {
-                // Removed: title.style.top = `calc(100dvh / 2 - var(--title-font-size) / 2)`;
             }
             menu.style.transition = 'none';
             setTimeout(() => {
