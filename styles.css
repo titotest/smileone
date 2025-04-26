@@ -80,13 +80,6 @@ html, body {
     transform: translateZ(0);
 }
 
-.title.initial {
-    transition: none;
-    left: 50%;
-    top: calc(100dvh / 2 - var(--title-font-size) / 2);
-    transform: translate(-50%, 0) rotate(0deg) scale(1);
-}
-
 .title {
     top: calc(100dvh / 2 - var(--title-font-size) / 2);
     left: 50%;
