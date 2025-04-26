@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Editable menu auto-trigger delay for index page (in milliseconds)
+    const MENU_AUTO_TRIGGER_DELAY = 500; // 0.5 seconds, change this to adjust delay (e.g., 800 for 0.8 seconds)
+
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
@@ -212,53 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('touchcancel', handlePressEnd);
     });
 
-    if (iframe) {
-        const ensureIframeSize = () => {
-            iframe.style.width = '100vw';
-            iframe.style.height = '100dvh';
-            iframe.style.paddingBottom = 'env(safe-area-inset-bottom, 0)';
-            iframe.style.zIndex = '5';
-            requestAnimationFrame(ensureIframeSize);
-        };
-        requestAnimationFrame(ensureIframeSize);
-        window.addEventListener('resize', ensureIframeSize);
-
-        if (loadingMessage && errorMessage) {
-            loadingMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
-
-            iframe.addEventListener('load', () => {
-                try {
-                    if (iframe.contentWindow.document.body) {
-                        loadingMessage.style.display = 'none';
-                        errorMessage.style.display = 'none';
-                    }
-                } catch (e) {
-                    loadingMessage.style.display = 'none';
-                    errorMessage.style.display = 'block';
-                }
-            });
-
-            setTimeout(() => {
-                try {
-                    if (!iframe.contentWindow.document.body || iframe.contentWindow.document.body.innerHTML === '') {
-                        loadingMessage.style.display = 'none';
-                        errorMessage.style.display = 'block';
-                    }
-                } catch (e) {
-                    loadingMessage.style.display = 'none';
-                    errorMessage.style.display = 'block';
-                }
-            }, 59000);
-        }
-    }
-
     if (menu) {
         // Auto-trigger menu on index page load, unless menu=visible is already set
         if (document.body.getAttribute('data-page') === 'index' && !isInitialMenuVisible) {
             setTimeout(() => {
                 toggleMenu(true);
-            }, 500); // 1s = 1000
+            }, MENU_AUTO_TRIGGER_DELAY); // Editable delay for menu auto-trigger
         }
 
         // Add click listener to the entire document to show the menu when the title is by itself
