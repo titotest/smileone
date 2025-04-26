@@ -39,11 +39,7 @@ html, body {
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-text-size-adjust: none;
     -webkit-touch-callout: none;
-    transform: scale(1) !important;
-    -webkit-transform: scale(1) !important;
-    -ms-transform: scale(1) !important;
 }
 
 .container {
