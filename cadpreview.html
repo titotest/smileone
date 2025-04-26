@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Block Cmd + scroll and other zoom gestures as early as possible
+        window.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }, { passive: false, capture: true });
+        document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+        document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+        document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        // Fallback to reset browser zoom
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.zoom = '1';
+        });
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta http-equiv="Cache-Control" content="no-store">
     <meta name="description" content="Endurance filament 3D printer, with performance and user experience in mind.">
     <title>Remorph Design - CAD Preview</title>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
@@ -15,51 +32,25 @@
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
-    <script>
-        // Prevent zoom immediately on script execution
-        (function() {
-            // Set viewport meta tag immediately
-            const setViewport = () => {
-                let viewportMeta = document.querySelector('meta[name="viewport"]');
-                const viewportContent = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-                if (viewportMeta) {
-                    viewportMeta.setAttribute('content', viewportContent);
-                } else {
-                    viewportMeta = document.createElement('meta');
-                    viewportMeta.name = 'viewport';
-                    viewportMeta.content = viewportContent;
-                    document.head.appendChild(viewportMeta);
-                }
-            };
-            setViewport();
-
-            // Prevent all zoom-related interactions
-            document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
-            document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
-            document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
-
-            // Prevent keyboard zoom (Cmd + +/-, Cmd + 0)
-            document.addEventListener('keydown', (e) => {
-                if ((e.metaKey || e.ctrlKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            // Prevent multi-touch zoom
-            document.addEventListener('touchstart', (e) => {
-                if (e.touches.length > 1) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            // Prevent Ctrl + scroll zoom
-            document.addEventListener('wheel', (e) => {
-                if (e.ctrlKey) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-        })();
-    </script>
+    <style>
+        html, body, .container, .iframe-container {
+            touch-action: none !important;
+            transform: scale(1) !important;
+            -webkit-transform: scale(1) !important;
+            overflow: hidden !important;
+            -webkit-text-size-adjust: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+        .loading-message, .error-message {
+            touch-action: none !important;
+            -webkit-text-size-adjust: none !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+    </style>
 </head>
 <body data-page="cadpreview">
     <div class="container">

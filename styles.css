@@ -37,14 +37,13 @@ html, body {
     overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
-    -webkit-text-size-adjust: 100%; /* Prevent font scaling */
-    -webkit-user-select: none; /* Prevent text selection */
-    user-select: none; /* Prevent text selection */
-    zoom: 1 !important; /* Lock zoom level, enforce with !important */
-    -webkit-transform: scale(1) !important; /* Prevent scaling */
-    transform: scale(1) !important; /* Prevent scaling */
-    -webkit-user-zoom: fixed; /* Safari-specific: attempt to disable zooming */
-    user-zoom: fixed; /* Attempt to disable zooming */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -webkit-touch-callout: none;
+    transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    -ms-transform: scale(1) !important;
 }
 
 .container {
@@ -56,7 +55,9 @@ html, body {
     justify-content: center;
     position: relative;
     overflow: hidden;
-    touch-action: none; /* Reinforce no touch zooming */
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .iframe-container {
@@ -64,6 +65,9 @@ html, body {
     width: 100vw;
     height: 100dvh;
     z-index: 4;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .title, .title.at-top {
@@ -215,6 +219,10 @@ body:not([data-page="index"]) .title.at-top {
     z-index: 5;
     background: transparent;
     clip-path: inset(2px);
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 @supports not (height: 100dvh) {
@@ -231,6 +239,10 @@ body:not([data-page="index"]) .title.at-top {
     height: 6px;
     background: black;
     z-index: 6;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 @media (orientation: landscape) and (max-width: 1024px) {
@@ -254,6 +266,10 @@ body:not([data-page="index"]) .title.at-top {
     z-index: 0;
     pointer-events: none;
     padding: 10px;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 .loading-message {
@@ -302,6 +318,7 @@ body[data-page="files"] .title {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+    touch-action: none;
 }
 
 .file-button {
@@ -315,6 +332,7 @@ body[data-page="files"] .title {
     transition: transform 0.1s ease;
     will-change: transform;
     flex-shrink: 0;
+    touch-action: none;
 }
 
 .file-button.tapped {
@@ -328,6 +346,7 @@ body[data-page="files"] .title {
     max-height: 96px;
     object-fit: contain;
     pointer-events: none;
+    touch-action: none;
 }
 
 .file-title {
@@ -341,6 +360,7 @@ body[data-page="files"] .title {
     transition: none;
     backface-visibility: hidden;
     transform: translateZ(0);
+    touch-action: none;
 }
 
 @media (orientation: portrait) {

@@ -2,6 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
+    // Block zoom gestures in scripts.js for consistency
+    window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+
     const title = document.getElementById('title');
     const menu = document.getElementById('menu');
     const fornoobies = document.querySelector('.fornoobies');
