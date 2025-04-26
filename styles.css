@@ -39,6 +39,7 @@ html, body {
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-text-size-adjust: none;
     -webkit-touch-callout: none;
 }
 
@@ -219,6 +220,15 @@ body:not([data-page="index"]) .title.at-top {
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
+}
+
+@media (max-width: 768px) {
+    .fullscreen-iframe {
+        transform: scale(0.8);
+        width: calc(100vw / 0.8);
+        height: calc(100dvh / 0.8);
+        transform-origin: top left;
+    }
 }
 
 @supports not (height: 100dvh) {
