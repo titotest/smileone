@@ -43,6 +43,17 @@ html, body {
     -webkit-touch-callout: none;
 }
 
+body[data-page="specs"],
+body[data-page="specs"] .container {
+    touch-action: auto !important;
+    overflow: auto !important;
+    overflow-y: auto !important;
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+    -webkit-text-size-adjust: auto !important;
+    -webkit-touch-callout: default !important;
+}
+
 .container {
     width: 100vw;
     height: calc(100dvh + env(safe-area-inset-bottom, 0));

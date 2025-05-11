@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="Endurance filament 3D printer, with performance and user experience in mind.">
     <title>Remorph Design - Files</title>
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -11,29 +10,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
-    <link rel="stylesheet" href="styles.css?t=20250430">
-    <style>
-        html, body {
-            touch-action: none !important;
-            transform: scale(1) !important;
-            -webkit-transform: scale(1) !important;
-            overflow: hidden !important;
-            -webkit-text-size-adjust: none !important;
-            user-select: none !important;
-        }
-    </style>
-    <script>
-        // Block zoom gestures and Cmd + scroll as early as possible
-        window.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) e.preventDefault();
-        }, { passive: false });
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
-        document.addEventListener('gesturechange', (e) => e.preventDefault());
-        document.addEventListener('gestureend', (e) => e.preventDefault());
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
-    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="files">
     <div class="container">
@@ -49,6 +26,6 @@
             </button>
         </div>
     </div>
-    <script src="scripts.js?t=20250430"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>

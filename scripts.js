@@ -5,15 +5,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Block zoom gestures in scripts.js for consistency
+    // Block zoom gestures in scripts.js for consistency, except for specs page
     window.addEventListener('wheel', (e) => {
-        if (e.ctrlKey || e.metaKey) e.preventDefault();
+        if (document.body.getAttribute('data-page') !== 'specs' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+        }
     }, { passive: false });
-    document.addEventListener('gesturestart', (e) => e.preventDefault());
-    document.addEventListener('gesturechange', (e) => e.preventDefault());
-    document.addEventListener('gestureend', (e) => e.preventDefault());
+    document.addEventListener('gesturestart', (e) => {
+        if (document.body.getAttribute('data-page') !== 'specs') {
+            e.preventDefault();
+        }
+    });
+    document.addEventListener('gesturechange', (e) => {
+        if (document.body.getAttribute('data-page') !== 'specs') {
+            e.preventDefault();
+        }
+    });
+    document.addEventListener('gestureend', (e) => {
+        if (document.body.getAttribute('data-page') !== 'specs') {
+            e.preventDefault();
+        }
+    });
     document.addEventListener('touchstart', (e) => {
-        if (e.touches.length > 1) e.preventDefault();
+        if (document.body.getAttribute('data-page') !== 'specs' && e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Allow scrolling on specs page
+    document.addEventListener('touchmove', (e) => {
+        if (document.body.getAttribute('data-page') !== 'specs') {
+            e.preventDefault();
+            const touchEndY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchEndY;
+            if (Math.abs(deltaY) > 30) {
+                if (deltaY < 0 && isMenuVisible) handleScroll(false);
+                else if (deltaY > 0 && !isMenuVisible) handleScroll(true);
+                touchStartY = touchEndY;
+            }
+        }
     }, { passive: false });
 
     const title = document.getElementById('title');
@@ -237,26 +267,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
-            else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
+            if (document.body.getAttribute('data-page') !== 'specs') {
+                e.preventDefault();
+                if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
+                else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
+            }
         }, { passive: false });
 
         document.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
             resetIdleTimer();
         }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const touchEndY = e.touches[0].clientY;
-            const deltaY = touchStartY - touchEndY;
-            if (Math.abs(deltaY) > 30) {
-                if (deltaY < 0 && isMenuVisible) handleScroll(false);
-                else if (deltaY > 0 && !isMenuVisible) handleScroll(true);
-                touchStartY = touchEndY;
-            }
-        }, { passive: false });
 
         title.addEventListener('click', () => {
             handleTitleClick();
