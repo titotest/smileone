@@ -14,7 +14,6 @@
     <style>
         body[data-page="specs"] {
             overflow: auto;
-            touch-action: pinch-zoom;
         }
         #title.title.at-top {
             cursor: pointer;
@@ -27,7 +26,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            touch-action: pinch-zoom;
             padding-bottom: calc(env(safe-area-inset-bottom, 0) + 14vmin);
             -webkit-overflow-scrolling: auto;
         }
@@ -41,13 +39,11 @@
             align-items: center;
             gap: 2vmin;
             z-index: 1;
-            touch-action: none;
         }
         .graph-image {
             width: 42vmin;
             object-fit: contain;
             pointer-events: none;
-            touch-action: none;
         }
         .text {
             position: absolute;
