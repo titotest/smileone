@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+    <title>Remorph Design - Overview</title>
+    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
+    <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body[data-page="overview"] {
+            overflow: auto;
+            touch-action: pinch-zoom;
+        }
+        #title.title.at-top {
+            cursor: pointer;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            min-height: 100dvh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 10vmin;
+            -webkit-overflow-scrolling: auto;
+        }
+        .overview-container {
+            position: absolute;
+            top: calc(2 * var(--title-font-size));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4vmin;
+            z-index: 1;
+            width: 86vmin;
+        }
+        .overview-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .overview-image {
+            width: 100%;
+            max-width: 86vmin;
+            object-fit: contain;
+        }
+        .overview-caption {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            font-size: 2vmin;
+            color: #f5f5f7;
+            text-align: left;
+            margin-top: 2vmin;
+            margin-bottom: 10vmin;
+            width: 100%;
+        }
+        .table-wrapper {
+            width: 100%;
+            max-width: 86vmin;
+            margin-top: 2vmin;
+            margin-bottom: 4vmin;
+            border: 2px solid rgba(245, 245, 247, 0.5);
+            border-radius: 1vmin;
+        }
+        .overview-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            font-size: 2vmin;
+            color: #f5f5f7;
+            background: transparent;
+            position: relative;
+        }
+        .overview-table th,
+        .overview-table td {
+            padding: 1vmin;
+            text-align: center;
+            background: transparent;
+            position: relative;
+        }
+        .overview-table th {
+            font-weight: 600;
+        }
+        .overview-table th::after,
+        .overview-table td::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-right: 2px solid rgba(245, 245, 247, 0.5);
+            border-bottom: 2px solid rgba(245, 245, 247, 0.5);
+            pointer-events: none;
+        }
+        .overview-table th:last-child::after,
+        .overview-table td:last-child::after {
+            border-right: none;
+        }
+        .overview-table tr:last-child td::after {
+            border-bottom: none;
+        }
+        .overview-table th:first-child {
+            border-top-left-radius: 0.8vmin;
+        }
+        .overview-table th:last-child {
+            border-top-right-radius: 0.8vmin;
+        }
+        .overview-table tr:last-child td:first-child {
+            border-bottom-left-radius: 0.8vmin;
+        }
+        .overview-table tr:last-child td:last-child {
+            border-bottom-right-radius: 0.8vmin;
+        }
+        body[data-page="overview"], .container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body[data-page="overview"]::-webkit-scrollbar, .container::-webkit-scrollbar {
+            display: none;
+        }
+        @media (max-width: 666px) {
+            .overview-container {
+                width: 90vw;
+            }
+            .overview-image {
+                width: 90vw;
+                max-width: 90vw;
+            }
+            .overview-caption {
+                font-size: 2.5vmin;
+                margin-top: 3vmin;
+                margin-bottom: 10vmin;
+            }
+            .table-wrapper {
+                max-width: 90vw;
+                border-radius: 1vmin;
+            }
+            .overview-table {
+                font-size: 2.5vmin;
+            }
+            .overview-table th,
+            .overview-table td {
+                padding: 1.5vmin;
+            }
+            .overview-table th:first-child {
+                border-top-left-radius: 0.6vmin;
+            }
+            .overview-table th:last-child {
+                border-top-right-radius: 0.6vmin;
+            }
+            .overview-table tr:last-child td:first-child {
+                border-bottom-left-radius: 0.6vmin;
+            }
+            .overview-table tr:last-child td:last-child {
+                border-bottom-right-radius: 0.6vmin;
+            }
+        }
+    </style>
+</head>
+<body data-page="overview">
+    <div class="container">
+        <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
+        <div class="overview-container">
+            <div class="overview-item">
+                <img src="/images/O1_Dimensions.png" alt="Dimensions" class="overview-image">
+                <div class="table-wrapper">
+                    <table class="overview-table">
+                        <tr>
+                            <th>Machine Dimensions</th>
+                            <th>Motion Limits</th>
+                            <th>Max Build</th>
+                            <th>Buildplate Size</th>
+                        </tr>
+                        <tr>
+                            <td>460mm Wide<br>560mm Deep<br>720mm High</td>
+                            <td>X313.6mm<br>Y372.6mm<br>Z309.6mm</td>
+                            <td>X307mm<br>Y307mm<br>Z304mm</td>
+                            <td>320x320mm</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O2_Buildplate_Size.png" alt="Buildplate Size" class="overview-image">
+                <p class="overview-caption">Constraints defined the build size. 
+                    Had to fit on most workbenches and desks, 
+                    the extrusions to be cuts of 50mm increments, 
+                    electronics and XY motors isolated… 
+                    Those types of decisions along with the toolhead design, 
+                    electronics layout, nozzle wiper and such, defined the max XY motion, 
+                    which made the printable area 307×307mm. 
+                    The slightly larger build plate is due to some niche reasons, 
+                    mainly, not printing on the very edges, 
+                    heat around when the entire area is utilized and embedded sections to grab the flexible sheet. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O3_Maxwell_Kinematic.png" alt="Maxwell Kinematic" class="overview-image">
+                <p class="overview-caption">This isn’t just 3-point leveling. <br>
+                    Maxwell kinematic couplers ensure even expansion and positioning. <br>
+                    Each joint uses 12mm steel balls on two 5mm shafts, held by a 10×15×25mm magnet. </p>
+            <div class="overview-item">
+                <img src="/images/O4_XY_Joint.png" alt="XY Joint" class="overview-image">
+                <p class="overview-caption">All idlers and gears use 5mm shafts with 13mm bearings. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O5_Servo_Stepper.png" alt="Motors" class="overview-image">
+                <p class="overview-caption">To avoid constraining the size and weight of the toolhead components and to maintain comfortable chamber access, 
+                    bigger ones made more sense than multiple small motors.<br>But N23 steppers cap out around 1000 RPM, so for the XY, two N23 servos. 
+                    The Z axis uses three N17 steppers. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O6_TH.png" alt="Toolhead" class="overview-image">
+                <p class="overview-caption">The toolhead has a slide-up guard. The PCB is mounted at the front, 
+                    keeping the cable close to the filament tube and providing easy access to the connectors. 
+                    Components are rapidly accessible, with very few steps to reach one. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O7_Filter_Box.png" alt="Filter" class="overview-image">
+                <p class="overview-caption">At the top of the chamber, 
+                    a slide-out filter box contains three 15×40×80mm HEPA filters and 0.69L of activated carbon pellets. 
+                    Both, chamber fan and part cooling fan draw air through it. 
+                    The chamber fan’s exhaust is split into two outlets at the bottom of the chamber for top-down convection. </p>
+            </div>     
+            <div class="overview-item">
+                <img src="/images/O8_Spool_Box.png" alt="Filament Storage" class="overview-image">
+                <p class="overview-caption">The chamber has a sealed filament storage with desiccant compartments. <br>
+                    Spool holder sits on bearings to minimize resistance for the extruder. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O9_Y_Splitter.png" alt="Y-Splitter" class="overview-image">
+                <p class="overview-caption">Filament Y-Splitter to ease external feed. </p>
+            </div>
+            <div class="overview-item">
+                <img src="/images/O10_Nozzle_Wipper.png" alt="Overview Image 3" class="overview-image">
+                <p class="overview-caption">Nozzle wiper with a slide-out bucket. </p>
+            </div>  
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>

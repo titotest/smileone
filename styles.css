@@ -44,7 +44,9 @@ html, body {
 }
 
 body[data-page="specs"],
-body[data-page="specs"] .container {
+body[data-page="overview"],
+body[data-page="specs"] .container,
+body[data-page="overview"] .container {
     touch-action: auto !important;
     overflow: auto !important;
     overflow-y: auto !important;
@@ -322,6 +324,10 @@ body[data-page="cadpreview"] .title {
 }
 
 body[data-page="files"] .title {
+    cursor: pointer;
+}
+
+body[data-page="overview"] .title {
     cursor: pointer;
 }
 

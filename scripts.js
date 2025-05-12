@@ -5,36 +5,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Block zoom gestures in scripts.js for consistency, except for specs page
+    // Block zoom gestures in scripts.js for consistency, except for specs and overview pages
     window.addEventListener('wheel', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs' && (e.ctrlKey || e.metaKey)) {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page')) && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
         }
     }, { passive: false });
     document.addEventListener('gesturestart', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs') {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('gesturechange', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs') {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('gestureend', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs') {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('touchstart', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs' && e.touches.length > 1) {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page')) && e.touches.length > 1) {
             e.preventDefault();
         }
     }, { passive: false });
 
-    // Allow scrolling on specs page
+    // Allow scrolling on specs and overview pages
     document.addEventListener('touchmove', (e) => {
-        if (document.body.getAttribute('data-page') !== 'specs') {
+        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('wheel', (e) => {
-            if (document.body.getAttribute('data-page') !== 'specs') {
+            if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
                 else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
