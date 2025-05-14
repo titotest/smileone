@@ -16,6 +16,10 @@
             font-family: Arial, sans-serif;
             color: white;
             overflow: hidden;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
         #gameCanvas {
             width: 100vw;
@@ -23,16 +27,18 @@
             background-color: transparent;
             position: relative;
             z-index: 1;
+            max-width: 100%;
+            max-height: 100%;
         }
         #revealedImage {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
+            top: env(safe-area-inset-top);
+            left: env(safe-area-inset-left);
             width: 100vw;
             height: 100vh;
-            max-width: 100vw;
-            max-height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             opacity: 0;
             z-index: -1;
@@ -41,7 +47,7 @@
         #resetButton {
             display: none;
             position: fixed;
-            bottom: 60px;
+            bottom: calc(60px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
             width: 580px;
@@ -64,7 +70,7 @@
         @media (max-width: 600px) {
             #resetButton {
                 font-size: 28px;
-                width: calc(90vw - 20px);
+                width: calc(90vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));
                 max-width: 464px;
                 height: 80px;
             }
@@ -95,7 +101,7 @@
         const baseMoveDuration = 100;
         let moveDuration = baseMoveDuration;
         let moveProgress = 0;
-        const maxFoodPlacementRetries = 100;
+        const maxFoodPlacementRetries = 200;
         let speedMultiplier = 1;
         const maxSpeedMultiplier = 6;
         const accelerationRate = 0.02;
@@ -138,14 +144,14 @@
             const totalButtonWidthPx = totalButtonWidth * gridSize;
             const startXPx = (window.innerWidth - totalButtonWidthPx) / 2;
             const startX = Math.floor(startXPx / gridSize);
-            const startY = tileCountY - 8;
+            const startY = tileCountY - 12;
             buttonConfigs.forEach((config, index) => {
                 const gridX = startX + index * (5 + gapCases);
                 buttonAreas.push({
                     x: gridX,
                     y: startY,
-                    width: 5,
-                    height: 5,
+                    width: 6,
+                    height: 6,
                     id: config.id
                 });
             });
@@ -156,6 +162,15 @@
                 x < area.x + area.width &&
                 y >= area.y &&
                 y < area.y + area.height
+            );
+        }
+        function isPointNearButtons(x, y) {
+            const buffer = window.innerWidth < 400 ? 1 : 2;
+            return buttonAreas.some(area => 
+                x >= area.x - buffer &&
+                x < area.x + 5 + buffer &&
+                y >= area.y - buffer &&
+                y < area.y + 5 + buffer
             );
         }
         function isAccelerating() {
@@ -173,17 +188,16 @@
             if (gameLoop) cancelAnimationFrame(gameLoop);
             const gapCases = window.innerWidth < 400 ? 2 : 3;
             const totalButtonWidthCases = 4 * 5 + 3 * gapCases;
-            gridSize = Math.max(12, Math.min(20, Math.floor(window.innerWidth * 0.9 / totalButtonWidthCases)));
-            tileCountX = Math.floor(window.innerWidth / gridSize);
-            tileCountY = Math.floor(window.innerHeight / gridSize);
+            gridSize = Math.max(12, Math.min(20, Math.floor(Math.max(100, window.innerWidth) * 0.9 / totalButtonWidthCases)));
+            tileCountX = Math.floor(Math.max(100, window.innerWidth) / gridSize);
+            tileCountY = Math.floor(Math.max(100, window.innerHeight) / gridSize);
             canvas.width = tileCountX * gridSize;
             canvas.height = tileCountY * gridSize;
             offscreenCanvas.width = canvas.width;
             offscreenCanvas.height = canvas.height;
-            console.log(`initGame: gridSize=${gridSize}, tileCountX=${tileCountX}, tileCountY=${tileCountY}, canvas=${canvas.width}x${canvas.height}`);
             updateButtonAreas();
-            snake = [{ x: Math.floor(tileCountX / 2), y: Math.floor(tileCountY / 2), renderX: Math.floor(tileCountX / 2), renderY: Math.floor(tileCountY / 2) }];
-            direction = { x: 1, y: 0 };
+            snake = [{ x: Math.floor(tileCountX / 2), y: 0, renderX: Math.floor(tileCountX / 2), renderY: 0 }];
+            direction = { x: 0, y: 1 };
             foodEatenCurrent = 0;
             foodEatenTotal = 0;
             eatenFoodPositions = [];
@@ -196,6 +210,7 @@
             resetButton.style.display = 'none';
             canvas.style.display = 'block';
             revealedImage.style.display = 'none';
+            food = null;
             placeFood();
             draw();
             lastTime = performance.now();
@@ -206,7 +221,7 @@
                 food = { x: 3, y: 3 };
                 return;
             }
-            const edgeBuffer = 3;
+            const edgeBuffer = window.innerWidth < 400 ? 1 : 2;
             food = {
                 x: Math.floor(Math.random() * (tileCountX - 2 * edgeBuffer)) + edgeBuffer,
                 y: Math.floor(Math.random() * (tileCountY - 2 * edgeBuffer)) + edgeBuffer
@@ -216,17 +231,7 @@
                 placeFood(retryCount + 1);
             }
         }
-        function isPointNearButtons(x, y) {
-            const buffer = 3;
-            return buttonAreas.some(area => 
-                x >= area.x - buffer &&
-                x < area.x + area.width + buffer &&
-                y >= area.y - buffer &&
-                y < area.y + area.height + buffer
-            );
-        }
         function draw() {
-            console.log('draw called');
             offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
             if (!isGameOver) {
                 buttonAreas.forEach((area, index) => {
@@ -271,7 +276,6 @@
         }
         function gameTick(timestamp) {
             if (isGameOver) return;
-            console.log('gameTick called');
             const deltaTime = Math.min(timestamp - lastTime, 100);
             lastTime = timestamp;
             if (isAccelerating()) {
@@ -368,8 +372,8 @@
         }
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const clickX = Math.floor((e.clientX - rect.left) / gridSize);
-            const clickY = Math.floor((e.clientY - rect.top) / gridSize);
+            const clickX = (e.clientX - rect.left) / gridSize;
+            const clickY = (e.clientY - rect.top) / gridSize;
             handleButtonPress(clickX, clickY);
         });
         canvas.addEventListener('mouseup', () => {
@@ -380,8 +384,8 @@
             if (isGameOver) return;
             const rect = canvas.getBoundingClientRect();
             const touch = e.touches[0];
-            const clickX = Math.floor((touch.clientX - rect.left) / gridSize);
-            const clickY = Math.floor((touch.clientY - rect.top) / gridSize);
+            const clickX = (touch.clientX - rect.left) / gridSize;
+            const clickY = (touch.clientY - rect.top) / gridSize;
             handleButtonPress(clickX, clickY);
         });
         canvas.addEventListener('touchend', () => {
