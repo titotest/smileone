@@ -17,7 +17,8 @@
   
   setTimeout(() => {
     let parts = [decode(Y[0]), decode(Y[1]), decode(Y[2])];
-    let email = parts[0] + parts[1] + parts[2] + "@" + w.location.hostname;
+    let domain = w.location.hostname.replace(/^www\./i, ''); // Remove www. prefix
+    let email = parts[0] + parts[1] + parts[2] + "@" + domain;
     b1.onclick = () => w.navigator.clipboard.writeText(email);
     b2.onclick = () => {
       let a = d.createElement("a");
