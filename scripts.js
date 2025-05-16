@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { passive: false });
 
-    // Allow scrolling on specs and overview pages
+    // Allow scrolling on specs, overview, and feed pages
     document.addEventListener('touchmove', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
+        if (!['specs', 'overview', 'feed'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const iframe = document.getElementById('fullscreen-iframe');
     const loadingMessage = document.querySelector('.loading-message');
     const errorMessage = document.querySelector('.error-message');
+    const yapButtons = document.querySelectorAll('.yap-button'); // Add for feed page buttons
 
     let isSmiley = false;
     let isMenuVisible = history.state?.menuVisible || false;
@@ -158,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleTitleClick = () => {
-        if (!menu) {
+        if (!menu || ['cadpreview', 'files', 'overview', 'specs', 'feed'].includes(document.body.getAttribute('data-page'))) {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             return;
         }
@@ -229,8 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startIdleTimer();
     };
 
-    // Add tapped effect to file buttons
-    document.querySelectorAll('.file-button').forEach(button => {
+    // Add tapped effect to file buttons and yap buttons
+    document.querySelectorAll('.file-button, .yap-button').forEach(button => {
         const handlePressStart = (e) => {
             button.classList.add('tapped');
         };
@@ -267,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('wheel', (e) => {
-            if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
+            if (!['specs', 'overview', 'feed'].includes(document.body.getAttribute('data-page'))) {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
                 else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);
