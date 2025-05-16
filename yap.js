@@ -48,7 +48,7 @@
   const initializeGame = () => {
     width = canvas.width = win.innerWidth;
     height = canvas.height = win.innerHeight;
-    dot = { x: width / 2, y: height * 0.9 };
+    dot = { x: width / 2, y: height / 2 }; // Changed to center of page
     segments = 10;
     isDragging = false;
     shieldActive = true;
@@ -72,6 +72,8 @@
         pauseTimer: 0, 
         wonderMode: 'none', 
         wonderAngle: 0, 
+        targetWonderAngle: 0, // New: target angle for smooth eye transition
+        wonderLerp: 0,       // New: lerp progress for eye transition
         decelerationPhase: 0, 
         pauseType: 'none', 
         curlPhase: 0,
@@ -106,7 +108,7 @@
     }
     
     let { x, y } = dot;
-    let distanceFromStart = sqrt((x - width / 2) ** 2 + (y - height * 0.9) ** 2);
+    let distanceFromStart = sqrt((x - width / 2) ** 2 + (y - height / 2) ** 2); // Updated to check center
     drawCircle(x, y, 6, "#0f0", ctx);
     if (!isDragging && distanceFromStart < 1) {
       let opacity = 0.75 + 0.25 * sin(Date.now() * 0.002);
@@ -143,6 +145,8 @@
         pauseTimer: 0, 
         wonderMode: last.wonderMode, 
         wonderAngle: last.wonderAngle, 
+        targetWonderAngle: last.targetWonderAngle, // Propagate new property
+        wonderLerp: last.wonderLerp,             // Propagate new property
         decelerationPhase: 0, 
         pauseType: 'none', 
         curlPhase: 0,
@@ -152,7 +156,7 @@
         shieldSprintTimer: last.shieldSprintTimer
       });
     } else {
-      let { x, y, angle, speed, targetSpeed, time, pause, pauseDuration, speedState, speedTimer, hesitationTimer, pauseTimer, wonderMode, wonderAngle, decelerationPhase, pauseType, curlPhase, shieldState, shieldLoopAngle, shieldCooldown, shieldSprintTimer } = caterpillar[0];
+      let { x, y, angle, speed, targetSpeed, time, pause, pauseDuration, speedState, speedTimer, hesitationTimer, pauseTimer, wonderMode, wonderAngle, targetWonderAngle, wonderLerp, decelerationPhase, pauseType, curlPhase, shieldState, shieldLoopAngle, shieldCooldown, shieldSprintTimer } = caterpillar[0];
       let newX = x, newY = y;
       
       // Shield interaction logic
@@ -167,14 +171,18 @@
           shieldState = 'notice';
           targetSpeed = 0.25; // Slow down to 0.25 of normal speed
           wonderMode = 'head';
-          wonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Look at shield
+          targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Set target eye angle
+          wonderLerp = 0; // Reset lerp for smooth transition
           angleLerp = 0; // Reset angle interpolation for smooth turning
         } else if (shieldState === 'notice') {
           // Move closer slowly
           targetSpeed = 0.6; // 0.6 of normal speed
           let angleToShield = atan2(dot.y - y, dot.x - x);
           targetAngle = angleToShield;
-          wonderAngle = angleToShield - angle; // Continue looking at shield
+          targetWonderAngle = angleToShield - angle; // Update target eye angle
+          wonderLerp += 0.1; // Increment lerp progress
+          if (wonderLerp > 1) wonderLerp = 1;
+          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
           speed += (targetSpeed - speed) * 0.1; // Smooth speed transition
           newX = x + Math.cos(angleToShield) * speed * 2; // Move toward shield
           newY = y + Math.sin(angleToShield) * speed * 2;
@@ -194,7 +202,10 @@
           newX = dot.x + orbitRadius * Math.cos(shieldLoopAngle);
           newY = dot.y + orbitRadius * Math.sin(shieldLoopAngle);
           targetAngle = atan2(newY - y, newX - x);
-          wonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Keep looking at shield
+          targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Keep eyes on shield
+          wonderLerp += 0.1; // Increment lerp progress
+          if (wonderLerp > 1) wonderLerp = 1;
+          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
           
           if (shieldLoopAngle >= 2 * PI + atan2(y - dot.y, x - dot.x)) {
             // Loop complete, enter sprint state
@@ -204,8 +215,9 @@
             shieldCooldown = 4; // 4-second cooldown
             let angleAway = atan2(y - dot.y, x - dot.x); // Move away from shield
             targetAngle = angleAway;
+            targetWonderAngle = 0; // Eyes return to default
+            wonderLerp = 0; // Reset lerp for smooth transition
             wonderMode = 'none';
-            wonderAngle = 0;
           }
         } else if (shieldState === 'sprint' && shieldSprintTimer > 0) {
           // Continue sprinting
@@ -213,6 +225,10 @@
           shieldSprintTimer -= 0.016;
           let angleAway = atan2(y - dot.y, x - dot.x);
           targetAngle = angleAway;
+          targetWonderAngle = 0; // Eyes stay at default
+          wonderLerp += 0.1; // Increment lerp progress
+          if (wonderLerp > 1) wonderLerp = 1;
+          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
           speed += (targetSpeed - speed) * 0.1; // Smooth speed transition
           newX = x + Math.cos(angleAway) * speed * 2; // Move away from shield
           newY = y + Math.sin(angleAway) * speed * 2;
@@ -228,7 +244,9 @@
         shieldState = 'none';
         targetSpeed = 1;
         wonderMode = 'none';
-        wonderAngle = 0;
+        targetWonderAngle = 0;
+        wonderLerp = 0;
+        wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp);
       }
       
       // Update cooldown
@@ -273,6 +291,8 @@
           caterpillar[0].pauseDuration = caterpillar[0].pause;
           caterpillar[0].wonderMode = 'head';
           caterpillar[0].wonderAngle = 0;
+          caterpillar[0].targetWonderAngle = 0;
+          caterpillar[0].wonderLerp = 0;
         } else if (pauseTimer > 120 + rand() * 120 && decelerationPhase === 0) {
           let r = rand();
           if (r < 0.25) {
@@ -291,12 +311,16 @@
           caterpillar[0].pauseTimer = 0;
           caterpillar[0].wonderMode = 'head';
           caterpillar[0].wonderAngle = 0;
+          caterpillar[0].targetWonderAngle = 0;
+          caterpillar[0].wonderLerp = 0;
         } else {
           caterpillar[0].time = elapsed;
           caterpillar[0].angle += noise;
           caterpillar[0].targetSpeed = newTargetSpeed;
           caterpillar[0].wonderMode = 'none';
           caterpillar[0].wonderAngle = 0;
+          caterpillar[0].targetWonderAngle = 0;
+          caterpillar[0].wonderLerp = 0;
           caterpillar[0].decelerationPhase = 0;
           caterpillar[0].pauseType = 'none';
           caterpillar[0].curlPhase = 0;
@@ -332,6 +356,8 @@
             angleLerp = 0;
             caterpillar[0].wonderMode = 'none';
             caterpillar[0].wonderAngle = 0;
+            caterpillar[0].targetWonderAngle = 0;
+            caterpillar[0].wonderLerp = 0;
             break;
           }
         }
@@ -342,6 +368,8 @@
         newY = y;
         caterpillar[0].wonderMode = 'head';
         caterpillar[0].wonderAngle = sin(Date.now() * 0.0004) * (0.4 + rand() * 0.4);
+        caterpillar[0].targetWonderAngle = caterpillar[0].wonderAngle;
+        caterpillar[0].wonderLerp = 1; // No lerp during pause wobble
         if (pauseType === 'long' && curlPhase > 0) {
           caterpillar[0].angle += (rand() < 0.5 ? 1 : -1) * (PI / 6) * (0.016 / 2);
           caterpillar[0].curlPhase -= 0.016;
@@ -361,6 +389,8 @@
         caterpillar[0].targetSpeed = newTargetSpeed;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
+        caterpillar[0].targetWonderAngle = 0;
+        caterpillar[0].wonderLerp = 0;
         hitEdge = true;
       }
       if (newX > width - margin) {
@@ -370,6 +400,8 @@
         caterpillar[0].targetSpeed = newTargetSpeed;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
+        caterpillar[0].targetWonderAngle = 0;
+        caterpillar[0].wonderLerp = 0;
         hitEdge = true;
       }
       if (newY < titleHeight) {
@@ -379,6 +411,8 @@
         caterpillar[0].targetSpeed = newTargetSpeed;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
+        caterpillar[0].targetWonderAngle = 0;
+        caterpillar[0].wonderLerp = 0;
         hitEdge = true;
       }
       if (newY > height - margin) {
@@ -388,6 +422,8 @@
         caterpillar[0].targetSpeed = newTargetSpeed;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
+        caterpillar[0].targetWonderAngle = 0;
+        caterpillar[0].wonderLerp = 0;
         hitEdge = true;
       }
       
@@ -399,6 +435,8 @@
         caterpillar[0].pauseDuration = caterpillar[0].pause;
         caterpillar[0].wonderMode = 'head';
         caterpillar[0].wonderAngle = 0;
+        caterpillar[0].targetWonderAngle = 0;
+        caterpillar[0].wonderLerp = 0;
       }
       
       caterpillar[0].speed = speed;
@@ -412,6 +450,8 @@
       caterpillar[0].angle = currentAngle;
       caterpillar[0].wonderMode = wonderMode;
       caterpillar[0].wonderAngle = wonderAngle;
+      caterpillar[0].targetWonderAngle = targetWonderAngle;
+      caterpillar[0].wonderLerp = wonderLerp;
       caterpillar[0].decelerationPhase = decelerationPhase;
       caterpillar[0].pauseType = pauseType;
       caterpillar[0].curlPhase = curlPhase;
@@ -434,6 +474,9 @@
         curr.shieldLoopAngle = prev.shieldLoopAngle;
         curr.shieldCooldown = prev.shieldCooldown;
         curr.shieldSprintTimer = prev.shieldSprintTimer;
+        curr.wonderAngle = prev.wonderAngle; // Propagate for consistency
+        curr.targetWonderAngle = prev.targetWonderAngle;
+        curr.wonderLerp = prev.wonderLerp;
       }
     }
     
