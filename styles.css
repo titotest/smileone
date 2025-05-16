@@ -504,9 +504,6 @@ body[data-page="overview"] .title {
     [data-page="feed"] div#GizmoFluff.yap-buttons button.yap-button[id].tapped {
         transform: scale(0.9);
     }
-    [data-page="feed"] .title {
-        top: 2vmin;
-    }
 }
 
 }
