@@ -2,7 +2,7 @@
   const doc = document;
   const win = window;
   const canvas = doc.getElementById("QuantumWaffle");
-  const ctx = canvas ? canvas.getContext("2d") : null;
+  const ctx = canvas.getContext("2d");
   const title = doc.getElementById("title");
   const buttonContainer = doc.getElementById("GizmoFluff");
   
@@ -48,7 +48,7 @@
   const initializeGame = () => {
     width = canvas.width = win.innerWidth;
     height = canvas.height = win.innerHeight;
-    dot = { x: width / 2, y: height / 2 }; // Changed to center of page
+    dot = { x: width / 2, y: height / 2 };
     segments = 10;
     isDragging = false;
     shieldActive = true;
@@ -72,15 +72,16 @@
         pauseTimer: 0, 
         wonderMode: 'none', 
         wonderAngle: 0, 
-        targetWonderAngle: 0, // New: target angle for smooth eye transition
-        wonderLerp: 0,       // New: lerp progress for eye transition
+        targetWonderAngle: 0,
+        wonderLerp: 0,
         decelerationPhase: 0, 
         pauseType: 'none', 
         curlPhase: 0,
         shieldState: 'none',
         shieldLoopAngle: 0,
         shieldCooldown: 0,
-        shieldSprintTimer: 0
+        shieldSprintTimer: 0,
+        loopDirection: 1
       });
       buttonContainer.classList.add("hidden");
       buttonContainer.style.visibility = "hidden";
@@ -108,14 +109,15 @@
     }
     
     let { x, y } = dot;
-    let distanceFromStart = sqrt((x - width / 2) ** 2 + (y - height / 2) ** 2); // Updated to check center
+    let distanceFromStart = sqrt((x - width / 2) ** 2 + (y - height / 2) ** 2);
     drawCircle(x, y, 6, "#0f0", ctx);
     if (!isDragging && distanceFromStart < 1) {
       let opacity = 0.75 + 0.25 * sin(Date.now() * 0.002);
       drawCircle(x, y, 40.8, "#fff", ctx, opacity, true);
     }
     if (shieldActive) {
-      drawCircle(x, y, 40.8, "#fff", ctx, 0.5, true);
+      let opacity = 0.5 + 0.3 * sin(Date.now() * 0.002);
+      drawCircle(x, y, 40.8, "#fff", ctx, opacity, true);
     }
   };
   
@@ -139,242 +141,278 @@
         time: 0, 
         pause: 0, 
         pauseDuration: 0, 
-        speedState: last.speedState, 
+        speedState: 'normal', 
         speedTimer: 0, 
         hesitationTimer: 0, 
         pauseTimer: 0, 
-        wonderMode: last.wonderMode, 
-        wonderAngle: last.wonderAngle, 
-        targetWonderAngle: last.targetWonderAngle, // Propagate new property
-        wonderLerp: last.wonderLerp,             // Propagate new property
+        wonderMode: 'none', 
+        wonderAngle: 0, 
+        targetWonderAngle: 0,
+        wonderLerp: 0,
         decelerationPhase: 0, 
         pauseType: 'none', 
         curlPhase: 0,
-        shieldState: last.shieldState,
-        shieldLoopAngle: last.shieldLoopAngle,
-        shieldCooldown: last.shieldCooldown,
-        shieldSprintTimer: last.shieldSprintTimer
+        shieldState: 'none',
+        shieldLoopAngle: 0,
+        shieldCooldown: 0,
+        shieldSprintTimer: 0,
+        loopDirection: 1
       });
     } else {
-      let { x, y, angle, speed, targetSpeed, time, pause, pauseDuration, speedState, speedTimer, hesitationTimer, pauseTimer, wonderMode, wonderAngle, targetWonderAngle, wonderLerp, decelerationPhase, pauseType, curlPhase, shieldState, shieldLoopAngle, shieldCooldown, shieldSprintTimer } = caterpillar[0];
+      let { x, y, angle, speed, targetSpeed, time, pause, pauseDuration, speedState, speedTimer, hesitationTimer, pauseTimer, wonderMode, wonderAngle, targetWonderAngle, wonderLerp, decelerationPhase, pauseType, curlPhase, shieldState, shieldLoopAngle, shieldCooldown, shieldSprintTimer, loopDirection } = caterpillar[0];
       let newX = x, newY = y;
       
-      // Shield interaction logic
       let distanceToShield = sqrt((x - dot.x) ** 2 + (y - dot.y) ** 2);
       let shieldRadius = 40.8;
-      let shieldZone = shieldRadius * 4; // 4 times the shield diameter
-      let closeDistance = shieldRadius + 14 + 5; // Very close but not touching (shield radius + caterpillar radius + small buffer)
+      let shieldZone = shieldRadius * 4;
+      let closeDistance = shieldRadius + 14 + 5;
       
-      if (shieldActive && shieldCooldown <= 0 && pause <= 0) { // Only trigger if not paused
-        if (shieldState === 'none' && distanceToShield <= shieldZone) {
-          // Enter notice state
-          shieldState = 'notice';
-          targetSpeed = 0.25; // Slow down to 0.25 of normal speed
-          wonderMode = 'head';
-          targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Set target eye angle
-          wonderLerp = 0; // Reset lerp for smooth transition
-          angleLerp = 0; // Reset angle interpolation for smooth turning
-        } else if (shieldState === 'notice') {
-          // Move closer slowly
-          targetSpeed = 0.6; // 0.6 of normal speed
-          let angleToShield = atan2(dot.y - y, dot.x - x);
-          targetAngle = angleToShield;
-          targetWonderAngle = angleToShield - angle; // Update target eye angle
-          wonderLerp += 0.1; // Increment lerp progress
-          if (wonderLerp > 1) wonderLerp = 1;
-          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
-          speed += (targetSpeed - speed) * 0.1; // Smooth speed transition
-          newX = x + Math.cos(angleToShield) * speed * 2; // Move toward shield
-          newY = y + Math.sin(angleToShield) * speed * 2;
-          if (distanceToShield <= closeDistance) {
-            // Enter looping state
-            shieldState = 'looping';
-            targetSpeed = 1; // Normal speed for looping
-            shieldLoopAngle = atan2(y - dot.y, x - dot.x); // Start loop at current angle
-          }
-        } else if (shieldState === 'looping') {
-          // Perform one loop around shield
-          let loopSpeed = 2 * PI / 2; // Complete one loop in ~2 seconds at normal speed
-          shieldLoopAngle += loopSpeed * 0.016;
-          targetSpeed = 1;
-          speed += (targetSpeed - speed) * 0.1; // Smooth speed transition
-          let orbitRadius = closeDistance;
-          newX = dot.x + orbitRadius * Math.cos(shieldLoopAngle);
-          newY = dot.y + orbitRadius * Math.sin(shieldLoopAngle);
-          targetAngle = atan2(newY - y, newX - x);
-          targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle; // Keep eyes on shield
-          wonderLerp += 0.1; // Increment lerp progress
-          if (wonderLerp > 1) wonderLerp = 1;
-          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
-          
-          if (shieldLoopAngle >= 2 * PI + atan2(y - dot.y, x - dot.x)) {
-            // Loop complete, enter sprint state
-            shieldState = 'sprint';
-            shieldSprintTimer = 1.5; // Sprint for 1.5 seconds
-            targetSpeed = 2; // Sprint at 2x normal speed
-            shieldCooldown = 4; // 4-second cooldown
-            let angleAway = atan2(y - dot.y, x - dot.x); // Move away from shield
-            targetAngle = angleAway;
-            targetWonderAngle = 0; // Eyes return to default
-            wonderLerp = 0; // Reset lerp for smooth transition
-            wonderMode = 'none';
-          }
-        } else if (shieldState === 'sprint' && shieldSprintTimer > 0) {
-          // Continue sprinting
-          targetSpeed = 2;
-          shieldSprintTimer -= 0.016;
-          let angleAway = atan2(y - dot.y, x - dot.x);
-          targetAngle = angleAway;
-          targetWonderAngle = 0; // Eyes stay at default
-          wonderLerp += 0.1; // Increment lerp progress
-          if (wonderLerp > 1) wonderLerp = 1;
-          wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp); // Smooth eye transition
-          speed += (targetSpeed - speed) * 0.1; // Smooth speed transition
-          newX = x + Math.cos(angleAway) * speed * 2; // Move away from shield
-          newY = y + Math.sin(angleAway) * speed * 2;
-          if (shieldSprintTimer <= 0) {
-            // End sprint, return to normal
-            shieldState = 'none';
-            targetSpeed = 1;
-            speedState = 'normal';
-          }
-        }
-      } else if (shieldState !== 'none' && (shieldCooldown > 0 || pause > 0)) {
-        // Reset shield state if cooldown or pause is active
+      if (!shieldActive || shieldCooldown > 0 || pause > 0) {
         shieldState = 'none';
         targetSpeed = 1;
+        speedState = 'normal';
         wonderMode = 'none';
+        wonderAngle = 0;
         targetWonderAngle = 0;
         wonderLerp = 0;
+        shieldLoopAngle = 0;
+        shieldSprintTimer = 0;
+        loopDirection = 1;
+      } else if (shieldState === 'none' && distanceToShield <= shieldZone) {
+        shieldState = 'notice';
+        targetSpeed = 0.25;
+        wonderMode = 'head';
+        targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle;
+        wonderLerp = 0;
+        angleLerp = 0;
+      } else if (shieldState === 'notice') {
+        targetSpeed = 0.6;
+        let angleToShield = atan2(dot.y - y, dot.x - x);
+        targetAngle = angleToShield;
+        targetWonderAngle = angleToShield - angle;
+        wonderLerp += 0.1;
+        if (wonderLerp > 1) wonderLerp = 1;
         wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp);
+        speed += (targetSpeed - speed) * 0.1;
+        
+        let targetX = dot.x + closeDistance * Math.cos(angleToShield);
+        let targetY = dot.y + closeDistance * Math.sin(angleToShield);
+        let moveDistance = Math.min(speed * 2, sqrt((targetX - x) ** 2 + (targetY - y) ** 2));
+        newX = x + moveDistance * Math.cos(angleToShield);
+        newY = y + moveDistance * Math.sin(angleToShield);
+        
+        let newDistance = sqrt((newX - dot.x) ** 2 + (newY - dot.y) ** 2);
+        if (newDistance < closeDistance) {
+          let shieldAngle = atan2(newY - dot.y, newX - dot.x);
+          newX = dot.x + closeDistance * Math.cos(shieldAngle);
+          newY = dot.y + closeDistance * Math.sin(shieldAngle);
+          newDistance = closeDistance;
+        }
+        
+        if (Math.abs(newDistance - closeDistance) < 1) {
+          shieldState = 'looping';
+          targetSpeed = 1;
+          shieldLoopAngle = atan2(y - dot.y, x - dot.x);
+          loopDirection = rand() < 0.5 ? 1 : -1;
+        }
+      } else if (shieldState === 'looping') {
+        let loopSpeed = 2 * PI / 2;
+        shieldLoopAngle += loopSpeed * 0.016 * loopDirection;
+        targetSpeed = 1;
+        speed += (targetSpeed - speed) * 0.1;
+        let orbitRadius = closeDistance;
+        newX = dot.x + orbitRadius * Math.cos(shieldLoopAngle);
+        newY = dot.y + orbitRadius * Math.sin(shieldLoopAngle);
+        
+        let newDistance = sqrt((newX - dot.x) ** 2 + (newY - dot.y) ** 2);
+        if (newDistance < closeDistance) {
+          let shieldAngle = atan2(newY - dot.y, newX - dot.x);
+          newX = dot.x + closeDistance * Math.cos(shieldAngle);
+          newY = dot.y + closeDistance * Math.sin(shieldAngle);
+        }
+        
+        targetAngle = atan2(newY - y, newX - x);
+        targetWonderAngle = atan2(dot.y - y, dot.x - x) - angle;
+        wonderLerp += 0.1;
+        if (wonderLerp > 1) wonderLerp = 1;
+        wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp);
+        
+        let startAngle = atan2(y - dot.y, x - dot.x);
+        let loopComplete = loopDirection === 1 
+          ? shieldLoopAngle >= 2 * PI + startAngle 
+          : shieldLoopAngle <= startAngle - 2 * PI;
+        if (loopComplete) {
+          shieldState = 'sprint';
+          shieldSprintTimer = 1.5;
+          targetSpeed = 2;
+          shieldCooldown = 5;
+          let angleAway = atan2(y - dot.y, x - dot.x);
+          targetAngle = angleAway;
+          targetWonderAngle = 0;
+          wonderLerp = 0;
+          wonderMode = 'none';
+        }
+      } else if (shieldState === 'sprint' && shieldSprintTimer > 0) {
+        targetSpeed = 2;
+        shieldSprintTimer -= 0.016;
+        let angleAway = atan2(y - dot.y, x - dot.x);
+        targetAngle = angleAway;
+        targetWonderAngle = 0;
+        wonderLerp += 0.1;
+        if (wonderLerp > 1) wonderLerp = 1;
+        wonderAngle = lerpAngle(wonderAngle, targetWonderAngle, wonderLerp);
+        speed += (targetSpeed - speed) * 0.1;
+        newX = x + Math.cos(angleAway) * speed * 2;
+        newY = y + Math.sin(angleAway) * speed * 2;
+        
+        let newDistance = sqrt((newX - dot.x) ** 2 + (newY - dot.y) ** 2);
+        if (newDistance < closeDistance) {
+          let shieldAngle = atan2(newY - dot.y, newX - dot.x);
+          newX = dot.x + closeDistance * Math.cos(shieldAngle);
+          newY = dot.y + closeDistance * Math.sin(shieldAngle);
+        }
+        
+        if (shieldSprintTimer <= 0) {
+          shieldState = 'none';
+          targetSpeed = 1;
+          speedState = 'normal';
+        }
       }
       
-      // Update cooldown
       if (shieldCooldown > 0) {
         shieldCooldown -= 0.016;
         if (shieldCooldown < 0) shieldCooldown = 0;
       }
       
-      caterpillar[0].speedTimer += 0.016;
-      if (speedTimer > 10 + rand() * 10 && shieldState === 'none') {
-        let r = rand();
-        caterpillar[0].speedState = r < 0.05 ? 'slow' : r < 0.25 ? 'sprint' : 'normal';
-        caterpillar[0].speedTimer = 0;
-      }
-      let newTargetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
-      if (shieldState !== 'none') newTargetSpeed = targetSpeed; // Override with shield state speed
-      
-      if (pause <= 0 && shieldState === 'none') {
-        let noise = rand() * 0.15 - 0.075;
-        let elapsed = time + rand() * 0.1;
-        caterpillar[0].hesitationTimer += 0.016;
-        caterpillar[0].pauseTimer += 0.016;
-        
-        if (hesitationTimer > 20 + rand() * 40 && decelerationPhase === 0) {
+      if (shieldState === 'none') {
+        caterpillar[0].speedTimer += 0.016;
+        if (speedTimer > 10 + rand() * 10) {
           let r = rand();
-          if (r < 0.7) {
-            caterpillar[0].pause = 0.2 + rand() * 0.3;
-            caterpillar[0].pauseType = 'short';
-            caterpillar[0].hesitationTimer = 0;
-          } else if (r < 0.95) {
-            caterpillar[0].pause = 1 + rand() * 2;
-            caterpillar[0].pauseType = 'medium';
-            caterpillar[0].hesitationTimer = 0;
+          caterpillar[0].speedState = r < 0.05 ? 'slow' : r < 0.25 ? 'sprint' : 'normal';
+          caterpillar[0].speedTimer = 0;
+        }
+        let newTargetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
+        
+        if (pause <= 0) {
+          let noise = rand() * 0.15 - 0.075;
+          let elapsed = time + rand() * 0.1;
+          caterpillar[0].hesitationTimer += 0.016;
+          caterpillar[0].pauseTimer += 0.016;
+          
+          if (hesitationTimer > 20 + rand() * 40 && decelerationPhase === 0) {
+            let r = rand();
+            if (r < 0.7) {
+              caterpillar[0].pause = 0.2 + rand() * 0.3;
+              caterpillar[0].pauseType = 'short';
+              caterpillar[0].hesitationTimer = 0;
+            } else if (r < 0.95) {
+              caterpillar[0].pause = 1 + rand() * 2;
+              caterpillar[0].pauseType = 'medium';
+              caterpillar[0].hesitationTimer = 0;
+            } else {
+              caterpillar[0].pause = 5 + rand() * 5;
+              caterpillar[0].pauseType = 'long';
+              caterpillar[0].hesitationTimer = 0;
+              caterpillar[0].curlPhase = rand() < 0.3 ? 2 : 0;
+            }
+            caterpillar[0].decelerationPhase = 0.8 + rand() * 0.4;
+            caterpillar[0].targetSpeed = 0.2;
+            caterpillar[0].pauseDuration = caterpillar[0].pause;
+            caterpillar[0].wonderMode = 'head';
+            caterpillar[0].wonderAngle = 0;
+            caterpillar[0].targetWonderAngle = 0;
+            caterpillar[0].wonderLerp = 0;
+          } else if (pauseTimer > 120 + rand() * 120 && decelerationPhase === 0) {
+            let r = rand();
+            if (r < 0.25) {
+              caterpillar[0].pause = 1 + rand() * 2;
+              caterpillar[0].pauseType = 'medium';
+            } else {
+              caterpillar[0].pause = 5 + rand() * 5;
+              caterpillar[0].pauseType = 'long';
+              caterpillar[0].curlPhase = rand() < 0.3 ? 2 : 0;
+            }
+            caterpillar[0].decelerationPhase = 0.8 + rand() * 0.4;
+            caterpillar[0].targetSpeed = 0.2;
+            caterpillar[0].pauseDuration = caterpillar[0].pause;
+            caterpillar[0].angle += (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
+            caterpillar[0].time = 0;
+            caterpillar[0].pauseTimer = 0;
+            caterpillar[0].wonderMode = 'head';
+            caterpillar[0].wonderAngle = 0;
+            caterpillar[0].targetWonderAngle = 0;
+            caterpillar[0].wonderLerp = 0;
           } else {
-            caterpillar[0].pause = 5 + rand() * 5;
-            caterpillar[0].pauseType = 'long';
-            caterpillar[0].hesitationTimer = 0;
-            caterpillar[0].curlPhase = rand() < 0.3 ? 2 : 0;
-          }
-          caterpillar[0].decelerationPhase = 0.8 + rand() * 0.4;
-          caterpillar[0].targetSpeed = 0.2;
-          caterpillar[0].pauseDuration = caterpillar[0].pause;
-          caterpillar[0].wonderMode = 'head';
-          caterpillar[0].wonderAngle = 0;
-          caterpillar[0].targetWonderAngle = 0;
-          caterpillar[0].wonderLerp = 0;
-        } else if (pauseTimer > 120 + rand() * 120 && decelerationPhase === 0) {
-          let r = rand();
-          if (r < 0.25) {
-            caterpillar[0].pause = 1 + rand() * 2;
-            caterpillar[0].pauseType = 'medium';
-          } else {
-            caterpillar[0].pause = 5 + rand() * 5;
-            caterpillar[0].pauseType = 'long';
-            caterpillar[0].curlPhase = rand() < 0.3 ? 2 : 0;
-          }
-          caterpillar[0].decelerationPhase = 0.8 + rand() * 0.4;
-          caterpillar[0].targetSpeed = 0.2;
-          caterpillar[0].pauseDuration = caterpillar[0].pause;
-          caterpillar[0].angle += (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
-          caterpillar[0].time = 0;
-          caterpillar[0].pauseTimer = 0;
-          caterpillar[0].wonderMode = 'head';
-          caterpillar[0].wonderAngle = 0;
-          caterpillar[0].targetWonderAngle = 0;
-          caterpillar[0].wonderLerp = 0;
-        } else {
-          caterpillar[0].time = elapsed;
-          caterpillar[0].angle += noise;
-          caterpillar[0].targetSpeed = newTargetSpeed;
-          caterpillar[0].wonderMode = 'none';
-          caterpillar[0].wonderAngle = 0;
-          caterpillar[0].targetWonderAngle = 0;
-          caterpillar[0].wonderLerp = 0;
-          caterpillar[0].decelerationPhase = 0;
-          caterpillar[0].pauseType = 'none';
-          caterpillar[0].curlPhase = 0;
-        }
-        
-        if (decelerationPhase > 0) {
-          speed -= (speed - 0.2) * 0.15 * (1 - decelerationPhase / (0.8 + rand() * 0.4));
-          caterpillar[0].decelerationPhase -= 0.016;
-          if (caterpillar[0].decelerationPhase <= 0) {
-            caterpillar[0].decelerationPhase = 0;
-          }
-        } else {
-          speed += (targetSpeed - speed) * 0.1;
-        }
-        
-        targetAngle = caterpillar[0].angle;
-        angleLerp += 0.1;
-        if (angleLerp > 1) angleLerp = 1;
-        currentAngle = lerpAngle(currentAngle, targetAngle, angleLerp);
-        
-        if (shieldState !== 'looping') {
-          newX = x + Math.cos(currentAngle) * speed * 2;
-          newY = y + Math.sin(currentAngle) * speed * 2;
-        }
-        for (let i = 1; i < caterpillar.length; i++) {
-          let segment = caterpillar[i];
-          let distToSegment = sqrt((newX - segment.x) ** 2 + (newY - segment.y) ** 2);
-          if (distToSegment < 10) {
-            let pushAngle = atan2(newY - segment.y, newX - segment.x);
-            newX = segment.x + 10 * Math.cos(pushAngle);
-            newY = segment.y + 10 * Math.sin(pushAngle);
-            currentAngle = targetAngle = pushAngle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
-            angleLerp = 0;
+            caterpillar[0].time = elapsed;
+            caterpillar[0].angle += noise;
+            caterpillar[0].targetSpeed = newTargetSpeed;
             caterpillar[0].wonderMode = 'none';
             caterpillar[0].wonderAngle = 0;
             caterpillar[0].targetWonderAngle = 0;
             caterpillar[0].wonderLerp = 0;
-            break;
-          }
-        }
-      } else if (pause > 0) {
-        caterpillar[0].pause -= 0.016;
-        speed += (0.2 - speed) * 0.1;
-        newX = x;
-        newY = y;
-        caterpillar[0].wonderMode = 'head';
-        caterpillar[0].wonderAngle = sin(Date.now() * 0.0004) * (0.4 + rand() * 0.4);
-        caterpillar[0].targetWonderAngle = caterpillar[0].wonderAngle;
-        caterpillar[0].wonderLerp = 1; // No lerp during pause wobble
-        if (pauseType === 'long' && curlPhase > 0) {
-          caterpillar[0].angle += (rand() < 0.5 ? 1 : -1) * (PI / 6) * (0.016 / 2);
-          caterpillar[0].curlPhase -= 0.016;
-          if (caterpillar[0].curlPhase <= 0) {
+            caterpillar[0].decelerationPhase = 0;
+            caterpillar[0].pauseType = 'none';
             caterpillar[0].curlPhase = 0;
+          }
+          
+          if (decelerationPhase > 0) {
+            speed -= (speed - 0.2) * 0.15 * (1 - decelerationPhase / (0.8 + rand() * 0.4));
+            caterpillar[0].decelerationPhase -= 0.016;
+            if (caterpillar[0].decelerationPhase <= 0) {
+              caterpillar[0].decelerationPhase = 0;
+            }
+          } else {
+            speed += (targetSpeed - speed) * 0.1;
+          }
+          
+          targetAngle = caterpillar[0].angle;
+          angleLerp += 0.1;
+          if (angleLerp > 1) angleLerp = 1;
+          currentAngle = lerpAngle(currentAngle, targetAngle, angleLerp);
+          
+          newX = x + Math.cos(currentAngle) * speed * 2;
+          newY = y + Math.sin(currentAngle) * speed * 2;
+          
+          if (shieldActive) {
+            let newDistance = sqrt((newX - dot.x) ** 2 + (newY - dot.y) ** 2);
+            if (newDistance < closeDistance) {
+              let shieldAngle = atan2(newY - dot.y, newX - dot.x);
+              newX = dot.x + closeDistance * Math.cos(shieldAngle);
+              newY = dot.y + closeDistance * Math.sin(shieldAngle);
+            }
+          }
+          
+          for (let i = 1; i < caterpillar.length; i++) {
+            let segment = caterpillar[i];
+            let distToSegment = sqrt((newX - segment.x) ** 2 + (newY - segment.y) ** 2);
+            if (distToSegment < 10) {
+              let pushAngle = atan2(newY - segment.y, newX - segment.x);
+              newX = segment.x + 10 * Math.cos(pushAngle);
+              newY = segment.y + 10 * Math.sin(pushAngle);
+              currentAngle = targetAngle = pushAngle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
+              angleLerp = 0;
+              caterpillar[0].wonderMode = 'none';
+              caterpillar[0].wonderAngle = 0;
+              caterpillar[0].targetWonderAngle = 0;
+              caterpillar[0].wonderLerp = 0;
+              break;
+            }
+          }
+        } else if (pause > 0) {
+          caterpillar[0].pause -= 0.016;
+          speed += (0.2 - speed) * 0.1;
+          newX = x;
+          newY = y;
+          caterpillar[0].wonderMode = 'head';
+          caterpillar[0].wonderAngle = sin(Date.now() * 0.0004) * (0.4 + rand() * 0.4);
+          caterpillar[0].targetWonderAngle = caterpillar[0].wonderAngle;
+          caterpillar[0].wonderLerp = 1;
+          if (pauseType === 'long' && curlPhase > 0) {
+            caterpillar[0].angle += (rand() < 0.5 ? 1 : -1) * (PI / 6) * (0.016 / 2);
+            caterpillar[0].curlPhase -= 0.016;
+            if (caterpillar[0].curlPhase <= 0) {
+              caterpillar[0].curlPhase = 0;
+            }
           }
         }
       }
@@ -386,7 +424,7 @@
         newX = margin;
         currentAngle = targetAngle = angle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
         angleLerp = 0;
-        caterpillar[0].targetSpeed = newTargetSpeed;
+        caterpillar[0].targetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
         caterpillar[0].targetWonderAngle = 0;
@@ -397,7 +435,7 @@
         newX = width - margin;
         currentAngle = targetAngle = angle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
         angleLerp = 0;
-        caterpillar[0].targetSpeed = newTargetSpeed;
+        caterpillar[0].targetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
         caterpillar[0].targetWonderAngle = 0;
@@ -408,7 +446,7 @@
         newY = titleHeight;
         currentAngle = targetAngle = angle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
         angleLerp = 0;
-        caterpillar[0].targetSpeed = newTargetSpeed;
+        caterpillar[0].targetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
         caterpillar[0].targetWonderAngle = 0;
@@ -419,7 +457,7 @@
         newY = height - margin;
         currentAngle = targetAngle = angle + (rand() * PI / 2 - PI / 4) * (rand() < 0.5 ? -1 : 1);
         angleLerp = 0;
-        caterpillar[0].targetSpeed = newTargetSpeed;
+        caterpillar[0].targetSpeed = speedState === 'slow' ? 0.5 : speedState === 'sprint' ? 1.5 : 1;
         caterpillar[0].wonderMode = 'none';
         caterpillar[0].wonderAngle = 0;
         caterpillar[0].targetWonderAngle = 0;
@@ -427,7 +465,7 @@
         hitEdge = true;
       }
       
-      if (hitEdge && rand() < 0.2 && decelerationPhase === 0 && shieldState === 'none') {
+      if (hitEdge && rand() < 0.2 && decelerationPhase == 0 && shieldState === 'none') {
         caterpillar[0].pause = 0.2 + rand() * 0.3;
         caterpillar[0].pauseType = 'short';
         caterpillar[0].decelerationPhase = 0.8 + rand() * 0.4;
@@ -459,6 +497,7 @@
       caterpillar[0].shieldLoopAngle = shieldLoopAngle;
       caterpillar[0].shieldCooldown = shieldCooldown;
       caterpillar[0].shieldSprintTimer = shieldSprintTimer;
+      caterpillar[0].loopDirection = loopDirection;
       
       for (let i = 1; i < caterpillar.length; i++) {
         let prev = caterpillar[i - 1];
@@ -474,9 +513,10 @@
         curr.shieldLoopAngle = prev.shieldLoopAngle;
         curr.shieldCooldown = prev.shieldCooldown;
         curr.shieldSprintTimer = prev.shieldSprintTimer;
-        curr.wonderAngle = prev.wonderAngle; // Propagate for consistency
+        curr.wonderAngle = prev.wonderAngle;
         curr.targetWonderAngle = prev.targetWonderAngle;
         curr.wonderLerp = prev.wonderLerp;
+        curr.loopDirection = prev.loopDirection;
       }
     }
     
