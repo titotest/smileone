@@ -93,6 +93,7 @@ body[data-page="photos"] .container {
     will-change: top, transform;
     transition: top var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing), font-size 0s;
     transform: translateZ(0);
+    z-index: 10;
 }
 
 .title {
@@ -107,6 +108,25 @@ body[data-page="photos"] .container {
 .title.at-top {
     top: calc(0.5 * var(--title-font-size) + env(safe-area-inset-top, 0));
     transform: translate(-50%, 0) rotate(0deg) scale(1);
+}
+
+body[data-page="photos"] .title.at-top,
+body[data-page="overview"] .title.at-top,
+body[data-page="specs"] .title.at-top {
+    position: fixed;
+    font-size: 48px; /* Fixed size to avoid viewport scaling */
+    zoom: 1;
+    transform: translate(-50%, 0) scale(1);
+    transform-origin: center;
+    will-change: transform, font-size;
+}
+
+@media (max-width: 666px) {
+    body[data-page="photos"] .title.at-top,
+    body[data-page="overview"] .title.at-top,
+    body[data-page="specs"] .title.at-top {
+        font-size: 42px; /* Adjusted for smaller screens */
+    }
 }
 
 #fullscreen-iframe {
@@ -392,7 +412,7 @@ body[data-page="photos"] .title {
     touch-action: none;
 }
 
-@media (orientation: portrait) {
+@media bug (orientation: portrait) {
     .file-buttons {
         gap: 16vmin;
     }
@@ -416,16 +436,15 @@ body[data-page="photos"] .container {
     width: 100vw;
     min-height: 100dvh;
     overflow: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
+    display: block;
     padding-bottom: env(safe-area-inset-bottom, 0);
     -webkit-overflow-scrolling: auto;
 }
 
 .photos-container {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -455,6 +474,6 @@ body[data-page="photos"]::-webkit-scrollbar, body[data-page="photos"] .container
 
 @media (max-width: 666px) {
     body[data-page="photos"] .container {
-        padding-top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
+        padding-bottom: env(safe-area-inset-bottom, 0);
     }
 }
