@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: false });
 
     const title = document.getElementById('title');
-    const titleContainer = document.querySelector('.title-container');
     const menu = document.getElementById('menu');
     const fornoobies = document.querySelector('.fornoobies');
     const he = document.querySelector('.he');
@@ -246,32 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('touchend', handlePressEnd, { passive: true });
         button.addEventListener('touchcancel', handlePressEnd);
     });
-
-    // Counter-scale title-container during zoom on zoomable pages
-    const zoomablePages = ['photos', 'overview', 'specs'];
-    if (zoomablePages.includes(document.body.getAttribute('data-page')) && titleContainer) {
-        let initialWidth = document.documentElement.clientWidth;
-        const adjustTitleScale = () => {
-            const currentWidth = document.documentElement.clientWidth;
-            const zoomLevel = initialWidth / currentWidth;
-            const inverseScale = 1 / zoomLevel;
-            titleContainer.style.transform = `translateX(-50%) scale(${inverseScale})`;
-            titleContainer.style.transformOrigin = 'center top';
-        };
-
-        // Update initialWidth on page load and orientation changes
-        window.addEventListener('resize', () => {
-            initialWidth = document.documentElement.clientWidth;
-            adjustTitleScale();
-        });
-
-        // Adjust scale on zoom
-        window.addEventListener('resize', adjustTitleScale);
-        window.addEventListener('wheel', adjustTitleScale, { passive: true });
-
-        // Initial adjustment
-        adjustTitleScale();
-    }
 
     if (menu) {
         // Auto-trigger menu on index page load, unless menu=visible is already set
