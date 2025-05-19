@@ -5,36 +5,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable or enable fornoobies mode (set to false to disable)
     const fornoobiesEnabled = false;
 
-    // Block zoom gestures in scripts.js for consistency, except for specs and overview pages
+    // Block zoom gestures in scripts.js for consistency, except for specs, overview, and photos pages
     window.addEventListener('wheel', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page')) && (e.ctrlKey || e.metaKey)) {
+        if (!['specs', 'overview', 'photos'].includes(document.body.getAttribute('data-page')) && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
         }
     }, { passive: false });
     document.addEventListener('gesturestart', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
+        if (!['specs', 'overview', 'photos'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('gesturechange', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
+        if (!['specs', 'overview', 'photos'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('gestureend', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page'))) {
+        if (!['specs', 'overview', 'photos'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
         }
     });
     document.addEventListener('touchstart', (e) => {
-        if (!['specs', 'overview'].includes(document.body.getAttribute('data-page')) && e.touches.length > 1) {
+        if (!['specs', 'overview', 'photos'].includes(document.body.getAttribute('data-page')) && e.touches.length > 1) {
             e.preventDefault();
         }
     }, { passive: false });
 
-    // Allow scrolling on specs, overview, and feed pages
+    // Allow scrolling on specs, overview, photos, and feed pages
     document.addEventListener('touchmove', (e) => {
-        if (!['specs', 'overview', 'feed'].includes(document.body.getAttribute('data-page'))) {
+        if (!['specs', 'overview', 'photos', 'feed'].includes(document.body.getAttribute('data-page'))) {
             e.preventDefault();
             const touchEndY = e.touches[0].clientY;
             const deltaY = touchStartY - touchEndY;
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleTitleClick = () => {
-        if (!menu || ['cadpreview', 'files', 'overview', 'specs', 'feed'].includes(document.body.getAttribute('data-page'))) {
+        if (!menu || ['cadpreview', 'files', 'overview', 'specs', 'photos', 'feed'].includes(document.body.getAttribute('data-page'))) {
             window.location.href = 'https://www.remorphdesign.com/?menu=visible';
             return;
         }
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('wheel', (e) => {
-            if (!['specs', 'overview', 'feed'].includes(document.body.getAttribute('data-page'))) {
+            if (!['specs', 'overview', 'photos', 'feed'].includes(document.body.getAttribute('data-page'))) {
                 e.preventDefault();
                 if (e.deltaY < 0 && isMenuVisible) handleScroll(false);
                 else if (e.deltaY > 0 && !isMenuVisible) handleScroll(true);

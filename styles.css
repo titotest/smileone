@@ -45,8 +45,10 @@ html, body {
 
 body[data-page="specs"],
 body[data-page="overview"],
+body[data-page="photos"],
 body[data-page="specs"] .container,
-body[data-page="overview"] .container {
+body[data-page="overview"] .container,
+body[data-page="photos"] .container {
     touch-action: auto !important;
     overflow: auto !important;
     overflow-y: auto !important;
@@ -331,6 +333,10 @@ body[data-page="overview"] .title {
     cursor: pointer;
 }
 
+body[data-page="photos"] .title {
+    cursor: pointer;
+}
+
 .file-buttons {
     display: flex;
     justify-content: center;
@@ -397,5 +403,58 @@ body[data-page="overview"] .title {
     .file-title {
         font-size: 4vmin;
         margin-top: 2vmin;
+    }
+}
+
+body[data-page="photos"] {
+    overflow: auto;
+    touch-action: pinch-zoom;
+}
+
+body[data-page="photos"] .container {
+    position: relative;
+    width: 100vw;
+    min-height: 100dvh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    -webkit-overflow-scrolling: auto;
+}
+
+.photos-container {
+    position: relative;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.photo-image {
+    width: 100vw;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body[data-page="photos"], body[data-page="photos"] .container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body[data-page="photos"]::-webkit-scrollbar, body[data-page="photos"] .container::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 666px) {
+    body[data-page="photos"] .container {
+        padding-top: calc(var(--title-font-size) + env(safe-area-inset-top, 0));
     }
 }
