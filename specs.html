@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+    <title>Remorph Design - Specs</title>
+    <meta name="description" content="Remorph 3D printer Klipper input shaper calibration graph curves">
+    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
+    <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
+    <style>
+        body[data-page="specs"] {
+            overflow: auto;
+            touch-action: pinch-zoom;
+        }
+        #title.title.at-top {
+            cursor: pointer;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            min-height: 100dvh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 10vmin;
+            -webkit-overflow-scrolling: auto;
+        }
+        .graphs-container {
+            position: absolute;
+            top: calc(3 * var(--title-font-size));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4vmin;
+            width: 100%;
+            max-width: 180vmin;
+            padding: 0 4vmin;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+        .graph-link {
+            display: block;
+            flex: 1;
+        }
+        .graph-image {
+            width: 100%;
+            height: auto;
+            max-width: 84vmin;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        .graphs-title {
+            position: absolute;
+            top: calc(3 * var(--title-font-size) + 71vmin);
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 3vmin;
+            color: #f5f5f7;
+            text-align: center;
+            width: 90%;
+            max-width: 90vmin;
+            opacity: 0.69;
+            z-index: 2;
+        }
+        .text {
+            position: absolute;
+            top: calc(3 * var(--title-font-size) + 77vmin);
+            width: 90%;
+            max-width: 90vmin;
+            padding: 0 5vw;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            font-size: 3vmin;
+            color: #f5f5f7;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+        }
+        .text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        body[data-page="specs"], .container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body[data-page="specs"]::-webkit-scrollbar, .container::-webkit-scrollbar {
+            display: none;
+        }
+        @media (max-width: 666px) {
+            .graphs-container {
+                flex-direction: column;
+                gap: 6vmin;
+            }
+            .graph-image {
+                max-width: 80vmin;
+            }
+            .graphs-title {
+                top: calc(3 * var(--title-font-size) + 149vmin);
+            }
+            .text {
+                top: calc(3 * var(--title-font-size) + 155vmin);
+                font-size: 3.2vmin;
+            }
+        }
+    </style>
+</head>
+<body data-page="specs">
+    <div class="container">
+        <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
+        
+        <div class="graphs-container" id="graphs-gallery">
+            <a href="/images/IS_X_AXIS_GRAPH.png" class="graph-link" data-pswp-width="3000" data-pswp-height="2400">
+                <img src="/images/SD_IS_X_AXIS_GRAPH.png" alt="X Axis Input Shaper Graph" class="graph-image">
+            </a>
+            <a href="/images/IS_Y_AXIS_GRAPH.png" class="graph-link" data-pswp-width="3000" data-pswp-height="2400">
+                <img src="/images/SD_IS_Y_AXIS_GRAPH.png" alt="Y Axis Input Shaper Graph" class="graph-image">
+            </a>
+        </div>
+
+        <div class="graphs-title">
+            Initial Input Shaper Frequency Response
+        </div>
+        
+        <div class="text">
+            <br><br>
+            1000mm/s travel speed 
+            <br><br>
+            125.000mm/s² max accel. 
+            <br><br>
+            Long meltzone hotend's
+            <br><br>
+            LGX PRO 
+            <br><br>
+            BEACON
+            <br><br>
+            CPAP
+            <br><br>
+            MAGBED
+            <br><br>
+            HEPA and carbon pellets with top-down convection 
+            <br><br>
+            Static core XY 
+            <br><br>
+            Frame made of 3030s and 2020s t-slot extrusions 
+            <br><br>
+            N23 servos for X and Y 
+            <br><br>
+            Servos and electronics isolated 
+            <br><br>
+            9mm belts for X Y Z 
+            <br><br>
+            12mm linear rails 
+            <br><br>
+            5:1 gear ratio for Z
+            <br><br>
+            maxwell kinematic couplers 
+            <br><br>
+            X307 Y307 Z304mm 
+            <br><br>
+            W460 D560 H720mm 
+            <br><br>
+            hinges, door handle and connected cables are all internal 
+            <br><br>
+            4mm panels 
+            <br><br>
+            Sealed internal filament dry box 
+            <br><br>
+            External filament feed possible 
+            <br><br>
+            Optical endstops 
+            <br><br>
+            All idlers and gears use 5mm shafts with 13mm bearings 
+            <br><br>
+            Nozzle wiper with a slide-out bucket 
+            <br><br>
+        </div>
+    </div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                            <div class="pswp__preloader__cut">
+                                <div class="pswp__preloader__donut"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous"></button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next"></button>
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js';
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#graphs-gallery',
+            children: 'a.graph-link',
+            pswpModule: () => import('https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js'),
+            wheelToZoom: true,
+            showHideAnimationType: 'zoom',
+            initialZoomLevel: 'fit',
+            secondaryZoomLevel: 1.25,
+            maxZoomLevel: 2,
+            bgOpacity: 0.95,
+            spacing: 0.15,
+            loop: false,
+            clickToCloseNonZoomable: false,
+            tapAction: 'close'
+        });
+
+        lightbox.on('beforeOpen', () => {
+            document.querySelectorAll('#graphs-gallery a.graph-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                });
+            });
+        });
+
+        lightbox.init();
+
+        const textElement = document.querySelector('.text');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    textElement.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(textElement);
+    </script>
+</body>
+</html>
