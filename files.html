@@ -12,26 +12,79 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Fix for removing underline on link buttons -->
     <style>
+        body {
+            background: #000;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(transparent 49%, #00ffff22 50%, #00ffff22 51%, transparent 52%),
+                linear-gradient(90deg, transparent 49%, #00ffff22 50%, #00ffff22 51%, transparent 52%);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: bottom;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            from { background-position: 0 0; }
+            to { background-position: 60px 60px; }
+        }
+
+        .terminal-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            opacity: 0.42;
+            pointer-events: none;
+        }
+
+        .terminal-text {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: clamp(0.73rem, 1.78vw, 1.3rem);
+            line-height: 1.5;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            white-space: pre-wrap;
+            margin-left: 12px;
+            margin-bottom: 20px;
+            max-width: 90%;
+            overflow: hidden;
+        }
+
         .file-button {
             text-decoration: none;
         }
     </style>
 </head>
 <body data-page="files">
+
+    <div class="grid-bg"></div>
+
+    <div class="terminal-overlay">
+        <pre class="terminal-text">
+<span id="typewriter"></span>
+        </pre>
+    </div>
+
     <div class="container">
         <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
         <div class="file-buttons">
-            <!-- ZIP Download Button -->
-            <a href="https://github.com/lexreman/remorphdesign/tree/main" 
+            <a href="https://github.com/lexreman/remorphdesign/archive/refs/heads/main.zip" 
                download="remorphdesign-main.zip" 
                class="file-button">
                 <img src="/images/zip_icon.png" alt="ZIP Download" class="file-icon">
                 <span class="file-title">ZIP</span>
             </a>
 
-            <!-- GitHub Repository Button (Specific Files) -->
             <a href="https://github.com/lexreman/remorphdesign/tree/main" 
                target="_blank" 
                rel="noopener noreferrer" 
@@ -41,6 +94,56 @@
             </a>
         </div>
     </div>
+
+    <script>
+        const text = `############################
+# REMORPH DESIGN CAD FILES #
+############################
+
+*Initial public release – January 03, 2026*
+
+**ATTENTION:**  
+These files represent the initial public release. 
+Minor updates are expected in the near future 
+to address CAD clean-up, additional verification, 
+sub-assembly refinements, small user-experience improvements, 
+and possible modifications to certain parts or assemblies.
+
+Dedicated files for solidworks and f360 will be published after.
+
+The printer has been fully assembled and is currently operational. 
+Extensive iteration has been performed on critical components, 
+assemblies, and design solutions, 
+providing high confidence in the present functionality. 
+
+During this brief refinement period, 
+temporary discrepancies may exist between the CAD files and the BOM 
+— users are advised to cross-reference both for accuracy.
+
+**Made with love,**  
+**Carried on the shoulders of giants,**  
+**Released openly for those who aim beyond.**
+
+-Courtesy of Lex Reman`;
+
+        const typewriter = document.getElementById('typewriter');
+        const totalChars = text.length;
+        const totalTime = 2200; // 2.2 seconds
+        const interval = totalTime / totalChars;
+
+        let i = 0;
+        typewriter.textContent = '';
+
+        const timer = setInterval(() => {
+            if (i < totalChars) {
+                typewriter.textContent += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(timer);
+            }
+        }, interval);
+    </script>
+
     <script src="scripts.js"></script>
 </body>
 </html>
