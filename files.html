@@ -11,19 +11,34 @@
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Fix for removing underline on link buttons -->
+    <style>
+        .file-button {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body data-page="files">
     <div class="container">
         <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
         <div class="file-buttons">
-            <button class="file-button">
+            <!-- ZIP Download Button -->
+            <a href="https://github.com/lexreman/remorphdesign/tree/main" 
+               download="remorphdesign-main.zip" 
+               class="file-button">
                 <img src="/images/zip_icon.png" alt="ZIP Download" class="file-icon">
                 <span class="file-title">ZIP</span>
-            </button>
-            <button class="file-button">
+            </a>
+
+            <!-- GitHub Repository Button (Specific Files) -->
+            <a href=https://github.com/lexreman/remorphdesign/tree/main" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="file-button">
                 <img src="/images/folder_icon.png" alt="Specific Files" class="file-icon">
                 <span class="file-title">SPECIFIC</span>
-            </button>
+            </a>
         </div>
     </div>
     <script src="scripts.js"></script>
