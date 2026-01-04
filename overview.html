@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
     <title>Remorph Design - Open Source 3D Printer Overview</title>
     
-    <meta name="description" content="Remorph Design: Open-source industrial-grade filament 3D printer. Initial public release January 2026.">
+    <meta name="description" content="Remorph Design: Open-source industrial-grade filament 3D printer. Initial public release January 2026 – high-performance CoreXY design with 307×307×304mm build volume, Maxwell kinematic bed, enclosed chamber, and advanced HEPA/carbon filtration.">
     
     <meta property="og:title" content="Remorph Design - Open Source 3D Printer Overview">
-    <meta property="og:description" content="high-performance open-source filament 3D printer featuring industrial-grade components, 307×307×304mm build volume, maxwell kinematic coupling, top down convection chamber with filtration.">
+    <meta property="og:description" content="Early 2026 release of a high-performance open-source filament 3D printer featuring industrial-grade components, large 307×307×304mm build volume, kinematic coupling, enclosed heated chamber, and advanced filtration system.">
     <meta property="og:image" content="https://www.remorphdesign.com/images/O6_TH.png">
     <meta property="og:url" content="https://www.remorphdesign.com/overview.html">
     <meta property="og:type" content="website">
@@ -23,163 +23,46 @@
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
     
     <style>
-        body[data-page="overview"] {
-            overflow: auto;
-            touch-action: pinch-zoom;
-        }
-        #title.title.at-top {
-            cursor: pointer;
-        }
-        .container {
-            position: relative;
-            width: 100vw;
-            min-height: 100dvh;
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 10vmin;
-            -webkit-overflow-scrolling: auto;
-        }
-        .overview-container {
-            position: absolute;
-            top: calc(2 * var(--title-font-size));
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4vmin;
-            z-index: 1;
-            width: 86vmin;
-        }
-        .overview-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        .overview-image {
-            width: 100%;
-            max-width: 86vmin;
-            object-fit: contain;
-            cursor: pointer;
-        }
-        .overview-caption {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 600;
-            font-size: 2vmin;
-            color: #f5f5f7;
-            text-align: left;
-            margin-top: 2vmin;
-            margin-bottom: 10vmin;
-            width: 100%;
-        }
-        .table-wrapper {
-            width: 100%;
-            max-width: 86vmin;
-            margin-top: 2vmin;
-            margin-bottom: 4vmin;
-            border: 2px solid rgba(245, 245, 247, 0.5);
-            border-radius: 1vmin;
-        }
-        .overview-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 600;
-            font-size: 2vmin;
-            color: #f5f5f7;
-            background: transparent;
-            position: relative;
-        }
-        .overview-table th,
-        .overview-table td {
-            padding: 1vmin;
-            text-align: center;
-            background: transparent;
-            position: relative;
-        }
-        .overview-table th {
-            font-weight: 600;
-        }
-        .overview-table th::after,
-        .overview-table td::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-right: 2px solid rgba(245, 245, 247, 0.5);
-            border-bottom: 2px solid rgba(245, 245, 247, 0.5);
-            pointer-events: none;
-        }
-        .overview-table th:last-child::after,
-        .overview-table td:last-child::after {
-            border-right: none;
-        }
-        .overview-table tr:last-child td::after {
-            border-bottom: none;
-        }
-        .overview-table th:first-child {
-            border-top-left-radius: 0.8vmin;
-        }
-        .overview-table th:last-child {
-            border-top-right-radius: 0.8vmin;
-        }
-        .overview-table tr:last-child td:first-child {
-            border-bottom-left-radius: 0.8vmin;
-        }
-        .overview-table tr:last-child td:last-child {
-            border-bottom-right-radius: 0.8vmin;
-        }
-        body[data-page="overview"], .container {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        body[data-page="overview"]::-webkit-scrollbar, .container::-webkit-scrollbar {
-            display: none;
-        }
-        @media (max-width: 666px) {
-            .overview-container {
-                width: 90vw;
-            }
-            .overview-image {
-                width: 90vw;
-                max-width: 90vw;
-            }
-            .overview-caption {
-                font-size: 3.3vmin;
-                margin-top: 4vmin;
-                margin-bottom: 10vmin;
-            }
-            .table-wrapper {
-                max-width: 90vw;
-                border-radius: 1vmin;
-            }
-            .overview-table {
-                font-size: 2.5vmin;
-            }
-            .overview-table th,
-            .overview-table td {
-                padding: 1.5vmin;
-            }
-            .overview-table th:first-child {
-                border-top-left-radius: 0.6vmin;
-            }
-            .overview-table th:last-child {
-                border-top-right-radius: 0.6vmin;
-            }
-            .overview-table tr:last-child td:first-child {
-                border-bottom-left-radius: 0.6vmin;
-            }
-            .overview-table tr:last-child td:last-child {
-                border-bottom-right-radius: 0.6vmin;
-            }
+        body[data-page="overview"]{overflow:auto;touch-action:pinch-zoom}
+        #title.title.at-top{cursor:pointer}
+        .container{position:relative;width:100vw;min-height:100dvh;overflow:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:20vmin;-webkit-overflow-scrolling:auto}
+        .overview-container{position:absolute;top:calc(2*var(--title-font-size));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4vmin;z-index:1;width:86vmin}
+        .overview-item{display:flex;flex-direction:column;align-items:center;width:100%}
+        .overview-image{width:100%;max-width:86vmin;object-fit:contain;cursor:pointer}
+        .overview-caption{font-family:'Nunito',sans-serif;font-weight:600;font-size:2vmin;color:#f5f5f7;text-align:left;margin-top:2vmin;margin-bottom:10vmin;width:100%}
+        .table-wrapper{width:100%;max-width:86vmin;margin:2vmin 0 4vmin;border:2px solid rgba(245,245,247,.5);border-radius:1vmin}
+        .overview-table{width:100%;border-collapse:separate;border-spacing:0;font-family:'Nunito',sans-serif;font-weight:600;font-size:2vmin;color:#f5f5f7;background:transparent;position:relative}
+        .overview-table th,.overview-table td{padding:1vmin;text-align:center;background:transparent;position:relative}
+        .overview-table th{font-weight:600}
+        .overview-table th::after,.overview-table td::after{content:'';position:absolute;inset:0;border-right:2px solid rgba(245,245,247,.5);border-bottom:2px solid rgba(245,245,247,.5);pointer-events:none}
+        .overview-table th:last-child::after,.overview-table td:last-child::after{border-right:none}
+        .overview-table tr:last-child td::after{border-bottom:none}
+        .overview-table th:first-child{border-top-left-radius:.8vmin}
+        .overview-table th:last-child{border-top-right-radius:.8vmin}
+        .overview-table tr:last-child td:first-child{border-bottom-left-radius:.8vmin}
+        .overview-table tr:last-child td:last-child{border-bottom-right-radius:.8vmin}
+        .extra-gallery{display:flex;flex-direction:column;gap:4vmin;width:100%;margin:6vmin 0 15vmin}
+        .extra-row{display:flex;justify-content:space-between;gap:1vmin;width:100%}
+        .extra-link{flex:1;display:block}
+        .extra-image{width:100%;height:100%;object-fit:contain;cursor:pointer}
+        .extra-wrapper{position:relative;width:100%;padding-top:56.25%;overflow:hidden}
+        body[data-page="overview"],.container{-ms-overflow-style:none;scrollbar-width:none}
+        body[data-page="overview"]::-webkit-scrollbar,.container::-webkit-scrollbar{display:none}
+        @media (max-width:666px){
+            .overview-container{width:90vw}
+            .overview-image{width:90vw;max-width:90vw}
+            .overview-caption{font-size:3.3vmin;margin-top:4vmin;margin-bottom:10vmin}
+            .table-wrapper{max-width:90vw;border-radius:1vmin}
+            .overview-table{font-size:2.5vmin}
+            .overview-table th,.overview-table td{padding:1.5vmin}
+            .extra-row{flex-direction:column;gap:4vmin}
+            .extra-gallery{margin-bottom:20vmin}
+            .container{padding-bottom:25vmin}
+            .extra-wrapper{padding-top:0}
+            .extra-image{height:auto}
         }
     </style>
 </head>
@@ -248,7 +131,7 @@
                     a slide-out filter box contains three 15×40×80mm HEPA filters and 0.69L of activated carbon pellets. 
                     Both, chamber fan and part cooling fan draw air through it. 
                     The chamber fan’s exhaust is split into two outlets at the bottom of the chamber for top-down convection.</p>
-            </div>     
+            </div>
             <div class="overview-item" id="item-8">
                 <img src="/images/O8_Spool_Box.png" alt="Remorph 3D printer enclosed filament storage" class="overview-image">
                 <p class="overview-caption">The chamber has a sealed filament storage with desiccant compartments. 
@@ -261,20 +144,113 @@
             <div class="overview-item" id="item-10">
                 <img src="/images/O10_Nozzle_Wipper.png" alt="Remorph 3D printer nozzle wiper with bucket" class="overview-image">
                 <p class="overview-caption">Nozzle wiper with a slide-out bucket.</p>
-            </div>  
+            </div>
+
+            <div class="extra-gallery" id="extra-gallery">
+                <div class="extra-row">
+                    <a href="/images/overview_extra_01.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_01.png" alt="Remorph 3D printer extra image 01" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_02.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_02.png" alt="Remorph 3D printer extra image 02" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_03.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_03.png" alt="Remorph 3D printer extra image 03" class="extra-image"></div>
+                    </a>
+                </div>
+                <div class="extra-row">
+                    <a href="/images/overview_extra_04.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_04.png" alt="Remorph 3D printer extra image 04" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_05.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_05.png" alt="Remorph 3D printer extra image 05" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_06.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_06.png" alt="Remorph 3D printer extra image 06" class="extra-image"></div>
+                    </a>
+                </div>
+                <div class="extra-row">
+                    <a href="/images/overview_extra_07.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_07.png" alt="Remorph 3D printer extra image 07" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_08.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_08.png" alt="Remorph 3D printer extra image 08" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_09.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_09.png" alt="Remorph 3D printer extra image 09" class="extra-image"></div>
+                    </a>
+                </div>
+                <div class="extra-row">
+                    <a href="/images/overview_extra_10.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_10.png" alt="Remorph 3D printer extra image 10" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_11.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_11.png" alt="Remorph 3D printer extra image 11" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_12.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_12.png" alt="Remorph 3D printer extra image 12" class="extra-image"></div>
+                    </a>
+                </div>
+                <div class="extra-row">
+                    <a href="/images/overview_extra_13.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_13.png" alt="Remorph 3D printer extra image 13" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_14.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_14.png" alt="Remorph 3D printer extra image 14" class="extra-image"></div>
+                    </a>
+                    <a href="/images/overview_extra_15.png" class="extra-link">
+                        <div class="extra-wrapper"><img src="/images/overview_extra_15.png" alt="Remorph 3D printer extra image 15" class="extra-image"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                            <div class="pswp__preloader__cut">
+                                <div class="pswp__preloader__donut"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous"></button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next"></button>
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        document.querySelectorAll('.overview-image').forEach(img => {
-            img.addEventListener('click', function() {
-                const item = this.closest('.overview-item');
-                item.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            });
+        document.querySelectorAll('.overview-image').forEach(img=>{img.addEventListener('click',()=>{img.closest('.overview-item').scrollIntoView({behavior:'smooth',block:'center',inline:'center'})})});
+    </script>
+
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js';
+        const lightbox=new PhotoSwipeLightbox({gallery:'#extra-gallery',children:'a.extra-link',pswpModule:()=>import('https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js'),wheelToZoom:true,showHideAnimationType:'zoom',initialZoomLevel:'fit',secondaryZoomLevel:1.5,maxZoomLevel:3,bgOpacity:.95,spacing:.12,loop:false});
+        lightbox.init();
+    </script>
+
+    <script>
+        document.querySelectorAll('.extra-link').forEach(link=>{
+            const img=new Image();
+            img.src=link.href;
+            img.onload=()=>{link.dataset.pswpWidth=img.naturalWidth;link.dataset.pswpHeight=img.naturalHeight};
         });
     </script>
 
