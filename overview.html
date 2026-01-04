@@ -3,14 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
-    <title>Remorph Design - Overview</title>
+    <title>Remorph Design - Open Source 3D Printer Overview</title>
+    
+    <meta name="description" content="Remorph Design: Open-source industrial-grade filament 3D printer. Initial public release January 2026.">
+    
+    <meta property="og:title" content="Remorph Design - Open Source 3D Printer Overview">
+    <meta property="og:description" content="high-performance open-source filament 3D printer featuring industrial-grade components, 307×307×304mm build volume, maxwell kinematic coupling, top down convection chamber with filtration.">
+    <meta property="og:image" content="https://www.remorphdesign.com/images/O6_TH.png">
+    <meta property="og:url" content="https://www.remorphdesign.com/overview.html">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
+    
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;900&display=swap">
     <link rel="stylesheet" href="styles.css">
+    
     <style>
         body[data-page="overview"] {
             overflow: auto;
@@ -52,6 +65,7 @@
             width: 100%;
             max-width: 86vmin;
             object-fit: contain;
+            cursor: pointer;
         }
         .overview-caption {
             font-family: 'Nunito', sans-serif;
@@ -173,8 +187,8 @@
     <div class="container">
         <h1 id="title" class="title at-top">REMORPH DESIGN</h1>
         <div class="overview-container">
-            <div class="overview-item">
-                <img src="/images/O1_Dimensions.png" alt="Dimensions" class="overview-image">
+            <div class="overview-item" id="item-1">
+                <img src="/images/O1_Dimensions.png" alt="Remorph 3D printer dimensions and build volume specifications" class="overview-image">
                 <div class="table-wrapper">
                     <table class="overview-table">
                         <tr>
@@ -192,8 +206,8 @@
                     </table>
                 </div>
             </div>
-            <div class="overview-item">
-                <img src="/images/O2_Buildplate_Size.png" alt="Buildplate Size" class="overview-image">
+            <div class="overview-item" id="item-2">
+                <img src="/images/O2_Buildplate_Size.png" alt="Remorph 3D printer build plate size and printable area" class="overview-image">
                 <p class="overview-caption">Constraints defined the build size. 
                     Had to fit on most workbenches and desks, 
                     the extrusions to be cuts of 50mm increments, 
@@ -203,51 +217,67 @@
                     which made the printable area 307×307mm. 
                     The slightly larger build plate is due to some niche reasons, 
                     mainly, not printing on the very edges, 
-                    heat around when the entire area is utilized and embedded sections to grab the flexible sheet. </p>
+                    heat around when the entire area is utilized and embedded sections to grab the flexible sheet.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O3_Maxwell_Kinematic.png" alt="Maxwell Kinematic" class="overview-image">
-                <p class="overview-caption">This isn’t just 3-point leveling. <br>
-                    Maxwell kinematic couplers ensure even expansion and positioning. <br>
-                    Each joint uses 12mm steel balls on two 5mm shafts, held by a 10×15×25mm magnet. </p>
-            <div class="overview-item">
-                <img src="/images/O4_XY_Joint.png" alt="XY Joint" class="overview-image">
-                <p class="overview-caption">All idlers and gears use 5mm shafts with 13mm bearings. </p>
+            <div class="overview-item" id="item-3">
+                <img src="/images/O3_Maxwell_Kinematic.png" alt="Remorph 3D printer Maxwell kinematic bed coupling" class="overview-image">
+                <p class="overview-caption">This isn’t just 3-point leveling. 
+                    Maxwell kinematic couplers ensure even expansion and positioning. 
+                    Each joint uses 12mm steel balls on two 5mm shafts, held by a 10×15×25mm magnet.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O5_Servo_Stepper.png" alt="Motors" class="overview-image">
+            <div class="overview-item" id="item-4">
+                <img src="/images/O4_XY_Joint.png" alt="Remorph 3D printer XY joint and belt system" class="overview-image">
+                <p class="overview-caption">All idlers and gears use 5mm shafts with 13mm bearings.</p>
+            </div>
+            <div class="overview-item" id="item-5">
+                <img src="/images/O5_Servo_Stepper.png" alt="Remorph 3D printer motors - N23 servos and N17 steppers" class="overview-image">
                 <p class="overview-caption">To avoid constraining the size and weight of the toolhead components and to maintain comfortable chamber access, 
-                    bigger ones made more sense than multiple small motors. <br>But N23 steppers cap out around 1000 RPM, so for the XY, two N23 servos. 
-                    The Z axis uses three N17 steppers. </p>
+                    bigger ones made more sense than multiple small motors. 
+                    But N23 steppers cap out around 1000 RPM, so for the XY, two N23 servos. 
+                    The Z axis uses three N17 steppers.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O6_TH.png" alt="Toolhead" class="overview-image">
+            <div class="overview-item" id="item-6">
+                <img src="/images/O6_TH.png" alt="Remorph 3D printer toolhead assembly" class="overview-image">
                 <p class="overview-caption">The toolhead has a slide-up guard. The PCB is mounted at the front, 
                     keeping the cable close to the filament tube and providing easy access to the connectors. 
-                    Components are rapidly accessible, with very few steps to reach one. </p>
+                    Components are rapidly accessible, with very few steps to reach one.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O7_Filter_Box.png" alt="Filter" class="overview-image">
+            <div class="overview-item" id="item-7">
+                <img src="/images/O7_Filter_Box.png" alt="Remorph 3D printer HEPA and carbon filter system" class="overview-image">
                 <p class="overview-caption">At the top of the chamber, 
                     a slide-out filter box contains three 15×40×80mm HEPA filters and 0.69L of activated carbon pellets. 
-                    Both, chamber fan and part cooling fan draw air through it. <br>
-                    The chamber fan’s exhaust is split into two outlets at the bottom of the chamber for top-down convection. </p>
+                    Both, chamber fan and part cooling fan draw air through it. 
+                    The chamber fan’s exhaust is split into two outlets at the bottom of the chamber for top-down convection.</p>
             </div>     
-            <div class="overview-item">
-                <img src="/images/O8_Spool_Box.png" alt="Filament Storage" class="overview-image">
-                <p class="overview-caption">The chamber has a sealed filament storage with desiccant compartments. <br>
-                    Spool holder sits on bearings to minimize resistance for the extruder. </p>
+            <div class="overview-item" id="item-8">
+                <img src="/images/O8_Spool_Box.png" alt="Remorph 3D printer enclosed filament storage" class="overview-image">
+                <p class="overview-caption">The chamber has a sealed filament storage with desiccant compartments. 
+                    Spool holder sits on bearings to minimize resistance for the extruder.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O9_Y_Splitter.png" alt="Y-Splitter" class="overview-image">
-                <p class="overview-caption">Filament Y-Splitter to ease external feed. </p>
+            <div class="overview-item" id="item-9">
+                <img src="/images/O9_Y_Splitter.png" alt="Remorph 3D printer filament Y-splitter" class="overview-image">
+                <p class="overview-caption">Filament Y-Splitter to ease external feed.</p>
             </div>
-            <div class="overview-item">
-                <img src="/images/O10_Nozzle_Wipper.png" alt="Overview Image 3" class="overview-image">
-                <p class="overview-caption">Nozzle wiper with a slide-out bucket. </p>
+            <div class="overview-item" id="item-10">
+                <img src="/images/O10_Nozzle_Wipper.png" alt="Remorph 3D printer nozzle wiper with bucket" class="overview-image">
+                <p class="overview-caption">Nozzle wiper with a slide-out bucket.</p>
             </div>  
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.overview-image').forEach(img => {
+            img.addEventListener('click', function() {
+                const item = this.closest('.overview-item');
+                item.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            });
+        });
+    </script>
+
     <script src="scripts.js"></script>
 </body>
 </html>
