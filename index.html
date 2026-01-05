@@ -12,8 +12,66 @@
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        #bg-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: url('images/Main_cover_01.png') center center / cover no-repeat;
+            opacity: 0;
+            transition: opacity var(--transition-duration) var(--transition-easing);
+            pointer-events: none;
+            z-index: 0;
+        }
+        #bg-cover.visible {
+            opacity: 1;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+        #scroll-hint {
+            position: absolute;
+            bottom: 8vh;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Nunito', Arial, sans-serif;
+            font-weight: 900;
+            font-size: 3.4vmin;
+            color: rgba(245, 245, 247, 0.42);
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes menuHint {
+            0% {
+                transform: translateX(-50%) translateY(20vh);
+                opacity: 0.42;
+            }
+            50% {
+                transform: translateX(-50%) translateY(2vh);
+                opacity: 0.69;
+            }
+            100% {
+                transform: translateX(-50%) translateY(20vh);
+                opacity: 0.42;
+            }
+        }
+        #scroll-hint.show {
+            animation: menuHint 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        }
+        @media (max-width: 666px) {
+            #scroll-hint {
+                font-size: 4.5vmin;
+            }
+        }
+    </style>
 </head>
 <body data-page="index">
+    <div id="bg-cover" class="visible"></div>
+    <div id="scroll-hint" class="show">MENU</div>
+
     <div class="container">
         <h1 id="title" class="title">REMORPH DESIGN</h1>
         <nav id="menu" class="menu">
@@ -35,6 +93,25 @@
             <span class="ho">Touch here for menu</span>
         </div>
     </div>
+
     <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bgCover = document.getElementById('bg-cover');
+            const scrollHint = document.getElementById('scroll-hint');
+            const menu = document.getElementById('menu');
+
+            const toggleElements = () => {
+                const isMenuVisible = menu.classList.contains('visible');
+                bgCover.classList.toggle('visible', !isMenuVisible);
+                scrollHint.classList.toggle('show', !isMenuVisible);
+            };
+
+            const observer = new MutationObserver(toggleElements);
+            observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+
+            toggleElements();
+        });
+    </script>
 </body>
 </html>

@@ -247,13 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (menu) {
-        // Auto-trigger menu on index page load, unless menu=visible is already set
-        if (document.body.getAttribute('data-page') === 'index' && !isInitialMenuVisible) {
-            setTimeout(() => {
-                toggleMenu(true);
-            }, MENU_AUTO_TRIGGER_DELAY); // Editable delay for menu auto-trigger
-        }
-
         // Add click listener to the entire document to show the menu when the title is by itself
         document.addEventListener('click', (e) => {
             // Check if the click target is the title, "he", or "ho" (or their descendants)
