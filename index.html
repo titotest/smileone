@@ -61,6 +61,10 @@
         #scroll-hint.show {
             animation: menuHint 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
         }
+        #scroll-hint.hide {
+            opacity: 0;
+            animation: none;
+        }
         @media (max-width: 666px) {
             #scroll-hint {
                 font-size: 4.5vmin;
@@ -104,7 +108,13 @@
             const toggleElements = () => {
                 const isMenuVisible = menu.classList.contains('visible');
                 bgCover.classList.toggle('visible', !isMenuVisible);
-                scrollHint.classList.toggle('show', !isMenuVisible);
+                if (isMenuVisible) {
+                    scrollHint.classList.remove('show');
+                    scrollHint.classList.add('hide');
+                } else {
+                    scrollHint.classList.remove('hide');
+                    scrollHint.classList.add('show');
+                }
             };
 
             const observer = new MutationObserver(toggleElements);
