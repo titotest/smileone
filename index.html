@@ -40,22 +40,22 @@
             font-family: 'Nunito', Arial, sans-serif;
             font-weight: 900;
             font-size: 3.4vmin;
-            color: rgba(245, 245, 247, 0.42);
+            color: rgba(245, 245, 247, 0.38); /* more translucent base */
             pointer-events: none;
             z-index: 2;
         }
         @keyframes menuHint {
             0% {
                 transform: translateX(-50%) translateY(20vh);
-                opacity: 0.42;
+                opacity: 0.38;
             }
             50% {
-                transform: translateX(-50%) translateY(2vh);
-                opacity: 0.69;
+                transform: translateX(-50%) translateY(8vh); /* reduced max height by ~30% – much gentler */
+                opacity: 0.52; /* reduced peak opacity for glassy feel */
             }
             100% {
                 transform: translateX(-50%) translateY(20vh);
-                opacity: 0.42;
+                opacity: 0.38;
             }
         }
         #scroll-hint.show {
