@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
     <link rel="stylesheet" href="styles.css">
     <style>
+        :root {
+            --transition-duration: 1.2s; /* Slow and relaxed */
+            --transition-easing: cubic-bezier(0.34, 0.67, 0.2, 1); /* Dreamy soft ease */
+        }
+
         #bg-cover {
             position: fixed;
             top: 0;
@@ -28,10 +33,12 @@
         #bg-cover.visible {
             opacity: 1;
         }
+
         .container {
             position: relative;
             z-index: 1;
         }
+
         #scroll-hint {
             position: absolute;
             bottom: 8vh;
@@ -40,35 +47,51 @@
             font-family: 'Nunito', Arial, sans-serif;
             font-weight: 900;
             font-size: 3.4vmin;
-            color: rgba(245, 245, 247, 0.42);
+            color: rgba(245, 245, 247, 0.38); /* Slightly more translucent base */
             pointer-events: none;
             z-index: 2;
         }
+
         @keyframes menuHint {
             0% {
                 transform: translateX(-50%) translateY(20vh);
-                opacity: 0.42;
+                opacity: 0.38;
             }
             50% {
-                transform: translateX(-50%) translateY(2vh);
-                opacity: 0.69;
+                transform: translateX(-50%) translateY(6vh); /* Reduced travel by ~30%: was 2vh → effective upward movement now softer */
+                opacity: 0.52; /* Reduced peak opacity by 20% for glassy translucency */
             }
             100% {
                 transform: translateX(-50%) translateY(20vh);
-                opacity: 0.42;
+                opacity: 0.38;
             }
         }
+
         #scroll-hint.show {
-            animation: menuHint 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+            animation: menuHint 4.2s var(--transition-easing) infinite;
         }
+
         #scroll-hint.hide {
             opacity: 0;
             animation: none;
         }
+
         @media (max-width: 666px) {
             #scroll-hint {
                 font-size: 4.5vmin;
             }
+        }
+
+        /* Menu open state – kept dim and gentle */
+        .menu.visible {
+            top: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.9;
+            visibility: visible;
+            transition: 
+                top var(--transition-duration) var(--transition-easing),
+                transform var(--transition-duration) var(--transition-easing),
+                opacity var(--transition-duration) var(--transition-easing);
         }
     </style>
 </head>
