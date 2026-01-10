@@ -519,3 +519,15 @@ body[data-page="photos"]::-webkit-scrollbar, body[data-page="photos"] .container
         transition: none;
     }
 }
+/* Completely hide tooltip on landing page when title is centered (menu closed) */
+body[data-page="index"] .title:not(.at-top) + .title-tooltip {
+    display: none !important;
+}
+
+/* Optional: make sure it's really gone even if something weird happens */
+body[data-page="index"] .title-tooltip {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
