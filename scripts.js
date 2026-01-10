@@ -341,4 +341,66 @@ document.addEventListener('DOMContentLoaded', () => {
             resetIdleTimer();
         });
     }
+
+    
+});
+
+// Smooth glass follow-cursor tooltip – no delay, instant position
+document.addEventListener('DOMContentLoaded', () => {
+    const title = document.getElementById('title');
+    if (!title) return;
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'title-tooltip';
+    tooltip.textContent = 'go back';
+    document.body.appendChild(tooltip);
+
+    let rafPending = false;
+
+    const updatePosition = (e) => {
+        if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(() => {
+                const offsetX = 16;
+                const offsetY = 20;
+                
+                tooltip.style.left = (e.clientX + offsetX) + 'px';
+                tooltip.style.top  = (e.clientY + offsetY) + 'px';
+                rafPending = false;
+            });
+        }
+    };
+
+    const showTooltip = (e) => {
+        tooltip.classList.add('visible');
+        updatePosition(e); // set correct position immediately
+    };
+
+    const hideTooltip = () => {
+        tooltip.classList.remove('visible');
+    };
+
+    title.addEventListener('mouseenter', showTooltip);
+    title.addEventListener('mousemove', updatePosition);
+    title.addEventListener('mouseleave', hideTooltip);
+
+    // Optional: very subtle hint on touch (appears briefly)
+    let touchTimer;
+    title.addEventListener('touchstart', (e) => {
+        clearTimeout(touchTimer);
+        tooltip.classList.add('visible');
+        // Center-ish on screen for mobile
+        tooltip.style.left = '50%';
+        tooltip.style.top = '70%';
+        tooltip.style.transform = 'translate(-50%, -50%)';
+        
+        touchTimer = setTimeout(() => {
+            tooltip.classList.remove('visible');
+        }, 1800);
+    }, { passive: true });
+
+    title.addEventListener('touchend', () => {
+        clearTimeout(touchTimer);
+        tooltip.classList.remove('visible');
+    }, { passive: true });
 });

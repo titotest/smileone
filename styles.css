@@ -471,3 +471,51 @@ body[data-page="photos"]::-webkit-scrollbar, body[data-page="photos"] .container
         padding-bottom: env(safe-area-inset-bottom, 0);
     }
 }
+
+/* Aggressive glass follow-cursor tooltip – smooth in, instant out */
+.title-tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: clamp(12px, 2.3vmin, 15px);
+    color: #f8f8ff;
+    background: rgba(35, 35, 55, 0.28);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    padding: 7px 15px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.38);
+    
+    /* Key change here ↓ */
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+    transition: 
+        opacity 0.85s ease-out,
+        transform 0.85s ease-out;
+    transition: opacity 0.85s ease-out, transform 0.85s ease-out; /* fade in */
+    transition-delay: 0s;
+}
+
+/* When visible → smooth appear */
+.title-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Instant disappear when .visible is removed */
+.title-tooltip:not(.visible) {
+    transition: opacity 0s steps(1), transform 0s steps(1);
+    /* ^^^ this makes disappearance instant */
+}
+
+/* Touch / coarse pointer → mostly hidden */
+@media (hover: none) or (pointer: coarse) {
+    .title-tooltip {
+        opacity: 0 !important;
+        visibility: hidden;
+        transition: none;
+    }
+}
