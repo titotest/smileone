@@ -32,50 +32,11 @@
             position: relative;
             z-index: 1;
         }
-        #scroll-hint {
-            position: absolute;
-            bottom: 8vh;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Nunito', Arial, sans-serif;
-            font-weight: 900;
-            font-size: 3.4vmin;
-            color: rgba(245, 245, 247, 0.38); /* more translucent base */
-            pointer-events: none;
-            z-index: 2;
-        }
-        @keyframes menuHint {
-            0% {
-                transform: translateX(-50%) translateY(20vh);
-                opacity: 0.38;
-            }
-            50% {
-                transform: translateX(-50%) translateY(8vh); /* reduced max height by ~30% – much gentler */
-                opacity: 0.52; /* reduced peak opacity for glassy feel */
-            }
-            100% {
-                transform: translateX(-50%) translateY(20vh);
-                opacity: 0.38;
-            }
-        }
-        #scroll-hint.show {
-            animation: menuHint 3.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-        }
-        #scroll-hint.hide {
-            opacity: 0;
-            animation: none;
-        }
-        @media (max-width: 666px) {
-            #scroll-hint {
-                font-size: 4.5vmin;
-            }
-        }
     </style>
 </head>
 <body data-page="index">
-    <div id="bg-cover" class="visible"></div>
+    <div id="bg-cover"></div>
     <div id="scroll-hint" class="show">MENU</div>
-
     <div class="container">
         <h1 id="title" class="title">REMORPH DESIGN</h1>
         <nav id="menu" class="menu">
@@ -100,28 +61,29 @@
 
     <script src="scripts.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        (function() {
             const bgCover = document.getElementById('bg-cover');
-            const scrollHint = document.getElementById('scroll-hint');
             const menu = document.getElementById('menu');
-
-            const toggleElements = () => {
-                const isMenuVisible = menu.classList.contains('visible');
-                bgCover.classList.toggle('visible', !isMenuVisible);
-                if (isMenuVisible) {
-                    scrollHint.classList.remove('show');
-                    scrollHint.classList.add('hide');
-                } else {
-                    scrollHint.classList.remove('hide');
-                    scrollHint.classList.add('show');
-                }
-            };
-
-            const observer = new MutationObserver(toggleElements);
-            observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
-
-            toggleElements();
-        });
+            const isMenuVisible = menu && menu.classList.contains('visible');
+            bgCover.classList.toggle('visible', !isMenuVisible);
+            document.addEventListener('DOMContentLoaded', () => {
+                const scrollHint = document.getElementById('scroll-hint');
+                const toggleElements = () => {
+                    const currentVisible = menu.classList.contains('visible');
+                    bgCover.classList.toggle('visible', !currentVisible);
+                    if (currentVisible) {
+                        scrollHint.classList.remove('show');
+                        scrollHint.classList.add('hide');
+                    } else {
+                        scrollHint.classList.remove('hide');
+                        scrollHint.classList.add('show');
+                    }
+                };
+                const observer = new MutationObserver(toggleElements);
+                observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+                toggleElements();
+            });
+        })();
     </script>
 </body>
 </html>
