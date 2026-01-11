@@ -1,32 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
-    <title>Remorph Design - Photos</title>
-    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
-    <meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<title>Remorph Design - Photos</title>
+<link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
+<meta name="msapplication-TileImage" content="/favicon/ms-icon-150x150.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<!-- PhotoSwipe core CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
 </head>
 <body data-page="photos">
-    <div class="container">
-        <h1 id="title" class="title at-top" title-tooltip="go back">REMORPH DESIGN</h1>
-        <div class="photos-container">
-            <img src="/images/REMORPH_DESIGN_1.PNG" alt="Photo 1" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_2.PNG" alt="Photo 2" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_3.PNG" alt="Photo 3" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_4.PNG" alt="Photo 4" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_5.PNG" alt="Photo 5" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_6.PNG" alt="Photo 6" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_7.PNG" alt="Photo 7" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_8.PNG" alt="Photo 8" class="photo-image">
-            <img src="/images/REMORPH_DESIGN_9.PNG" alt="Photo 9" class="photo-image">
+
+<div class="container">
+    <h1 id="title" class="title at-top" title-tooltip="go back">REMORPH DESIGN</h1>
+
+    <div class="photos-container" id="photo-gallery">
+        <a href="/images/REMORPH_DESIGN_1.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_1.PNG" alt="Remorph Design photo 1" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_2.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_2.PNG" alt="Remorph Design photo 2" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_3.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_3.PNG" alt="Remorph Design photo 3" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_4.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_4.PNG" alt="Remorph Design photo 4" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_5.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_5.PNG" alt="Remorph Design photo 5" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_6.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_6.PNG" alt="Remorph Design photo 6" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_7.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_7.PNG" alt="Remorph Design photo 7" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_8.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_8.PNG" alt="Remorph Design photo 8" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_9.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_9.PNG" alt="Remorph Design photo 9" class="photo-image">
+        </a>
+        <a href="/images/REMORPH_DESIGN_10.PNG" class="photo-link" target="_blank">
+            <img src="/images/REMORPH_DESIGN_10.PNG" alt="Remorph Design photo 10" class="photo-image">
+        </a>
+    </div>
+</div>
+
+<!-- PhotoSwipe root element (required) -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom"></button>
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next"></button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
         </div>
     </div>
-    <script src="scripts.js"></script>
+</div>
+
+<script type="module">
+    import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js';
+
+    const lightbox = new PhotoSwipeLightbox({
+        gallery: '#photo-gallery',
+        children: 'a.photo-link',
+        pswpModule: () => import('https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js'),
+        wheelToZoom: true,
+        showHideAnimationType: 'zoom',
+        initialZoomLevel: 'fit',
+        secondaryZoomLevel: 1.5,
+        maxZoomLevel: 3,
+        bgOpacity: 0.95,
+        spacing: 0.12,
+        loop: true
+    });
+
+    lightbox.init();
+</script>
+
+<!-- Preload dimensions for better experience (same approach as overview) -->
+<script>
+    document.querySelectorAll('.photo-link').forEach(link => {
+        const img = new Image();
+        img.src = link.href;
+        img.onload = () => {
+            link.dataset.pswpWidth = img.naturalWidth;
+            link.dataset.pswpHeight = img.naturalHeight;
+        };
+    });
+</script>
+
+<script src="scripts.js"></script>
 </body>
 </html>
