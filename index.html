@@ -40,7 +40,7 @@
             font-family: 'Nunito', Arial, sans-serif;
             font-weight: 900;
             font-size: 3.4vmin;
-            color: rgba(245, 245, 247, 0.38); /* more translucent base */
+            color: rgba(245, 245, 247, 0.38);
             pointer-events: none;
             z-index: 2;
         }
@@ -50,8 +50,8 @@
                 opacity: 0.38;
             }
             50% {
-                transform: translateX(-50%) translateY(8vh); /* reduced max height by ~30% – much gentler */
-                opacity: 0.52; /* reduced peak opacity for glassy feel */
+                transform: translateX(-50%) translateY(8vh);
+                opacity: 0.52;
             }
             100% {
                 transform: translateX(-50%) translateY(20vh);
@@ -73,7 +73,7 @@
     </style>
 </head>
 <body data-page="index">
-    <div id="bg-cover" class="visible"></div>
+    <div id="bg-cover"></div>
     <div id="scroll-hint" class="show">MENU</div>
     <div class="container">
         <h1 id="title" class="title">REMORPH DESIGN</h1>
@@ -102,9 +102,12 @@
             const bgCover = document.getElementById('bg-cover');
             const scrollHint = document.getElementById('scroll-hint');
             const menu = document.getElementById('menu');
+
             const toggleElements = () => {
                 const isMenuVisible = menu.classList.contains('visible');
+                
                 bgCover.classList.toggle('visible', !isMenuVisible);
+                
                 if (isMenuVisible) {
                     scrollHint.classList.remove('show');
                     scrollHint.classList.add('hide');
@@ -113,8 +116,10 @@
                     scrollHint.classList.add('show');
                 }
             };
+
             const observer = new MutationObserver(toggleElements);
             observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+
             toggleElements();
         });
     </script>
